@@ -1,23 +1,30 @@
-import React, {useState} from 'react'
-import {Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, Modal, Pressable, Button} from 'react-native'
+import React, {useEffect, useState} from 'react'
+import {Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, Modal, Pressable, Button, SafeAreaView, FlatList} from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import RadioButtonRN from 'radio-buttons-react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ProgressChart } from 'react-native-chart-kit';
 import { SwipeListView } from 'react-native-swipe-list-view'
+import { openDatabase } from 'react-native-sqlite-storage';
+import { set } from 'react-native-reanimated';
 // import Icon from 'react-native-vector-icons'
+
+const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
 const Home = () => {
 
 
     const [modalVisible, setModalVisible] = useState(false);
-    const [WalletChoose, setWalletChoose] = useState('');
+    const [WalletChoose, setWalletChoose] = useState('Vi00');
     const [isIncome, setIsIncome] = useState(false)
+    const [ListVi, setListVi] = useState([])
+    const [SelectedList, setSelectedList] = useState([])
+    const [Key, SetKey] = useState([])
     // const [style_choose, setStyle_choose] = useState('bold')
     // load vao day ten cac vi, cac vi chon duoc se nam trong bien WalletChoose
     const listWallet = [
         {
-            label : 'Vi tong'
+            label : 'Vi Tổng'
         },
         {
             label : 'Vi 1'
@@ -79,6 +86,250 @@ const Home = () => {
             )
         }
     }
+    const GetListWallet = async()=>{
+        var List = [{"MaVi" : 'Vi00','TenVi': 'Ví Tổng' ,label :'Ví tổng', "Tien": 0, "SoDu": 0 }]
+        //Get Danh sách Ví: ID ví, Tên Ví, Tiền ban đầu lúc tạo ví
+        await db.transaction(async (tx) =>{
+            await tx.executeSql(
+              "SELECT * FROM DS_VI",
+              [],
+              (tx, results) =>{
+                var sum = 0
+                var vi = {"ID": '', "Tien": 0, label: '', 'SoDu': 0}
+                for (let i = 0; i < results.rows.length; i++){
+                    var a = results.rows.item(i)
+                    vi.ID = a.MaVi
+                    a.label = a.TenVi
+                    vi.Tien = a.Tien
+                    sum += a.Tien
+                    a.SoDu = a.Tien
+                    List.push(a)
+                }
+                List[0].Tien = sum
+                List[0].SoDu = sum
+                setListVi(List)
+              }
+            )
+        })
+        await db.transaction(async (tx) =>{
+            await tx.executeSql(
+              "SELECT MaVi, SUM(Tien) FROM GIAODICH GROUP BY MaVi",
+              [],
+              (tx, results) =>{
+                var sum = 0
+                for (let i = 0; i < results.rows.length; i++){
+                    var a = results.rows.item(i)
+                    sum += a["SUM(Tien)"]
+                    for (let i = 1; i < List.length; i++){
+                        if (List[i].MaVi == a.MaVi)
+                            List[i].SoDu = List[i].Tien + a["SUM(Tien)"]
+                    }
+                }
+                List[0].SoDu = List[0].Tien + sum
+                setListVi(List)
+              }
+            )
+        })
+        // Get số dư của ví
+        // await db.transaction(async (tx) =>{
+        //     await tx.executeSql(
+        //       "SELECT * FROM DS_VI",
+        //       [],
+        //       (tx, results) =>{
+        //         var sum = 0
+        //         var vi = {"ID": '', "Tien": 0, label: ''}
+        //         for (let i = 0; i < results.rows.length; i++){
+        //             var a = results.rows.item(i)
+        //             console.log(a)
+        //             vi.ID = a.MaVi
+        //             vi.Tien = a.Tien
+        //             sum += a.Tien
+        //             vi.label = a.TenVi
+        //             List.push(vi)
+        //         }
+        //         List[0].Tien = sum
+        //         console.log(List)
+        //         setListVi(List)
+        //       }
+        //     )
+        // }) 
+    }
+    const GetTenViByMaVi= (ID) =>{
+        if (ListVi.length > 0){
+            for( let i = 0; i < ListVi.length; i++){
+                if (ListVi[i].MaVi == ID)
+                    return ListVi[i].TenVi
+            }
+        }
+
+    }
+    const GetSoDuByMaVi= (ID) =>{
+        if (ListVi.length > 0){
+            for( let i = 0; i < ListVi.length; i++){
+                if (ListVi[i].MaVi == ID)
+                    return new Intl.NumberFormat().format(ListVi[i].SoDu) + '₫'
+            }
+        }
+
+    }
+    const GetGDByMaViGrByMaDanhMuc = async(ID, IsThu)=>{
+        SetKey([{'MaVi': ID, 'Thu': IsThu}])
+        if (IsThu == true)
+            IsThu = 1
+        else
+            IsThu = 0
+        if (ID == 'Vi00'){
+            await db.transaction(async (tx) =>{
+                var List = []
+                await tx.executeSql(
+                  `SELECT MaVi, MaDanhMuc, SUM(Tien) FROM GIAODICH WHERE Thu == ${IsThu} GROUP BY MaDanhMuc`,
+                  [],
+                  async (tx, results) =>{
+                    var sum = 0
+                    for (let i = 0; i < results.rows.length; i++){
+                        var a = results.rows.item(i)
+                        List.push(a)
+                        
+                    }
+                    setSelectedList(List)
+                    return List
+                  }
+                )
+                
+            })
+        }
+        else
+        await db.transaction(async (tx) =>{
+            var List = []
+            await tx.executeSql(
+              `SELECT MaVi, MaDanhMuc, SUM(Tien) FROM GIAODICH WHERE MaVi == '${ID}' AND Thu == ${IsThu} GROUP BY MaDanhMuc`,
+              [],
+              async (tx, results) =>{
+                var sum = 0
+                for (let i = 0; i < results.rows.length; i++){
+                    var a = results.rows.item(i)
+                    List.push(a)
+                    
+                }
+                setSelectedList(List)
+                return List
+              }
+            )
+            
+        })
+         
+    }
+    const getSoduVi = async()=>{
+        var List = [...ListVi]
+        console.log(List)
+        await db.transaction(async (tx) =>{
+            await tx.executeSql(
+              "SELECT * FROM GIAODICH",
+              [],
+              (tx, results) =>{
+                var sum = 0
+                console.log('len:' ,results.rows.length)
+                for (let i = 0; i < results.rows.length; i++){
+                    var a = results.rows.item(i)
+                    console.log(a)
+                    // sum += a["SUM(Tien)"]
+                    // for (let i = 1; i < List.length; i++){
+                    //     if (List[i].ID == a.MaVi)
+                    //         List[i].SoDu = List[i].Tien + a["SUM(Tien)"]
+                    // }
+                }
+                // console.log(List)
+              }
+            )
+        })
+
+    }
+    const AddVi = async()=>{
+        await db.transaction(async (tx)=> {
+            await tx.executeSql(
+            "INSERT INTO DS_VI (MaVi, TenVi, Tien) VALUES(?,?,?)",
+            ['Vi01', 'Ví 1', 100000]
+            )
+            await tx.executeSql(
+            "INSERT INTO DS_VI (MaVi, TenVi, Tien) VALUES(?,?,?)",
+            ['Vi02', 'Ví 2', 200000]
+            )
+        })
+    }
+    const AddGD = async()=>{
+        await db.transaction(async (tx)=> {
+            await tx.executeSql(
+            "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
+            ['GD01', 'Vi01', 50000, 1,'2023/22/02', 'MDM1', 'asd']
+            )
+            await tx.executeSql(
+            "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
+            ['GD02', 'Vi01', 20000, 1,'2023/22/02', 'MDM1', 'asd']
+            )
+            await tx.executeSql(
+            "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
+            ['GD03', 'Vi01', 20000, 1,'2023/22/02', 'MDM1', 'asd']
+            )
+            await tx.executeSql(
+            "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
+            ['GD04', 'Vi01', -10000, 0,'2023/22/02', 'MDM2', 'asd']
+            )
+            await tx.executeSql(
+            "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
+            ['GD05', 'Vi02', 50000, 1,'2023/22/02', 'MDM3', 'asd']
+            )
+            await tx.executeSql(
+            "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
+            ['GD06', 'Vi02', -10000, 0,'2023/22/02', 'MDM1', 'asd']
+            )
+            await tx.executeSql(
+            "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
+            ['GD07', 'Vi02', -30000, 0,'2023/22/02', 'MDM2', 'asd']
+            )
+        })
+    }
+    useEffect(() => {
+        AddVi()
+        AddGD()
+        // getSoduVi()
+
+        GetListWallet()
+        // GetGDByMaViGrByMaDanhMuc('Vi01', 1)
+      }, [])
+    let listItemView = (item) => {
+        return (
+            <TouchableOpacity
+            onPress={() => Alert.alert("Mo ra trang chi tiet")}
+            >
+                <Text style = {styles.Row_view}> MaDanhMuc: {item.MaDanhMuc}       {new Intl.NumberFormat().format(item['SUM(Tien)'])} </Text>
+            </TouchableOpacity>
+        );
+      };
+    const show = ()=>{
+        if (SelectedList.length == 0 || Key.length == 0){
+            GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome)
+        }
+        else if (Key[0].MaVi != WalletChoose || Key[0].Thu != isIncome){
+            GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome)
+        }
+        if (SelectedList != null)
+            return(
+                <SafeAreaView style={{flex: 1}}>
+                <View style={{flex: 1}}>
+                    <View style={{flex: 1}}>
+                        <FlatList
+                            data={SelectedList}
+                            // ItemSeparatorComponent={listViewItemSeparator}
+                            keyExtractor={(item, index) => index.toString()}
+                            renderItem={({item}) =>listItemView(item)}
+                    />
+            </View>
+            
+        </View>
+        </SafeAreaView>
+                
+            )
+    }
 
     return(
         <View style = {{backgroundColor: '#d4d9d7', flex:1}}>
@@ -86,7 +337,7 @@ const Home = () => {
                 <View style = {{flexDirection:'column', marginTop:25, alignItems:'center'}}>
                     <View style = {{flexDirection: 'row'}}>
                         <Text style = {{textAlign:'center', fontSize:25, color:'white', marginRight:5}}>
-                            Tong cong 
+                            {GetTenViByMaVi(WalletChoose)}
                         </Text>
                         <View style={{marginTop:10}}>
                             <Modal 
@@ -101,9 +352,9 @@ const Home = () => {
                                         <ScrollView>
                                             <View>
                                                 <RadioButtonRN 
-                                                    data = {listWallet}
+                                                    data = {ListVi}
                                                     selectedBtn = {(e) => {console.log(e.label)
-                                                    setWalletChoose(e.label)}}
+                                                    setWalletChoose(e.MaVi)}}
                                                 />
                                             </View>
                                         </ScrollView>
@@ -130,7 +381,7 @@ const Home = () => {
                         </View>
                     </View>
                    <Text style = {{fontSize:20, fontWeight:'bold', color:'white'}}>
-                        1T
+                        {GetSoDuByMaVi(WalletChoose)}
                    </Text>
                   
                 </View>
@@ -178,7 +429,7 @@ const Home = () => {
                     </View>
                                     
             </View>
-                <View>
+                {/* <View>
                     <ScrollView>
                         <TouchableOpacity
                         onPress={() => Alert.alert("Mo ra trang chi tiet")}
@@ -204,9 +455,9 @@ const Home = () => {
                         </TouchableOpacity>
                     </ScrollView>
 
-                </View>
+                </View> */}
             </ScrollView>
-            
+        {show()}
         </View>
         
     )
