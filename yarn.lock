@@ -1092,6 +1092,11 @@
     "minimatch" "^3.1.2"
     "strip-json-comments" "^3.1.1"
 
+"@freakycoder/react-native-bounceable@^1.0.3", "@freakycoder/react-native-bounceable@>= 1.0.3":
+  "integrity" "sha512-+iMq2tnqxCwFjitbPUz9nZ+VfJ8OU9waIlDJAAsoq1229QEwCmERCNy5zVtDsz75q3i4FLXX/n7fimdMzmP21A=="
+  "resolved" "https://registry.npmjs.org/@freakycoder/react-native-bounceable/-/react-native-bounceable-1.0.3.tgz"
+  "version" "1.0.3"
+
 "@hapi/address@^5.1.0":
   "integrity" "sha512-b/OicomrGhG+aRgAhtxqOArHDH7kE2sY0IQ5MwIU6EkzUIOmsfi4YfYPZxGSauHLgVzcwk2rseCi7fjeMpQh+w=="
   "resolved" "https://registry.npmjs.org/@hapi/address/-/address-5.1.0.tgz"
@@ -5419,7 +5424,7 @@
   dependencies:
     "minimist" "^1.2.6"
 
-"moment@^2.24.0":
+"moment@^2.24.0", "moment@^2.29.4", "moment@>= 2.29.4":
   "integrity" "sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w=="
   "resolved" "https://registry.npmjs.org/moment/-/moment-2.29.4.tgz"
   "version" "2.29.4"
@@ -6088,11 +6093,6 @@
   "resolved" "https://registry.npmjs.org/react-native-gradle-plugin/-/react-native-gradle-plugin-0.71.15.tgz"
   "version" "0.71.15"
 
-"react-native-ionicons@^4.6.5":
-  "integrity" "sha512-s2Ia7M5t609LE9LWygMj3ALVPUlKhK7R9XcMb67fP4EYJv0oLcwg5pc+8ftv9XXaUuTW/WgL3zJlBYxAvtvMJg=="
-  "resolved" "https://registry.npmjs.org/react-native-ionicons/-/react-native-ionicons-4.6.5.tgz"
-  "version" "4.6.5"
-
 "react-native-linear-gradient@^2.6.2":
   "integrity" "sha512-Z8Xxvupsex+9BBFoSYS87bilNPWcRfRsGC0cpJk72Nxb5p2nEkGSBv73xZbEHnW2mUFvP+huYxrVvjZkr/gRjQ=="
   "resolved" "https://registry.npmjs.org/react-native-linear-gradient/-/react-native-linear-gradient-2.6.2.tgz"
@@ -6146,6 +6146,14 @@
   "integrity" "sha512-SjAEuHc/D6ovp+RjDUhfNmw6NYOntdT7+GFhfMGfP/BSLMuMWynpzJy9GKQeyB8sI78T6Lzip21TVbongOg1Mw=="
   "resolved" "https://registry.npmjs.org/react-native-swipe-list-view/-/react-native-swipe-list-view-3.2.9.tgz"
   "version" "3.2.9"
+
+"react-native-time-date-picker@^1.2.0":
+  "integrity" "sha512-KpllANjlp8S2vyw4LTMNwii1Dg0GawxkO7u2963DR4WHNpKwLN7XIflZ4sPqyhp65tzPEorrfoVyebf/LWZ5+w=="
+  "resolved" "https://registry.npmjs.org/react-native-time-date-picker/-/react-native-time-date-picker-1.2.0.tgz"
+  "version" "1.2.0"
+  dependencies:
+    "@freakycoder/react-native-bounceable" ">= 1.0.3"
+    "moment" ">= 2.29.4"
 
 "react-native-vector-icons@^9.2.0":
   "integrity" "sha512-wKYLaFuQST/chH3AJRjmOLoLy3JEs1JR6zMNgTaemFpNoXs0ztRnTxcxFD9xhX7cJe1/zoN5BpQYe7kL0m5yyA=="

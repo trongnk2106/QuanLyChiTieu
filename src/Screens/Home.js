@@ -6,11 +6,16 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { ProgressChart } from 'react-native-chart-kit';
 import { SwipeListView } from 'react-native-swipe-list-view'
 // import Icon from 'react-native-vector-icons'
+import { TimeDatePicker } from 'react-native-time-date-picker';
+import moment from 'moment';
+import ViewDetail from '../Small_Components/ViewDetail';
+
 
 const Home = () => {
 
 
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalView, SetModalViewVisible] = useState(false)
     const [WalletChoose, setWalletChoose] = useState('');
     const [isIncome, setIsIncome] = useState(false)
     // const [style_choose, setStyle_choose] = useState('bold')
@@ -28,8 +33,8 @@ const Home = () => {
     ]
 
     const data_plot = {
-        labels: ["Swim", "Bike", "Run"], // optional
-        data: [0.4, 0.6, 0.8]
+        labels: ["Swim", "Bike", "Run", "thu"], // optional
+        data: [0.4, 0.6, 0.5, 1]
       };
 
     const chartConfig = {
@@ -80,6 +85,28 @@ const Home = () => {
         }
     }
 
+    const DeletaDanhMuc = () => {
+
+        // goi ham xoa giao dich
+
+       console.log("da xoa giao dich")
+    }
+
+
+    const AlerBottom = () => {
+        Alert.alert('Canh bao','Ban co chac chan muon xoa giao dich khong', [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {text: 'OK', onPress: () => {
+                DeletaDanhMuc()
+                SetModalViewVisible(!modalView)}},
+          ]);
+    }
+
+  
     return(
         <View style = {{backgroundColor: '#d4d9d7', flex:1}}>
             <View style = {styles.header}>
@@ -108,7 +135,7 @@ const Home = () => {
                                             </View>
                                         </ScrollView>
                                        
-                                        <Pressable onPress = {() => setModalVisible(!modalVisible)}>
+                                    <Pressable onPress = {() => setModalVisible(!modalVisible)}>
                                             <Text style = {{fontSize:15, color:'green', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:10}}> Chon </Text>
                                         </Pressable>
                                     </View>
@@ -154,7 +181,7 @@ const Home = () => {
                 </View>
             </View>
             <ScrollView>
-            <View style = {styles.body}>
+                <View style = {styles.body}>
                     <View style = {{flexDirection:'row', justifyContent:'space-between', paddingLeft:50, paddingRight:50, paddingTop:10}}>
                         <TouchableOpacity>
                             <Text style = {styles.Date_s}> Ngay</Text>
@@ -175,34 +202,88 @@ const Home = () => {
                         >
                             <Ionicons name = 'md-add-circle-sharp' color = 'yellow' size = {40}/>
                         </TouchableOpacity>
-                    </View>
-                                    
-            </View>
+                    </View>                
+                </View>
                 <View>
-                    <ScrollView>
-                        <TouchableOpacity
-                        onPress={() => Alert.alert("Mo ra trang chi tiet")}
-                        >
+                    {/* <ScrollView> */}
 
-                            <Text style = {styles.Row_view}> Thu nhap1 </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                        onPress={() => Alert.alert("Mo ra trang chi tiet")}>
-                            <Text style = {styles.Row_view}> Thu nhap2 </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                        onPress={() => Alert.alert("Mo ra trang chi tiet")}>
-                            <Text style = {styles.Row_view}> Thu nhap3 </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                        onPress={() => Alert.alert("Mo ra trang chi tiet")}>
-                            <Text style = {styles.Row_view}> Thu nhap4</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                        onPress={() => Alert.alert("Mo ra trang chi tiet")}>
-                            <Text style = {styles.Row_view}> Thu nhap5 </Text>
-                        </TouchableOpacity>
-                    </ScrollView>
+                        <Modal 
+                            animationType='slide'
+                            transparent={false}
+                            visible = {modalView}
+                            onRequestClose={() => SetModalViewVisible(!modalView)}    
+                        >
+                            <View style = {styles.showContainer}>
+                                <ViewDetail/>
+                                <Pressable onPress = {() => {
+                                    // SetModalViewVisible(!modalView)
+                                    AlerBottom()
+                                
+                                }}>
+                                    <Text style = {{fontSize:15, color:'red', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:10}}> XOA </Text>
+                                </Pressable>
+                                
+                            </View>
+
+                            
+
+
+                        </Modal>
+
+                        <Pressable
+                            onPress={() => SetModalViewVisible(true)}
+                        >
+                            {/* <Ionicons name = 'caret-down-outline' color = 'white' fontSize='20'/> */}
+                            <Text style = {styles.Row_view}> Thu nhap </Text>
+
+                        </Pressable>
+                        
+                        {/* <ViewDetail/> */}
+
+                    {/* <TouchableOpacity
+                    onPress={() => Alert.alert("Mo ra trang chi tiet")}
+                    >
+
+                        <Text style = {styles.Row_view}> Thu nhap1 </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                    onPress={() => Alert.alert("Mo ra trang chi tiet")}>
+                        <Text style = {styles.Row_view}> Thu nhap2 </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                    onPress={() => Alert.alert("Mo ra trang chi tiet")}>
+                        <Text style = {styles.Row_view}> Thu nhap3 </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                    onPress={() => Alert.alert("Mo ra trang chi tiet")}>
+                        <Text style = {styles.Row_view}> Thu nhap4</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                    onPress={() => Alert.alert("Mo ra trang chi tiet")}>
+                        <Text style = {styles.Row_view}> Thu nhap5 </Text>
+                    </TouchableOpacity>
+                </ScrollView> */}
+                       {/* <TimeDatePicker
+                        selectedDate={ moment().valueOf()}
+                        // mode={time}
+                        options={{
+                            daysStyle: {
+                                borderRadius: 16,
+                                borderWidth: 0.5,
+                                borderColor: "#f1f1f1",
+                            },
+                            is24Hour: false,
+                        }}
+                        onMonthYearChange={(month) => {
+                            console.log("month: ", month);
+                        }}
+                        onSelectedChange={(selected) => {
+                            console.log("selected: ", selected);
+                        }}
+                        onTimeChange={(time) => {
+                            console.log("time: ", time);
+                        }}
+                    /> */}
 
                 </View>
             </ScrollView>
