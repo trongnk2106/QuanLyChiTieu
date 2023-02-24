@@ -9,9 +9,12 @@ const EditTransaction = () => {
 
 
     const sotien = Number(50000000)
+    const danhmuccu = 'danh muc duoc load tu database'
     const [tranScationType, setTranSactionType] = useState('Chi Phi')
     const [Money, setMoney] = useState(sotien)
-
+    const [danhmuc, setDanhmuc] = useState(danhmuccu)
+    const [ghichu, setGhichu] = useState('')
+ 
     return(
         <View>
             <View style = {styles.header}>
@@ -26,14 +29,36 @@ const EditTransaction = () => {
                     <Text style = {styles.Income_s}> Thu Nhap</Text>
                 </View>
             </View>
-            <View style = {{flexDirection:'row'}}>
+            <View>
                 <View style = {styles.Textinput_s}>
                     <TextInput 
                     onChangeText={(newmoney) => setMoney(newmoney)}
                     value={`${Money.toString()}` }
                     />
                     <Text style = {{marginTop: 15}}> VND</Text>
-
+                </View>
+                <View style = {{marginTop:15, marginBottom:10}}>
+                    <Text> Tai khoan </Text>
+                    <Text style = {{color:'green', fontSize:15}}> Load loai tai khoan thu database</Text>
+                </View>
+                <View>
+                    <Text> Danh muc</Text>
+                    <TextInput
+                    onChangeText={(newdanhmuc) => {setDanhmuc(newdanhmuc)}}
+                    value={danhmuc}/>
+                </View>
+                <View>
+                    <Text> Ngay thang</Text>
+                    <Text> Load ngay thang truoc do tu database</Text>
+                    <Text> Create calender</Text>
+                </View>
+                <View style = {{marginTop:10}}>
+                    <Text> Ghi chu</Text>
+                    <TextInput
+                    onChangeText = {(newghichu) => {setGhichu(newghichu)}}
+                    value = {ghichu}
+                    placeholder = 'Ghi chu'
+                    />
                 </View>
             </View>
            
@@ -63,10 +88,13 @@ const styles = StyleSheet.create({
     Textinput_s : {
         borderBottomWidth:1,
         borderBottomColor:'black',
-        width:Dimensions.get('window').width / 5,
+        width:Dimensions.get('window').width / 3,
         // justifyContent:'center',
-        marginLeft: Dimensions.get('window').width / 3,
+        marginLeft: 100,
         flexDirection:'row',
+    },
+    save_s : {
+        textAlign: 'center'
     },
 })
 

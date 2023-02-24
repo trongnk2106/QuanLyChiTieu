@@ -96,6 +96,12 @@ const Home = () => {
     const AlerBottom = () => {
         Alert.alert('Canh bao','Ban co chac chan muon xoa giao dich khong', [
             {
+                text: 'Roll Back',
+                onPress : () => {
+                    SetModalViewVisible(!modalView)
+                }
+            },
+            {
               text: 'Cancel',
               onPress: () => console.log('Cancel Pressed'),
               style: 'cancel',
@@ -103,6 +109,7 @@ const Home = () => {
             {text: 'OK', onPress: () => {
                 DeletaDanhMuc()
                 SetModalViewVisible(!modalView)}},
+           
           ]);
     }
 

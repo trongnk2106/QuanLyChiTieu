@@ -10,6 +10,29 @@ const ViewDetail = () => {
 
     const [modalEdit, setModalEdit] = useState(false);
 
+    const AlerBottom = () => {
+        Alert.alert('Canh bao','Ban co chac chan muon xoa giao dich khong', [
+            {
+                text: 'Roll Back',
+                onPress: () => {
+                    console.log('quay tro lai')
+                    setModalEdit(!modalEdit)
+                }
+            },
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {text: 'OK', onPress: () => {
+                console.log('da luu thay doi')
+                setModalEdit(!modalView)}},
+          ]);
+    }
+
+
+
+
 
     return(
         <View style = {{backgroundColor:'#d4d9d7', flex: 1}}>
@@ -26,6 +49,12 @@ const ViewDetail = () => {
                     >
 
                         <EditTransaction/>
+
+                        <Pressable onPress ={() => {
+                            AlerBottom()
+                        }}> 
+                            <Text style = {{textAlign:'center'}}> Luu </Text>
+                        </Pressable>
 
 
                     </Modal>
