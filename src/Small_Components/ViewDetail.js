@@ -1,15 +1,78 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, Modal, Pressable, Button} from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import RadioButtonRN from 'radio-buttons-react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import EditTransaction from './EditTransaction';
+import { openDatabase } from 'react-native-sqlite-storage';
 
-const ViewDetail = () => {
+const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
+const ViewDetail = (props) => {
 
+    if (props.data != null)
+        console.log(props)
     const [modalEdit, setModalEdit] = useState(false);
+    const [ListVi, setListVi] = useState([])
+    const [ListDanhMuc, SetListDanhMuc] = useState([])
 
+
+    const getListVi = async () =>{    
+        await db.transaction(async (tx) =>{
+            await tx.executeSql(
+            `SELECT * FROM DS_VI`,
+            [],
+            (tx, results) =>{
+                var list = []
+                for (let i = 0; i < results.rows.length; i++){
+                    var a = results.rows.item(i)
+                    list.push(a)
+                    console.log(a)
+                }
+                setListVi(list)
+            }
+            )
+        })
+    }
+    const GetListDanhMuc = async () =>{
+        await db.transaction(async (tx) =>{
+            var List = []
+            await tx.executeSql(
+              "SELECT * FROM DANHMUC",
+              [],
+              async (tx, results) =>{
+                var sum = 0
+                for (let i = 0; i < results.rows.length; i++){
+                    var a = results.rows.item(i)
+                    List.push(a)
+                }
+                SetListDanhMuc(List)
+              }
+            )
+            
+        })
+    }
+    useEffect(() => {
+        getListVi()
+        GetListDanhMuc()
+      }, [])
+    const getTenVi = (MaVi) =>{
+        console.log(MaVi)
+        if (MaVi == 'Vi00')
+            return 'Ví tổng'
+        else if (ListVi.length > 0){
+            console.log(ListVi)
+            for (let  i = 0; i<ListVi.length; i++)
+                if (ListVi[i].MaVi == MaVi)
+                    return ListVi[i].TenVi
+        }
+    }
+    const GetTenDanhMuc = (MaDM) => {
+        if (ListDanhMuc.length > 0)
+            for (let  i = 0; i < ListDanhMuc.length; i++)
+                if (ListDanhMuc[i].MaDanhMuc == MaDM)
+                    return ListDanhMuc[i].TenDanhMuc
+    }
     const AlerBottom = () => {
         Alert.alert('Canh bao','Ban co chac chan muon xoa giao dich khong', [
             {
@@ -48,7 +111,9 @@ const ViewDetail = () => {
                     onRequestClose={() => setModalEdit(!modalEdit)}
                     >
 
-                        <EditTransaction/>
+                        <EditTransaction data = {props.data}
+                        TenTK = {getTenVi(props.data.MaVi)}
+                        />
 
                         <Pressable onPress ={() => {
                             AlerBottom()
@@ -67,16 +132,16 @@ const ViewDetail = () => {
 
             <View>
                 <View>
-                    <Text> So tien</Text>
-                    <Text> Load so tien vao day</Text>
+                    <Text> Số tiền</Text>
+                    <Text> {props.data['SUM(Tien)']} (tạm thời)</Text>
                 </View>
                 <View>
-                    <Text> Tai khoan</Text>
-                    <Text> Hien thi tai khoan chon vao day</Text>
+                    <Text> Tài khoản</Text>
+                    <Text> {getTenVi(props.data.MaVi)}</Text>
                 </View>
                 <View>
                     <Text> Danh muc</Text>
-                    <Text> Hien thi loai chi tieu</Text>
+                    <Text> {GetTenDanhMuc(props.data.MaDanhMuc)}</Text>
                 </View>
                 <View>
                     <Text> Hien thi ngay thang</Text>
