@@ -26,7 +26,7 @@ const ViewDetail = () => {
             },
             {text: 'OK', onPress: () => {
                 console.log('da luu thay doi')
-                setModalEdit(!modalView)}},
+                setModalEdit(!modalEdit)}},
           ]);
     }
 

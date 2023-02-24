@@ -3,6 +3,7 @@ import { Button, View } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import Home from './src/Screens/Home';
+import Acc from './src/Screens/SelectAccount';
 
 // function HomeScreen({ navigation }) {
 //   return (
@@ -29,7 +30,8 @@ export default function App() {
   return (
     <NavigationContainer>
       <Drawer.Navigator screenOptions={{headerShown : false}}>
-        <Drawer.Screen name="Home" component={Home} />
+        <Drawer.Screen name="Home" component={Home} /> 
+        <Drawer.Screen name="Tai Khoan" component={Acc} />
         <Drawer.Screen name="Notifications" component={NotificationsScreen} />
       </Drawer.Navigator>
     </NavigationContainer>
