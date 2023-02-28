@@ -37,9 +37,11 @@ const Add = ({ navigation }) => {
   // const [Key, SetKey] = useState([]);
 
   const [Tien, setTien] = useState(0);
-  const [Date, setdate] = useState('')
+  const [Date_s, setdate] = useState('')
   const [actionTriggered, setActionTriggered] = useState('');
-
+  // console.log(Date_s)
+  const test_ngay = new Date().getDate()
+  console.log(test_ngay)
   return(
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style = {{backgroundColor: '#ffffff', flex:1}}>
@@ -235,7 +237,7 @@ const Add = ({ navigation }) => {
           onPress={() => {setModalVisible(true);
               setActionTriggered('calendar');}}
       >
-          <Text style={{marginBottom: 5, fontSize: 18, color: '#4CA07C'}}>{Date != '' ? Date : 'Select Date'}</Text>
+          <Text style={{marginBottom: 5, fontSize: 18, color: '#4CA07C'}}>{Date_s != '' ? Date_s : 'Select Date'}</Text>
 
           <AntDesign
               name="calendar"
@@ -297,7 +299,7 @@ const Add = ({ navigation }) => {
                 console.log('onPressArrowRight'); goToNextMonth();
                 }}
                 markedDates={{
-                    [Date] : {selected: true, marked: true, selectedColor: '#466A8F'}
+                    [Date_s] : {selected: true, marked: true, selectedColor: '#466A8F'}
                 }}
             />
 

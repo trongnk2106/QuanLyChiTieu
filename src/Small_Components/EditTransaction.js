@@ -5,14 +5,16 @@ import RadioButtonRN from 'radio-buttons-react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 
 
-const EditTransaction = (props) => {
+const EditTransaction = ({route, navigation}) => {
 
-    if(props != null)
-        console.log(props)
-    const sotien = Number(props.data["SUM(Tien)"])
+    // if(props != null)
+    //     console.log(props)
+    // const sotien = Number(props.data["SUM(Tien)"])
+    const {data, TenTK} = route.params
+    console.log(data)
     const danhmuccu = 'danh muc duoc load tu database'
     const [tranScationType, setTranSactionType] = useState('Chi Phi')
-    const [Money, setMoney] = useState(props.data["SUM(Tien)"])
+    const [Money, setMoney] = useState(data["Tien"])
     const [danhmuc, setDanhmuc] = useState(danhmuccu)
     const [ghichu, setGhichu] = useState('')
  
@@ -34,7 +36,7 @@ const EditTransaction = (props) => {
                 <View style = {styles.Textinput_s}>
                     <TextInput 
                     onChangeText={(newmoney) => setMoney(newmoney)}
-                    value={`${Money.toString()}` }
+                    value={`${Money}` }
                     />
                     <Text style = {{marginTop: 15}}> VND</Text>
                 </View>
