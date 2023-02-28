@@ -10,7 +10,8 @@ import { TimeDatePicker } from 'react-native-time-date-picker';
 import { openDatabase } from 'react-native-sqlite-storage';
 
 import moment from 'moment';
-import ViewDetail from '../Small_Components/ViewDetail';
+// import ViewDetail from '../Small_Components/ViewDetail';
+import ViewDetail_Type from '../Small_Components/ViewDetail_Type';
 
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
@@ -346,10 +347,10 @@ const Home = () => {
                             keyExtractor={(item, index) => index.toString()}
                             renderItem={({item}) =>listItemView(item)}
                     />
-            </View>
+                     </View>
             
-        </View>
-        </SafeAreaView>
+                 </View>
+                </SafeAreaView>
                 
             )
     }
@@ -461,13 +462,17 @@ const Home = () => {
                             onRequestClose={() => SetModalViewVisible(!modalView)}    
                         >
                             <View style = {styles.showContainer}>
-                                <ViewDetail data = {SelectedGD}/>
+                                {/* <ViewDetail data = {SelectedGD}/>
+                                 */}
+
+                                <ViewDetail_Type />
+                                 
                                 <Pressable onPress = {() => {
                                     // SetModalViewVisible(!modalView)
                                     AlerBottom()
                                 
                                 }}>
-                                    <Text style = {{fontSize:15, color:'red', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:10}}> XOA </Text>
+                                    <Text style = {{fontSize:15, color:'red', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:10, backgroundColor :'white'}}> XOA </Text>
                                 </Pressable>
                                 
                             </View>
