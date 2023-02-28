@@ -12,7 +12,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import moment from 'moment';
 // import ViewDetail from '../Small_Components/ViewDetail';
 import ViewDetail_Type from '../Small_Components/ViewDetail_Type';
-
+import ViewDetail from '../Small_Components/ViewDetail';
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
 
@@ -142,7 +142,6 @@ const Home = () => {
                 }
                 List[0].Tien = sum
                 List[0].SoDu = sum
-                setListVi(List)
               }
             )
         })
@@ -165,29 +164,6 @@ const Home = () => {
               }
             )
         })
-        // Get số dư của ví
-        // await db.transaction(async (tx) =>{
-        //     await tx.executeSql(
-        //       "SELECT * FROM DS_VI",
-        //       [],
-        //       (tx, results) =>{
-        //         var sum = 0
-        //         var vi = {"ID": '', "Tien": 0, label: ''}
-        //         for (let i = 0; i < results.rows.length; i++){
-        //             var a = results.rows.item(i)
-        //             console.log(a)
-        //             vi.ID = a.MaVi
-        //             vi.Tien = a.Tien
-        //             sum += a.Tien
-        //             vi.label = a.TenVi
-        //             List.push(vi)
-        //         }
-        //         List[0].Tien = sum
-        //         console.log(List)
-        //         setListVi(List)
-        //       }
-        //     )
-        // }) 
     }
     const GetTenViByMaVi= (ID) =>{
         if (ListVi.length > 0){
@@ -208,6 +184,7 @@ const Home = () => {
 
     }
     const GetGDByMaViGrByMaDanhMuc = async(ID, IsThu)=>{
+        console.log(ID, IsThu)
         if (IsThu == true)
             IsThu = 1
         else
@@ -216,13 +193,14 @@ const Home = () => {
             await db.transaction(async (tx) =>{
                 var List = []
                 await tx.executeSql(
-                  `SELECT MaVi, MaDanhMuc, SUM(Tien) FROM GIAODICH WHERE Thu == ${IsThu} GROUP BY MaDanhMuc`,
+                  `SELECT GIAODICH.MaDanhMuc, DANHMUC.TenDanhMuc, SUM(Tien) FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND DANHMUC.ThuChi == ${isIncome} GROUP BY GIAODICH.MaDanhMuc`,
                   [],
                   async (tx, results) =>{
                     var sum = 0
                     for (let i = 0; i < results.rows.length; i++){
                         var a = results.rows.item(i)
                         List.push(a)
+                        // List[i].MaVi = 'Vi00'
                         
                     }
                     setSelectedList(List)
@@ -233,24 +211,26 @@ const Home = () => {
             })
         }
         else
-        await db.transaction(async (tx) =>{
-            var List = []
-            await tx.executeSql(
-              `SELECT MaVi, MaDanhMuc, SUM(Tien) FROM GIAODICH WHERE MaVi == '${ID}' AND Thu == ${IsThu} GROUP BY MaDanhMuc`,
-              [],
-              async (tx, results) =>{
-                var sum = 0
-                for (let i = 0; i < results.rows.length; i++){
-                    var a = results.rows.item(i)
-                    List.push(a)
-                    
+            await db.transaction(async (tx) =>{
+                var List = []
+                await tx.executeSql(
+                `SELECT GIAODICH.MaDanhMuc,GIAODICH.MaVi ,DANHMUC.TenDanhMuc, SUM(Tien) FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND GIAODICH.MaVi == '${ID}' AND DANHMUC.ThuChi == ${IsThu} GROUP BY GIAODICH.MaDanhMuc`,
+                [],
+                async (tx, results) =>{
+                    var sum = 0
+                    for (let i = 0; i < results.rows.length; i++){
+                        console.log(results.rows.length)
+                        var a = results.rows.item(i)
+                        console.log(a)
+                        List.push(a)
+
+                    }
+                    setSelectedList(List)
+                    return List
                 }
-                setSelectedList(List)
-                return List
-              }
-            )
-            
-        })
+                )
+                
+            })
          
     }
 
@@ -302,7 +282,7 @@ const Home = () => {
             )
             await tx.executeSql(
             "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
-            ['GD06', 'Vi02', -10000, 0,'2023/22/02', 'MDM1', 'asd']
+            ['GD06', 'Vi02', -10000, 0,'2023/22/02', 'MDM2', 'asd']
             )
             await tx.executeSql(
             "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
@@ -313,9 +293,9 @@ const Home = () => {
     
     
     useEffect(() => {
-        AddVi()
-        AddGD()
-        AddDM()
+        // AddVi()
+        // AddGD()
+        // AddDM()
         // getSoduVi()
         
         GetListWallet()
@@ -331,7 +311,7 @@ const Home = () => {
             setSelectedGD(item)
             }}
             >
-                <Text style = {styles.Row_view}> MaDanhMuc: {item.MaDanhMuc}       {new Intl.NumberFormat().format(item['SUM(Tien)'])} </Text>
+                <Text style = {styles.Row_view}> MaDanhMuc: {item.MaDanhMuc}       {new Intl.NumberFormat().format(item['SUM(Tien)'])}₫ </Text>
             </TouchableOpacity>
         );
       };
@@ -462,10 +442,10 @@ const Home = () => {
                             onRequestClose={() => SetModalViewVisible(!modalView)}    
                         >
                             <View style = {styles.showContainer}>
-                                {/* <ViewDetail data = {SelectedGD}/>
-                                 */}
+                                {/* <ViewDetail data = {SelectedGD}/> */}
+                                
 
-                                <ViewDetail_Type />
+                                <ViewDetail_Type data = {SelectedGD} />
                                  
                                 <Pressable onPress = {() => {
                                     // SetModalViewVisible(!modalView)
@@ -476,10 +456,6 @@ const Home = () => {
                                 </Pressable>
                                 
                             </View>
-
-                            
-
-
                         </Modal>
                         
                         {/* <ViewDetail/> */}
