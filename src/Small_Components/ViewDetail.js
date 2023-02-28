@@ -11,7 +11,7 @@ const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation :
 const ViewDetail = (props) => {
 
     if (props.data != null)
-        console.log(props)
+        console.log(props.data)
     const [modalEdit, setModalEdit] = useState(false);
     const [ListVi, setListVi] = useState([])
     const [ListDanhMuc, SetListDanhMuc] = useState([])
@@ -27,7 +27,6 @@ const ViewDetail = (props) => {
                 for (let i = 0; i < results.rows.length; i++){
                     var a = results.rows.item(i)
                     list.push(a)
-                    console.log(a)
                 }
                 setListVi(list)
             }
@@ -57,11 +56,10 @@ const ViewDetail = (props) => {
         GetListDanhMuc()
       }, [])
     const getTenVi = (MaVi) =>{
-        console.log(MaVi)
+
         if (MaVi == 'Vi00')
             return 'Ví tổng'
         else if (ListVi.length > 0){
-            console.log(ListVi)
             for (let  i = 0; i<ListVi.length; i++)
                 if (ListVi[i].MaVi == MaVi)
                     return ListVi[i].TenVi
@@ -133,15 +131,15 @@ const ViewDetail = (props) => {
             <View>
                 <View>
                     <Text> Số tiền</Text>
-                    <Text> {props.data['SUM(Tien)']} (tạm thời)</Text>
+                    {/* <Text> {props.data['SUM(Tien)']} (tạm thời)</Text> */}
                 </View>
                 <View>
                     <Text> Tài khoản</Text>
-                    <Text> {getTenVi(props.data.MaVi)}</Text>
+                    {/* <Text> {getTenVi(props.data.MaVi)}</Text> */}
                 </View>
                 <View>
                     <Text> Danh muc</Text>
-                    <Text> {GetTenDanhMuc(props.data.MaDanhMuc)}</Text>
+                    {/* <Text> {GetTenDanhMuc(props.data.MaDanhMuc)}</Text> */}
                 </View>
                 <View>
                     <Text> Hien thi ngay thang</Text>
