@@ -15,7 +15,6 @@ import moment from 'moment';
 // import ViewDetail from '../Small_Components/ViewDetail';
 import ViewDetail_Type from '../Small_Components/ViewDetail_Type';
 import ViewDetail from '../Small_Components/ViewDetail';
-import Add from './Add';
 
 import Add from './Add';
 
