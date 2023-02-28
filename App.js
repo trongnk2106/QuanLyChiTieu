@@ -4,6 +4,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import Home from './src/Screens/Home';
 import Acc from './src/Screens/SelectAccount';
+import Add from './src/Screens/Add';
+import Cal from './src/Screens/Calculator';
 
 // function HomeScreen({ navigation }) {
 //   return (
@@ -33,6 +35,8 @@ export default function App() {
         <Drawer.Screen name="Home" component={Home} /> 
         <Drawer.Screen name="Tai Khoan" component={Acc} />
         <Drawer.Screen name="Notifications" component={NotificationsScreen} />
+        <Drawer.Screen name="Thêm giao dịch" component={Add} />
+        <Drawer.Screen name="Calculator" component={Cal} options={{drawerItemStyle:{height:0}}} />
       </Drawer.Navigator>
     </NavigationContainer>
   );

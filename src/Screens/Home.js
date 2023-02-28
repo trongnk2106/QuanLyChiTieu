@@ -8,14 +8,16 @@ import { SwipeListView } from 'react-native-swipe-list-view'
 // import Icon from 'react-native-vector-icons'
 import { TimeDatePicker } from 'react-native-time-date-picker';
 import { openDatabase } from 'react-native-sqlite-storage';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import moment from 'moment';
 import ViewDetail from '../Small_Components/ViewDetail';
+import Add from './Add';
 
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
-
-const Home = () => {
+const Home = ({ navigation }) => {
 
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -445,7 +447,9 @@ const Home = () => {
 
                     <View style={{alignItems:'flex-end', marginBottom: 10, marginRight:10}}>
                         <TouchableOpacity
-                        onPress = {() => Alert.alert("mo trang add")}
+                            onPress = {() => {
+                                navigation.navigate("Thêm giao dịch");
+                            }}
                         >
                             <Ionicons name = 'md-add-circle-sharp' color = 'yellow' size = {40}/>
                         </TouchableOpacity>
@@ -528,7 +532,6 @@ const Home = () => {
             </ScrollView>
         {show()}
         </View>
-        
     )
 }
 
