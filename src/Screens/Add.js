@@ -32,11 +32,12 @@ const Add = ({ navigation }) => {
   const [isIncome, setIsIncome] = useState(false);
 
   const [Tien, setTien] = useState(0);
-  const [Date, setdate] = useState('');
+  // const [Date, setdate] = useState('');
   // const [Category, setCategory] = useState('');
 
   // const [activeButton, setActiveButton] = useState(false);
   // const [selected, setSelected] = useState('');
+  const [Date_s, setdate] = useState('')
   const [actionTriggered, setActionTriggered] = useState('');
 
   // const setSelectedCategory = (category) => {
@@ -44,6 +45,8 @@ const Add = ({ navigation }) => {
   //   else setSelected('');
   // };
 
+  const test_ngay = new Date().getDate()
+  console.log(test_ngay)
   return(
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style = {{backgroundColor: '#ffffff', flex:1}}>
@@ -247,7 +250,7 @@ const Add = ({ navigation }) => {
           onPress={() => {setModalVisible(true);
               setActionTriggered('calendar');}}
       >
-          <Text style={{marginBottom: 5, fontSize: 18, color: '#4CA07C'}}>{Date != '' ? Date : 'Select Date'}</Text>
+          <Text style={{marginBottom: 5, fontSize: 18, color: '#4CA07C'}}>{Date_s != '' ? Date_s : 'Select Date'}</Text>
 
           <AntDesign
               name="calendar"
@@ -309,7 +312,7 @@ const Add = ({ navigation }) => {
                 console.log('onPressArrowRight'); goToNextMonth();
                 }}
                 markedDates={{
-                    [Date] : {selected: true, marked: true, selectedColor: '#466A8F'}
+                    [Date_s] : {selected: true, marked: true, selectedColor: '#466A8F'}
                 }}
             />
 
@@ -326,14 +329,14 @@ const Add = ({ navigation }) => {
         : null }
       
       </Modal>
-                
+
       </ScrollView>
 
-      {/* <Text style={styles.floatingButton}>Them</Text> */}
+
       <TouchableOpacity style={styles.floatingButton}>
           <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Thêm</Text>
       </TouchableOpacity>
-
+      
     </View>
     </TouchableWithoutFeedback>
   )

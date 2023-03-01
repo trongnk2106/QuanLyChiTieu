@@ -13,7 +13,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import moment from 'moment';
 // import ViewDetail from '../Small_Components/ViewDetail';
-import ViewDetail_Type from '../Small_Components/ViewDetail_Type';
+import ViewDetail_Type from './ViewDetail_Type';
 import ViewDetail from '../Small_Components/ViewDetail';
 
 import Add from './Add';
@@ -45,6 +45,9 @@ const Home = ({ navigation }) => {
             label: 'Vi 2'
         }
     ]
+
+    // console.log(SelectedGD)
+
 
     const data_plot = {
         labels: ["Swim", "Bike", "Run", "thu"], // optional
@@ -309,19 +312,38 @@ const Home = ({ navigation }) => {
     useEffect(() => {
         GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome)
     }, [WalletChoose, isIncome])
-    let listItemView = (item) => {
+
+    // let listItemView = (item) => {
+    //     return (
+    //         <TouchableOpacity
+    //         onPress={() => {SetModalViewVisible(true)
+    //         setSelectedGD(item)
+    //         }}
+    //         >
+    //             <Text style = {styles.Row_view}> MaDanhMuc: {item.MaDanhMuc}       {new Intl.NumberFormat().format(item['SUM(Tien)'])}₫ </Text>
+    //         </TouchableOpacity>
+    //     );
+    //   };
+    // console.log(SelectedGD)
+
+
+     let listItemView = (item) => {
+        
         return (
-            <TouchableOpacity
-            onPress={() => {SetModalViewVisible(true)
-            setSelectedGD(item)
+            <Pressable
+            onPress={() => { 
+                navigation.navigate('ViewDetail_Type', {data : item})
+           
             }}
             >
                 <Text style = {styles.Row_view}> MaDanhMuc: {item.MaDanhMuc}       {new Intl.NumberFormat().format(item['SUM(Tien)'])}₫ </Text>
-            </TouchableOpacity>
+            </Pressable>
         );
       };
+
+
     const show = ()=>{
-        if (SelectedList != null)
+        if (SelectedList != null){
             return(
                 <SafeAreaView style={{flex: 1}}>
                 <View style={{flex: 1}}>
@@ -338,6 +360,8 @@ const Home = ({ navigation }) => {
                 </SafeAreaView>
                 
             )
+        }
+            
     }
   
     return(
@@ -440,22 +464,22 @@ const Home = ({ navigation }) => {
                     </View>                
                 </View>
                 <View>
-                    {/* <ScrollView> */}
+          
 
-                        <Modal 
+                        {/* <Modal 
                             animationType='slide'
                             transparent={false}
                             visible = {modalView}
                             onRequestClose={() => SetModalViewVisible(!modalView)}    
                         >
                             <View style = {styles.showContainer}>
-                                {/* <ViewDetail data = {SelectedGD}/> */}
+                              
                                 
 
                                 <ViewDetail_Type data = {SelectedGD} />
                                  
                                 <Pressable onPress = {() => {
-                                    // SetModalViewVisible(!modalView)
+                                    
                                     AlerBottom()
                                 
                                 }}>
@@ -463,58 +487,17 @@ const Home = ({ navigation }) => {
                                 </Pressable>
                                 
                             </View>
-                        </Modal>
+                        </Modal> */}
                         
-                        {/* <ViewDetail/> */}
-
-                    {/* <TouchableOpacity
-                    onPress={() => Alert.alert("Mo ra trang chi tiet")}
-                    >
-
-                        <Text style = {styles.Row_view}> Thu nhap1 </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                    onPress={() => Alert.alert("Mo ra trang chi tiet")}>
-                        <Text style = {styles.Row_view}> Thu nhap2 </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                    onPress={() => Alert.alert("Mo ra trang chi tiet")}>
-                        <Text style = {styles.Row_view}> Thu nhap3 </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                    onPress={() => Alert.alert("Mo ra trang chi tiet")}>
-                        <Text style = {styles.Row_view}> Thu nhap4</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                    onPress={() => Alert.alert("Mo ra trang chi tiet")}>
-                        <Text style = {styles.Row_view}> Thu nhap5 </Text>
-                    </TouchableOpacity>
-                </ScrollView> */}
-                       {/* <TimeDatePicker
-                        selectedDate={ moment().valueOf()}
-                        // mode={time}
-                        options={{
-                            daysStyle: {
-                                borderRadius: 16,
-                                borderWidth: 0.5,
-                                borderColor: "#f1f1f1",
-                            },
-                            is24Hour: false,
-                        }}
-                        onMonthYearChange={(month) => {
-                            console.log("month: ", month);
-                        }}
-                        onSelectedChange={(selected) => {
-                            console.log("selected: ", selected);
-                        }}
-                        onTimeChange={(time) => {
-                            console.log("time: ", time);
-                        }}
-                    /> */}
+                  
 
                 </View>
+                {/* <View>
+
+                </View> */}
             </ScrollView>
         {show()}
+
         </View>
     )
 }

@@ -3,23 +3,28 @@ import {Text, View, StyleSheet, Dimensions , TouchableOpacity, Modal, Pressable,
 import { openDatabase } from 'react-native-sqlite-storage';
 import { Line } from 'react-native-svg';
 import { getUriFromSource } from 'react-native-svg/lib/typescript/LocalSvg';
-
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import ViewDetail from '../Small_Components/ViewDetail';
 
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
 
-const ViewDetail_Type = (props) => {
+const ViewDetail_Type = ({route, navigation}) => {
+    // console.log(route.params)
+    const {data} = route.params
     const [modalViewDetail, setModalViewDtail] = useState(false)
     const [List, setList] = useState([])
     const [SelectedGD, setSelectedGD] = useState('')
 
+    // console.log(data.MaVi)
+
     const getListGD = async()=>{
-        if (props.data.MaVi == null){
+        if (data.MaVi == null){
+            // console.log(data)
             await db.transaction(async (tx) =>{
                 var List = []
                 await tx.executeSql(
-                  `SELECT * FROM GIAODICH WHERE MaDanhMuc == '${props.data.MaDanhMuc}' ORDER BY Date `,
+                  `SELECT * FROM GIAODICH WHERE MaDanhMuc == '${data.MaDanhMuc}' ORDER BY Date `,
                   [],
                   async (tx, results) =>{
                     for (let i = 0; i < results.rows.length; i++){
@@ -36,7 +41,7 @@ const ViewDetail_Type = (props) => {
             await db.transaction(async (tx) =>{
                 var List = []
                 await tx.executeSql(
-                `SELECT * FROM GIAODICH WHERE MaVi == '${props.data.MaVi}' AND MaDanhMuc == '${props.data.MaDanhMuc}'`,
+                `SELECT * FROM GIAODICH WHERE MaVi == '${data.MaVi}' AND MaDanhMuc == '${data.MaDanhMuc}'`,
                 [],
                 async (tx, results) =>{
                     var sum = 0
@@ -55,18 +60,19 @@ const ViewDetail_Type = (props) => {
 
     let listItemView = (item) => {
         return (
-            <TouchableOpacity
-            onPress={() => {setModalViewDtail(true)
-            setSelectedGD(item)
-            }}
+            <Pressable
+            // onPress={() => {setModalViewDtail(true)
+            // setSelectedGD(item)
+            // }}
+            onPress={ () =>{navigation.navigate('ViewDetail', {data0:data, data1: item})} }
             >
                <View style= {{marginTop: 20}}>
                     <View style = {{flexDirection : 'row', justifyContent:'space-between', marginLeft:5, marginRight : 5}}>
-                        <Text style = {{fontSize : 17}}> {props.data.TenDanhMuc} </Text>
+                        <Text style = {{fontSize : 17}}> {data.TenDanhMuc} </Text>
                         <Text style = {{fontSize : 17}}> {new Intl.NumberFormat().format(item.Tien) + ' ₫'}</Text>
                     </View>
                 </View>
-            </TouchableOpacity>
+            </Pressable>
         );
       };
 
@@ -126,30 +132,41 @@ const ViewDetail_Type = (props) => {
 
     useEffect(() =>{
         getListGD()
-    },[])
+    },[data.MaVi, data.MaDanhMuc])
 
     return(
         <View style={{backgroundColor : 'white', flex:1}}>
             <View style = {styles.header}>
-                <View>
-                    <Text style = {{textAlign: 'center', color:'white', fontSize:20, marginTop:5}}> {props.data.TenDanhMuc} </Text>
-                    <Text style = {{textAlign:'center', color:'white', fontSize:20, fontWeight:'bold'}}> {new Intl.NumberFormat().format(props.data['SUM(Tien)']) + ' ₫'} </Text>
+                <View style = {{marginLeft: 20, marginTop:20, marginRight: Dimensions.get('window').width / 5}}>
+                    <Pressable style = {{paddingRight: 30, size: 30}} onPress={() => {navigation.goBack()}}>
+                        <Ionicons name = 'arrow-back' color = 'white' size={25}/>
+                    </Pressable>
                 </View>
+                <View style ={{alignItems :'center'}}>
+                    <Text style = {{textAlign: 'center', color:'white', fontSize:20, marginTop:5}}> {data.TenDanhMuc} </Text>
+                    <Text style = {{textAlign:'center', color:'white', fontSize:20, fontWeight:'bold'}}> {new Intl.NumberFormat().format(data['SUM(Tien)']) + ' ₫'} </Text>
+                    {/* <Text> in 1111</Text> */}
+                </View>
+                
                
             </View>
+            
             <View>
-                <Modal 
+                {/* <Pressable >
+                    
+                </Pressable> */}
+                {/* <Modal 
                 animationType='None'
                 transparent={false}
                 visible = {modalViewDetail}
                 onRequestClose = {() => modalViewDetail(!modalViewDetail)}
                 >
                     <View style = {styles.showContainer}>
-                        {/* <Text> Goi trang viewdetail cho nay, m lam database vao roi nen t goi bi loi</Text> */}
+                        <Text> Goi trang viewdetail cho nay, m lam database vao roi nen t goi bi loi</Text>
                         <ViewDetail data = {SelectedGD}/>
                                 
                         <Pressable onPress = {() => {
-                                    // SetModalViewVisible(!modalView)
+                                    SetModalViewVisible(!modalView)
                                     AlerBottom()
                                 
                                 }}>
@@ -159,7 +176,7 @@ const ViewDetail_Type = (props) => {
                     </View>
 
 
-                </Modal>
+                </Modal> */}
              
                 {show()}
 
@@ -175,6 +192,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#54b38a',
         borderBottomLeftRadius:30,
         borderBottomRightRadius:30,
+        flexDirection:'row'
     },
 })
 
