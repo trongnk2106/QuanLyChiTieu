@@ -7,20 +7,20 @@ import {
   TouchableOpacity, 
   TouchableWithoutFeedback,
   Alert, Modal, Pressable, 
-  Button, 
+  // Button, 
   SafeAreaView, 
   FlatList, 
   Keyboard,
   TextInput} from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import AntDesign from "react-native-vector-icons/AntDesign";
-import RadioButtonRN from 'radio-buttons-react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { TimeDatePicker } from 'react-native-time-date-picker';
 import { openDatabase } from 'react-native-sqlite-storage';
 import { onChange } from 'react-native-reanimated';
+import { Icon, Button } from 'react-native-elements'
 import SwitchButton from "@freakycoder/react-native-switch-button";
 import { Agenda, Calendar } from 'react-native-calendars';
+import Categories from './Categories'
 
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
@@ -29,16 +29,20 @@ const Add = ({ navigation }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalView, SetModalViewVisible] = useState(false)
-  // const [WalletChoose, setWalletChoose] = useState('Vi00');
   const [isIncome, setIsIncome] = useState(false);
-  // const [ListVi, setListVi] = useState([]);
-  // const [SelectedList, setSelectedList] = useState([]);
-  // const [SelectedGD, setSelectedGD] = useState('');
-  // const [Key, SetKey] = useState([]);
 
   const [Tien, setTien] = useState(0);
-  const [Date, setdate] = useState('')
+  const [Date, setdate] = useState('');
+  // const [Category, setCategory] = useState('');
+
+  // const [activeButton, setActiveButton] = useState(false);
+  // const [selected, setSelected] = useState('');
   const [actionTriggered, setActionTriggered] = useState('');
+
+  // const setSelectedCategory = (category) => {
+  //   if (category !== selected) setSelected(category);
+  //   else setSelected('');
+  // };
 
   return(
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -77,6 +81,7 @@ const Add = ({ navigation }) => {
       </View>
       {/* end of header */}
 
+      <ScrollView>
       {/* money input */}
       <View style = {{ 
         flexDirection: 'row', 
@@ -113,42 +118,90 @@ const Add = ({ navigation }) => {
           flexDirection:'row', 
           flexWrap:'wrap', 
           justifyContent:'space-between', 
-          alignContent: 'flex-start', 
-          maxWidth: 380}}>
+          alignContent: 'flex-start',
+          marginLeft: 10,
+          maxWidth: 360}}>
+
         <SwitchButton style={{marginLeft: 20}}
-            inactiveImageSource={require("../../assets/food2.png")}
-            activeImageSource={require("../../assets/food2.png")}
-            mainColor="#f1bb7b"
-            tintColor="#f1bb7b"
+            inactiveImageSource={require("../../assets/food.png")}
+            activeImageSource={require("../../assets/food.png")}
+            mainColor='#f1bb7b'
+            originalColor='white'
+            tintColor='#f1bb7b'
             text="Ăn uống"
             textStyle={{
               color: "#f1bb7b",
               fontWeight: "600",
               marginLeft: 20,
-              marginBottom: 10
+              marginBottom: 10,
+            
             }}
-            // onPress={(isActive: boolean) => console.log(isActive)}
+            // isActive={selected === 'food' ? true : false}
+            // onPress={() => {setSelectedCategory('food')}}  
         />
+
         <SwitchButton style={{marginLeft: 20}}
-            inactiveImageSource={require("../../assets/food2.png")}
-            activeImageSource={require("../../assets/food2.png")}
+            inactiveImageSource={require("../../assets/family.png")}
+            activeImageSource={require("../../assets/family.png")}
             mainColor="#587DB6"
             tintColor="#587DB6"
-            text="Ăn uống"
+            text="Gia đình"
             textStyle={{
               color: "#587DB6",
               fontWeight: "600",
               marginLeft: 20,
               marginBottom: 10
             }}
+            // onPress={(isActive: boolean) => {isActive='false'; console.log(isActive)}}
+        />
+        <SwitchButton style={{marginLeft: 20}}
+            inactiveImageSource={require("../../assets/coffee.png")}
+            activeImageSource={require("../../assets/coffee.png")}
+            mainColor="#8F3842"
+            tintColor="#8F3842"
+            text="Cà phê"
+            textStyle={{
+              color: "#8F3842",
+              fontWeight: "600",
+              marginLeft: 20,
+              marginBottom: 10
+            }}
             // onPress={(isActive: boolean) => console.log(isActive)}
         />
         <SwitchButton style={{marginLeft: 20}}
-            inactiveImageSource={require("../../assets/food2.png")}
-            activeImageSource={require("../../assets/food2.png")}
+            inactiveImageSource={require("../../assets/entertainment.png")}
+            activeImageSource={require("../../assets/entertainment.png")}
+            mainColor="#82B8B4"
+            tintColor="#82B8B4"
+            text="Giải trí"
+            textStyle={{
+              color: "#82B8B4",
+              fontWeight: "600",
+              marginLeft: 20,
+              marginBottom: 10
+            }}
+            // onPress={(isActive: boolean) => console.log(isActive)}
+        />
+        <SwitchButton style={{marginLeft: 20}}
+            inactiveImageSource={require("../../assets/grocery.png")}
+            activeImageSource={require("../../assets/grocery.png")}
+            mainColor="#D197AE"
+            tintColor="#D197AE"
+            text="Tạp phẩm"
+            textStyle={{
+              color: "#D197AE",
+              fontWeight: "600",
+              marginLeft: 20,
+              marginBottom: 10
+            }}
+            // onPress={(isActive: boolean) => console.log(isActive)}
+        />
+        <SwitchButton style={{marginLeft: 20}}
+            inactiveImageSource={require("../../assets/loan.png")}
+            activeImageSource={require("../../assets/loan.png")}
             mainColor="#91C87B"
             tintColor="#91C87B"
-            text="Ăn uống"
+            text="Cho vay"
             textStyle={{
               color: "#91C87B",
               fontWeight: "600",
@@ -158,13 +211,13 @@ const Add = ({ navigation }) => {
             // onPress={(isActive: boolean) => console.log(isActive)}
         />
         <SwitchButton style={{marginLeft: 20}}
-            inactiveImageSource={require("../../assets/food2.png")}
-            activeImageSource={require("../../assets/food2.png")}
-            mainColor="#91C87B"
-            tintColor="#91C87B"
-            text="Ăn uống"
+            inactiveImageSource={require("../../assets/more.png")}
+            activeImageSource={require("../../assets/more.png")}
+            mainColor="#D0C741"
+            tintColor="#D0C741"
+            text="Khác"
             textStyle={{
-              color: "#91C87B",
+              color: "#D0C741",
               fontWeight: "600",
               marginLeft: 20,
               marginBottom: 10
@@ -172,60 +225,19 @@ const Add = ({ navigation }) => {
             // onPress={(isActive: boolean) => console.log(isActive)}
         />
         <SwitchButton style={{marginLeft: 20}}
-            inactiveImageSource={require("../../assets/food2.png")}
-            activeImageSource={require("../../assets/food2.png")}
-            mainColor="#91C87B"
-            tintColor="#91C87B"
-            text="Ăn uống"
+            inactiveImageSource={require("../../assets/plus.png")}
+            activeImageSource={require("../../assets/plus.png")}
+            originalColor='#ffffff'
+            mainColor='#9A9A9A'
+            tintColor="#9A9A9A"
+            text="Thêm"
             textStyle={{
-              color: "#91C87B",
+              color: "#9A9A9A",
               fontWeight: "600",
               marginLeft: 20,
               marginBottom: 10
             }}
-            // onPress={(isActive: boolean) => console.log(isActive)}
-        />
-        <SwitchButton style={{marginLeft: 20}}
-            inactiveImageSource={require("../../assets/food2.png")}
-            activeImageSource={require("../../assets/food2.png")}
-            mainColor="#91C87B"
-            tintColor="#91C87B"
-            text="Ăn uống"
-            textStyle={{
-              color: "#91C87B",
-              fontWeight: "600",
-              marginLeft: 20,
-              marginBottom: 10
-            }}
-            // onPress={(isActive: boolean) => console.log(isActive)}
-        />
-        <SwitchButton style={{marginLeft: 20}}
-            inactiveImageSource={require("../../assets/food2.png")}
-            activeImageSource={require("../../assets/food2.png")}
-            mainColor="#91C87B"
-            tintColor="#91C87B"
-            text="Ăn uống"
-            textStyle={{
-              color: "#91C87B",
-              fontWeight: "600",
-              marginLeft: 20,
-              marginBottom: 10
-            }}
-            // onPress={(isActive: boolean) => console.log(isActive)}
-        />
-        <SwitchButton style={{marginLeft: 20}}
-            inactiveImageSource={require("../../assets/food2.png")}
-            activeImageSource={require("../../assets/food2.png")}
-            mainColor="#91C87B"
-            tintColor="#91C87B"
-            text="Ăn uống"
-            textStyle={{
-              color: "#91C87B",
-              fontWeight: "600",
-              marginLeft: 20,
-              marginBottom: 10
-            }}
-            // onPress={(isActive: boolean) => console.log(isActive)}
+            onPress={() => navigation.navigate("Thêm danh mục")}
         />
       </View>
 
@@ -249,7 +261,7 @@ const Add = ({ navigation }) => {
           style = {styles.noteText}
           placeholder='Add Note (Optional)'
           // multiline={true}
-          // numberOfLines={10}
+          // numberOfLines={15}
           // onChangeText={newghichu => setghichu(newghichu)}
           // defaultValue={ghichu}
       />
@@ -284,7 +296,7 @@ const Add = ({ navigation }) => {
 
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Calendar 
+            <Calendar style={{borderRadius: 15}}
                 onDayPress={(day) => {
                     setdate(day.dateString)
                 }}
@@ -314,7 +326,13 @@ const Add = ({ navigation }) => {
         : null }
       
       </Modal>
+                
+      </ScrollView>
 
+      {/* <Text style={styles.floatingButton}>Them</Text> */}
+      <TouchableOpacity style={styles.floatingButton}>
+          <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Thêm</Text>
+      </TouchableOpacity>
 
     </View>
     </TouchableWithoutFeedback>
@@ -393,6 +411,18 @@ const styles = StyleSheet.create({
       borderBottomColor:'#4CA07C',
       marginLeft: 20,
     },
+    floatingButton: {
+      width: 160,  
+      height: 40,   
+      borderRadius: 30,            
+      backgroundColor: '#54b38a',                                    
+      position: 'absolute',        
+      flexDirection: "row",                                  
+      bottom: 15,               
+      alignItems: 'center',
+      justifyContent: 'center',
+      alignSelf: 'center',
+    }
 })
 
 

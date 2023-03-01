@@ -6,6 +6,8 @@ import Home from './src/Screens/Home';
 import Acc from './src/Screens/SelectAccount';
 import Add from './src/Screens/Add';
 import Cal from './src/Screens/Calculator';
+import Categories from './src/Screens/Categories';
+import CreateCategory from './src/Screens/CreateCategory';
 
 // function HomeScreen({ navigation }) {
 //   return (
@@ -37,6 +39,8 @@ export default function App() {
         <Drawer.Screen name="Notifications" component={NotificationsScreen} />
         <Drawer.Screen name="Thêm giao dịch" component={Add} />
         <Drawer.Screen name="Calculator" component={Cal} options={{drawerItemStyle:{height:0}}} />
+        <Drawer.Screen name="Thêm danh mục" component={Categories} options={{drawerItemStyle:{height:0}}} />
+        <Drawer.Screen name="Tạo danh mục" component={CreateCategory} />
       </Drawer.Navigator>
     </NavigationContainer>
   );
