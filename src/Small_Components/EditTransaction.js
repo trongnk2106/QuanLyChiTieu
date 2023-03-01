@@ -10,11 +10,11 @@ const EditTransaction = ({route, navigation}) => {
     // if(props != null)
     //     console.log(props)
     // const sotien = Number(props.data["SUM(Tien)"])
-    const {data, TenTK} = route.params
-    console.log(data)
+    const {data0,data1, TenTK} = route.params
+    // console.log(data)
     const danhmuccu = 'danh muc duoc load tu database'
     const [tranScationType, setTranSactionType] = useState('Chi Phi')
-    const [Money, setMoney] = useState(data["Tien"])
+    const [Money, setMoney] = useState(data1["Tien"])
     const [danhmuc, setDanhmuc] = useState(danhmuccu)
     const [ghichu, setGhichu] = useState('')
  
@@ -22,7 +22,10 @@ const EditTransaction = ({route, navigation}) => {
         <View>
             <View style = {styles.header}>
                 <View style={{flexDirection:'row', marginTop:20}}>
-                    <Ionicons name='md-arrow-back' color='white' size={30} style={{marginLeft:10}}/>
+                    <Pressable style = {{paddingRight: 30, size: 30}} 
+                        onPress={ () =>{navigation.navigate('ViewDetail', {data0:data0, data1: data1})} }>
+                        <Ionicons name = 'arrow-back' color = 'white' size={25}/>
+                    </Pressable>
                     <Text style = {{color:'white', fontSize:20, marginLeft:50}}>
                         Chinh sua giao dich
                     </Text>

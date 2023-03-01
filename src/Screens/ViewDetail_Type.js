@@ -64,7 +64,7 @@ const ViewDetail_Type = ({route, navigation}) => {
             // onPress={() => {setModalViewDtail(true)
             // setSelectedGD(item)
             // }}
-            onPress={ () =>{navigation.navigate('ViewDetail', {data:item})} }
+            onPress={ () =>{navigation.navigate('ViewDetail', {data0:data, data1: item})} }
             >
                <View style= {{marginTop: 20}}>
                     <View style = {{flexDirection : 'row', justifyContent:'space-between', marginLeft:5, marginRight : 5}}>
@@ -132,7 +132,7 @@ const ViewDetail_Type = ({route, navigation}) => {
 
     useEffect(() =>{
         getListGD()
-    },[])
+    },[data.MaVi, data.MaDanhMuc])
 
     return(
         <View style={{backgroundColor : 'white', flex:1}}>

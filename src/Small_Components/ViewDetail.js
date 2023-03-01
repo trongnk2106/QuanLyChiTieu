@@ -5,13 +5,11 @@ import RadioButtonRN from 'radio-buttons-react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import EditTransaction from './EditTransaction';
 import { openDatabase } from 'react-native-sqlite-storage';
-
+import ViewDetail_Type from '../Screens/ViewDetail_Type';
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
 const ViewDetail = ({route, navigation}) => {
-    const {data} = route.params
-    // if (data != null)
-    //     console.log(data)
+    const {data0, data1} = route.params
     const [modalEdit, setModalEdit] = useState(false);
     const [ListVi, setListVi] = useState([])
     const [ListDanhMuc, SetListDanhMuc] = useState([])
@@ -90,8 +88,12 @@ const ViewDetail = ({route, navigation}) => {
                 setModalEdit(!modalEdit)}},
           ]);
     }
-
-
+    const changeFormatDate = (day)  =>{
+        var yyyy = day.slice(0,4)
+        var mm = Number(day.slice(5,7))
+        var dd = Number(day.slice(8,10))
+        return ( dd + ' tháng ' + mm + ', ' + yyyy)
+    }
 
 
 
@@ -99,7 +101,7 @@ const ViewDetail = ({route, navigation}) => {
         <View style = {{backgroundColor:'#d4d9d7', flex: 1}}>
             <View style = {styles.header}>
                 <View style = {{ flexDirection:'row',justifyContent:'space-between',marginTop:15}}> 
-                    <Pressable onPress={ () => navigation.goBack('ViewDetail_')}>
+                    <Pressable onPress={ () => navigation.navigate('ViewDetail_Type', {data : data0})}>
                         <Ionicons name='md-arrow-back' color='white' size={30} style={{marginLeft:10}}/>
                     </Pressable>
                     
@@ -127,8 +129,8 @@ const ViewDetail = ({route, navigation}) => {
                     {/* <Pressable onPress = { () => setModalEdit(true)}>
                         <Ionicons name ='md-pencil' color='white' size={30} style={{marginRight:10}}/>
                     </Pressable> */}
-                    <Pressable onPress={() => navigation.navigate('EditTransaction', {data: data, 
-                    TenTK: getTenVi(data.MaVi) })}>
+                    <Pressable onPress={() => navigation.navigate('EditTransaction', {data0:data0, data1: data1, 
+                    TenTK: getTenVi(data1.MaVi) })}>
                         <Ionicons name ='md-pencil' color='white' size={30} style={{marginRight:10}}/>
                     </Pressable>
                    
@@ -138,19 +140,19 @@ const ViewDetail = ({route, navigation}) => {
             <View>
                 <View>
                     <Text> Số tiền</Text>
-                    <Text> {data['SUM(Tien)']}</Text>
+                    <Text> {new Intl.NumberFormat().format(data1.Tien) + ' ₫'}</Text>
                 </View>
                 <View>
                     <Text> Tài khoản</Text>
-                    <Text> {getTenVi(data.MaVi)}</Text>
+                    <Text> {getTenVi(data1.MaVi)}</Text>
                 </View>
                 <View>
-                    <Text> Danh muc</Text>
-                    <Text> {GetTenDanhMuc(data.MaDanhMuc)}</Text>
+                    <Text> Danh mục</Text>
+                    <Text> {data0.TenDanhMuc}</Text>
                 </View>
                 <View>
-                    <Text> Hien thi ngay thang</Text>
-                    <Text> load ngay thang vao tu database cua danh muc</Text>
+                    <Text> Ngày</Text>
+                    <Text> {changeFormatDate(data1.Date)}</Text>
                 </View>
             </View>
 
