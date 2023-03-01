@@ -11,7 +11,7 @@ import EditAcc from '../Small_Components/EditAcc'
 
 
 
-const Acc = () => {
+const Acc = ({ navigation }) => {
 
     const sotien = Number(10000) //load gia tien cua tong cong cac vi vao
 
@@ -79,8 +79,18 @@ const Acc = () => {
     return(
         <View>
             <View style = {styles.header}>
-                <Text style = {{color : 'white', fontSize: 20, margin:10}}> Tai Khoan</Text>
-            </View>
+        <View style = {{ flexDirection: 'row', margin: 20, marginTop: 25}}>
+
+          <Pressable style = {{paddingRight: 30, size: 30}} onPress={() => {navigation.goBack()}}>
+            <Ionicons name = 'arrow-back' color = 'white' size={25}/>
+          </Pressable>
+
+          <Text style = {{fontSize:18, fontWeight:'bold', color:'white', marginRight:5}}>
+              TÀI KHOẢN
+          </Text>
+                  
+        </View>
+      </View>
             <View>
                 <Text style = {{textAlign:'center', marginTop:20, fontSize:18}}> Tong Cong : </Text>
                 <Text style = {{textAlign:'center', fontSize:18, fontWeight:'bold'}}> {sotien} VND</Text>

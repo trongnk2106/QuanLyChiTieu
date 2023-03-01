@@ -5,7 +5,6 @@ import RadioButtonRN from 'radio-buttons-react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import EditTransaction from './EditTransaction';
 import { openDatabase } from 'react-native-sqlite-storage';
-import ViewDetail_Type from '../Screens/ViewDetail_Type';
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
 const ViewDetail = ({route, navigation}) => {
@@ -101,7 +100,7 @@ const ViewDetail = ({route, navigation}) => {
         <View style = {{backgroundColor:'#d4d9d7', flex: 1}}>
             <View style = {styles.header}>
                 <View style = {{ flexDirection:'row',justifyContent:'space-between',marginTop:15}}> 
-                    <Pressable onPress={ () => navigation.navigate('ViewDetail_Type', {data : data0})}>
+                    <Pressable onPress={ () => navigation.goBack()}>
                         <Ionicons name='md-arrow-back' color='white' size={30} style={{marginLeft:10}}/>
                     </Pressable>
                     

@@ -23,7 +23,7 @@ const EditTransaction = ({route, navigation}) => {
             <View style = {styles.header}>
                 <View style={{flexDirection:'row', marginTop:20}}>
                     <Pressable style = {{paddingRight: 30, size: 30}} 
-                        onPress={ () =>{navigation.navigate('ViewDetail', {data0:data0, data1: data1})} }>
+                        onPress={ () =>{navigation.goBack()} }>
                         <Ionicons name = 'arrow-back' color = 'white' size={25}/>
                     </Pressable>
                     <Text style = {{color:'white', fontSize:20, marginLeft:50}}>
