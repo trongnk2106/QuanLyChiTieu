@@ -48,7 +48,7 @@ const CreateCategory = ({ navigation }) => {
       <View style = {styles.header}>
         <View style = {{ flexDirection: 'row', margin: 20, marginTop: 25}}>
 
-          <Pressable style = {{paddingRight: 30, size: 30}} onPress={() => {navigation.navigate('Thêm danh mục')}}>
+          <Pressable style = {{paddingRight: 30, size: 30}} onPress={() => {navigation.goBack()}}>
             <Ionicons name = 'arrow-back' color = 'white' size={25}/>
           </Pressable>
 
