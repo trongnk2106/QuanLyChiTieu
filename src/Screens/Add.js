@@ -23,7 +23,7 @@ import { Agenda, Calendar } from 'react-native-calendars';
 import Categories from './Categories'
 import RadioButtonRN from 'radio-buttons-react-native';
 
-import {ListIcon} from '../Small_Components/Icon';
+import {ListIncomeCategory, ListExpenseCategory} from '../Small_Components/Icon';
 
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
@@ -39,20 +39,11 @@ const Add = ({route, navigation }) => {
   const [Date_s, setdate] = useState('')
   const [MaDanhMuc, setMadanhMuc] = useState('')
   const [GhiChu, setGhiChu] = useState('')
-  
-  // const [Date, setdate] = useState('');
-  // const [Category, setCategory] = useState('');
-
-  // const [activeButton, setActiveButton] = useState(false);
-  // const [selected, setSelected] = useState('');
-  
-  const [actionTriggered, setActionTriggered] = useState('');
-
-  // const setSelectedCategory = (category) => {
-  //   if (category !== selected) setSelected(category);
-  //   else setSelected('');
-  // };
   const [Categories, setCategories] = useState([])
+
+  const [selected, setSelected] = useState('')
+  const [actionTriggered, setActionTriggered] = useState('');
+  
   const GetCategories = async()=>{
     //Get Danh sách Ví: ID ví, Tên Ví, Tiền ban đầu lúc tạo ví
     await db.transaction(async (tx) =>{
@@ -74,6 +65,7 @@ const Add = ({route, navigation }) => {
         )
     })
   }
+  
   const GetTenViByMaVi= (ID) =>{
     if (ID == 'Vi00')
       return "Chưa chọn"
@@ -83,8 +75,8 @@ const Add = ({route, navigation }) => {
                 return ListVi[i].TenVi
         }
     }
+  }
 
-}
   const getIcon =(x) =>{
     for (let  i = 0; i < ListIcon.length; i++){
       if (ListIcon[i].key == x)
@@ -92,22 +84,36 @@ const Add = ({route, navigation }) => {
     }
   }
   let listItemView = (item) => {
-        
     return (
-        <SwitchButton style={{marginLeft: 40}}
-            inactiveImageSource={getIcon(item.Icon)}
-            activeImageSource={getIcon(item.Icon)}
-            mainColor= {item.Color}
-            tintColor={item.Color}
-            text= {item.TenDanhMuc}
-            textStyle={{
-              color: item.Color,
-              fontWeight: "600",
-              marginLeft: 35,
-              marginBottom: 10
+        <View style={{flexDirection:'column', marginHorizontal:8}}>
+          <Button
+            buttonStyle={{
+              backgroundColor: MaDanhMuc === item.title ? item.iconColor : 'transparent',
+              width: 80, height: 80,
+              borderRadius: 10,
             }}
-            onPress={() => setMadanhMuc(item.MaDanhMuc)}
-        />
+            icon={
+              <Icon
+                reverse 
+                type={item.type}
+                size={30}
+                name={item.name}
+                color={item.iconColor}
+              />
+            }
+            onPress={() => {
+              // item.title == 'Xem thêm' ? navigation.navigate('ShowMoreCategories',{moneyType:isIncome,cateName:MaDanhMuc}) 
+              //               : setMadanhMuc(item.title)
+              item.title == 'Tạo' ? navigation.navigate('CreateCategory') : setMadanhMuc(item.title)
+            }}
+          />
+          <Text style={{
+            textAlign:'center', 
+            marginTop: 1,
+            marginBottom: 8, 
+            color:item.iconColor,
+            fontWeight:'bold'}}>{item.title}</Text>
+        </View>
     );
   };
 
@@ -120,24 +126,20 @@ const showCate = (isIncome)=>{
         data.push(Categories[i])
     return(
             <SafeAreaView style={{flex: 1}}>
-
                 <View style={{flex: 1}}>
-                    <FlatList
+                    <FlatList 
+                        contentContainerStyle={{justifyContent:'center', alignItems:'flex-start', alignSelf:'center'}}
                         horizontal={false}
                         numColumns = {4}
-                        data={data}
+                        data={isIncome ? ListIncomeCategory : ListExpenseCategory}
                         scrollEnabled= {false}
-                        // ItemSeparatorComponent={listViewItemSeparator}
                         keyExtractor={(item, index) => index.toString()}
-                        renderItem={({item}) =>listItemView(item)}
-                />
+                        renderItem={({item}) => listItemView(item)}
+                    />
                  </View>
-        
             </SafeAreaView>
-            
         )
-    
-        }      
+  }      
 }
   const test = ()=>{
     var x = new Date().toString()
@@ -312,7 +314,7 @@ const showCate = (isIncome)=>{
                         data = {ListVi}
                         selectedBtn = {(e) => {console.log(e.MaVi)
                         setWalletChoose(e.MaVi)}}
-                            />
+                    />
                 </View>
             </ScrollView>
             <Pressable onPress = {() => setModalVisible(!modalVisible)}>
