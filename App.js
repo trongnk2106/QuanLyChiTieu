@@ -3,7 +3,7 @@ import { Button, View } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import Home from './src/Screens/Home';
-import Acc from './src/Screens/SelectAccount';
+import Acc from './src/Screens/ViewAccount';
 import Add from './src/Screens/Add';
 import Cal from './src/Screens/Calculator';
 import Categories from './src/Screens/Categories';
@@ -13,6 +13,7 @@ import ViewDetail_Type from './src/Screens/ViewDetail_Type';
 import ViewDetail from './src/Small_Components/ViewDetail';
 import EditTransaction from './src/Small_Components/EditTransaction';
 import CategoriesStack from './src/Screens/CategoriesStack';
+import CreateAcc_Stack from './src/Screens/AccountStack';
 // function HomeScreen({ navigation }) {
 //   return (
 //     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -39,7 +40,7 @@ export default function App() {
     <NavigationContainer>
       <Drawer.Navigator screenOptions={{headerShown : false}}>
         <Drawer.Screen name="Trang chính" component={HomeStack} /> 
-        <Drawer.Screen name="Tài khoản" component={Acc} />
+        <Drawer.Screen name="Tài khoản" component={CreateAcc_Stack} />
         <Drawer.Screen name="Notifications" component={NotificationsScreen} />
         {/* <Drawer.Screen name="Thêm giao dịch" component={Add} /> */}
         {/* <Drawer.Screen name = 'ViewDetail_Type' component={ViewDetail_Type} />

@@ -11,7 +11,7 @@ import EditAcc from '../Small_Components/EditAcc'
 
 
 
-const Acc = ({ navigation }) => {
+const Acc = ({ route, navigation }) => {
 
     const sotien = Number(10000) //load gia tien cua tong cong cac vi vao
 
@@ -41,34 +41,17 @@ const Acc = ({ navigation }) => {
         
         return (
             <View>
-                 <Modal 
-                    animationType='slide'
-                    transparent={false}
-                    visible = {modalAcc}
-                    onRequestClose={() => SetModalAccVisible(!modalAcc)}    
-                >
-                    <View style = {styles.showContainer}>
-                        <EditAcc/>
-                        <Pressable onPress = {() => {
-                            // SetModalViewVisible(!modalView)
-                            AlerBottom()
-                        
-                        }}>
-                            <Text style = {{fontSize:15, color:'red', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:10}}> XOA </Text>
-                        </Pressable>
-                        
+                <Pressable style = {{backgroundColor : 'white',height:50, marginTop:5, borderRadius:10}}
+                 onPress = {() => {
+                    navigation.navigate('EditAcc',{TenTk: 'Hien thi ten tk', money : 10000})
+                 }}
+                 >
+                    <View>
+                        <Text> Hien thi tai khoan</Text>
                     </View>
-
-                    
-                </Modal>
-
-                <Pressable
-                    onPress={() => SetModalAccVisible(true)}
-                >
-                    {/* <Ionicons name = 'caret-down-outline' color = 'white' fontSize='20'/> */}
-                    <Text style = {styles.Row_view}> Chinh </Text>
-
+                
                 </Pressable>
+                
             </View>
            
         
@@ -77,55 +60,69 @@ const Acc = ({ navigation }) => {
 
 
     return(
-        <View>
+        <View style= {{backgroundColor: '#edece8', flex:1}}>
             <View style = {styles.header}>
-        <View style = {{ flexDirection: 'row', margin: 20, marginTop: 25}}>
+                <View style = {{ flexDirection: 'row', margin: 20, marginTop: 25}}>
 
-          <Pressable style = {{paddingRight: 30, size: 30}} onPress={() => {navigation.goBack()}}>
-            <Ionicons name = 'arrow-back' color = 'white' size={25}/>
-          </Pressable>
+                    <Pressable style = {{paddingRight: 30, size: 30}} onPress={() => {navigation.goBack()}}>
+                        <Ionicons name = 'arrow-back' color = 'white' size={25}/>
+                    </Pressable>
 
-          <Text style = {{fontSize:18, fontWeight:'bold', color:'white', marginRight:5}}>
-              TÀI KHOẢN
-          </Text>
-                  
-        </View>
-      </View>
+                    <Text style = {{fontSize:18, fontWeight:'bold', color:'white', marginRight:5}}>
+                        TÀI KHOẢN
+                    </Text>
+                        
+                </View>
+            </View>
             <View>
                 <Text style = {{textAlign:'center', marginTop:20, fontSize:18}}> Tong Cong : </Text>
                 <Text style = {{textAlign:'center', fontSize:18, fontWeight:'bold'}}> {sotien} VND</Text>
             </View>
             <View style = {{flexDirection : 'row', justifyContent : 'space-between', marginTop:20}}>
                 <View>
-                    <Icon name = 'history' size = {40} style = {{marginLeft: 60}}/>
+                <Pressable
+                 onPress = {() => {
+                    navigation.navigate('Transfer_History',{TKChuyen: 'Ten tk chuyen', TKNhan : 'Ten TK nhan', TGian: 'Thoi gian chuyen', sotien: 10000})
+                 }}
+                 >
+                        <Icon name = 'history' size = {40} style = {{marginLeft: 60}}/>
+                    </Pressable>
+                  
                     <Text style = {{marginLeft:15, marginTop:5}}> Lich su chuyen khoan</Text>
                 </View>
                 <View>
-                    <Oct name = 'arrow-switch' size = {40} style = {{marginRight: 60}}/>
+                    <Pressable onPress = {() => navigation.navigate('Transfer', {data : 'list ma vi'})}>
+                        <Oct name = 'arrow-switch' size = {40} style = {{marginRight: 60}}/>
+                    </Pressable>
+                   
                     <Text style = {{paddingRight:20, marginTop:5}}>Chuyen khoan</Text>
                 </View>
             </View>
 
-            <View>
+            <View style = {{marginTop:20}}>
                 <ScrollView style = {styles.body}>
-                    <RowDislay/>
-                    <RowDislay/>
-                    <RowDislay/>
-                    <RowDislay/>
-                    <RowDislay/>
-                    <RowDislay/>
-                    <RowDislay/>
-                    <RowDislay/>
-                    <RowDislay/>
-                    <RowDislay/>
+                        <RowDislay/>
+                        <RowDislay/>
+                        <RowDislay/>
+                        <RowDislay/>
+                        <RowDislay/>
+                        <RowDislay/>
+                        <RowDislay/>
+                        <RowDislay/>
+                        <RowDislay/>
+                        <RowDislay/>
                 </ScrollView>
+               
                 
             </View>
-
-            <View style= {{marginTop: Dimensions.get('window').height * 0.1, alignItems : 'center'}}>
-                <Ionicons name = 'md-add-circle-sharp' color = 'black' size = {40}/>
-            </View>
-
+                <Pressable style= {{marginTop : 10, alignItems : 'center', flexDirection:'column-reverse'}}
+                onPress = {() => navigation.navigate('AddAcc')}
+                >
+      
+                <Ionicons name = 'md-add-circle-sharp' color = 'black' size = {50} style = {{justifyContent:'flex-end'}}/>
+      
+                </Pressable>
+            
 
 
         </View>
@@ -143,14 +140,18 @@ const styles = StyleSheet.create({
     },
 
     body: {
-        backgroundColor : '#d4d9d7',
+        // backgroundColor : '#edece8',
+        // backgroundColor : 'green',
         flexDirection:'column',
-        width : Dimensions.get('window').width * 0.9,
-        height : Dimensions.get('window').height * 0.4,
+        width : Dimensions.get('window').width ,
+        height : Dimensions.get('window').height * 0.5,
         borderRadius:10,
-        marginLeft:20,
-        marginTop:10,
-        marginBottom: 5
+        // marginLeft:10,
+        // marginTop:10,
+        // marginRight: 10,
+        paddingLeft:20,
+        paddingRight:20,
+
 
     },
 

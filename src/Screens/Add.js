@@ -46,7 +46,7 @@ const Add = ({ navigation }) => {
   // };
 
   const test_ngay = new Date().getDate()
-  console.log(test_ngay)
+
   return(
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style = {{backgroundColor: '#ffffff', flex:1}}>
