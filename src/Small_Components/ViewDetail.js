@@ -4,6 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import RadioButtonRN from 'radio-buttons-react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import EditTransaction from './EditTransaction';
+import { ListIcon, getIcon } from './Icon';
 import { openDatabase } from 'react-native-sqlite-storage';
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
@@ -46,6 +47,33 @@ const ViewDetail = ({route, navigation}) => {
               }
             )
             
+        })
+    }
+    const Delete = async () =>{
+        console.log(data1.MaGD)    
+        await db.transaction(async (tx) =>{
+            await tx.executeSql(
+            `DELETE FROM GIAODICH WHERE MaGD = ?`,
+            [data1.MaGD],
+            (tx, results) => {
+                console.log('Results', results.rowsAffected);
+                if (results.rowsAffected > 0) {
+                  Alert.alert(
+                    'Success',
+                    'Giao dịch đã được xóa',
+                    [
+                      {
+                        text: 'Ok',
+                        onPress: () => navigation.navigate('Home'),
+                      },
+                    ],
+                    {cancelable: false},
+                  );
+                } else {
+                  Alert.alert('Hệ thống đang xử lý');
+                }
+            }
+            )
         })
     }
     useEffect(() => {
@@ -147,14 +175,24 @@ const ViewDetail = ({route, navigation}) => {
                 </View>
                 <View>
                     <Text> Danh mục</Text>
-                    <Text> {data0.TenDanhMuc}</Text>
+                    <View style = {{flexDirection : 'row',alignItems:'center', marginLeft:5, marginRight : 5}}>
+                        {getIcon(data1.Icon, data1.Color, ListIcon)}
+
+                        <Text style = {{fontSize : 17}}>    {data1.TenDanhMuc} </Text>
+                        <Text  style={{fontSize: 17, textAlign:'right', flex:1}} >{new Intl.NumberFormat().format(data1.Tien)}₫ </Text>
+                    </View>
                 </View>
                 <View>
                     <Text> Ngày</Text>
                     <Text> {changeFormatDate(data1.Date)}</Text>
                 </View>
             </View>
-
+            <Button
+            onPress={()=>{Delete()}}
+            title="Xóa"
+            color="#841584"
+            accessibilityLabel="Learn more about this purple button"
+            />               
         </View>
     )
 

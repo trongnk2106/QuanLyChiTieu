@@ -18,7 +18,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { openDatabase } from 'react-native-sqlite-storage';
 import { onChange } from 'react-native-reanimated';
 import SwitchButton from "@freakycoder/react-native-switch-button";
-import ListIcon from '../Small_Components/Icon';
+import {ListIcon} from '../Small_Components/Icon';
 
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
@@ -347,8 +347,23 @@ const showonRow= () =>{
               marginBottom: 10
             }}
             onPress={() => navigation.navigate("CreateCategory")}
-        /> */}
-      
+        /> 
+        */}
+              <SwitchButton style={{marginLeft: 20}}
+            inactiveImageSource={require("../../assets/plus.png")}
+            activeImageSource={require("../../assets/plus.png")}
+            originalColor='#ffffff'
+            mainColor='#9A9A9A'
+            tintColor="#9A9A9A"
+            text="Tạo"
+            textStyle={{
+              color: "#9A9A9A",
+              fontWeight: "600",
+              marginLeft: 20,
+              marginBottom: 10
+            }}
+            onPress={() => navigation.navigate("CreateCategory")}
+        />
       </View>
     {/* {showonRow() }         */}
     {show(Categories)}

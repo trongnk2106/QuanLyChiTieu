@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react'
-import {Text, View, StyleSheet, Dimensions , TouchableOpacity, Modal, Pressable, Alert, SafeAreaView, FlatList, SectionList } from 'react-native'
+import {Text, View, StyleSheet, Dimensions , TouchableOpacity, Modal, Pressable, Alert, SafeAreaView, FlatList, SectionList, Image } from 'react-native'
 import { openDatabase } from 'react-native-sqlite-storage';
 import { Line } from 'react-native-svg';
 import { getUriFromSource } from 'react-native-svg/lib/typescript/LocalSvg';
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import ViewDetail from '../Small_Components/ViewDetail';
+import {ListIcon, getIcon} from '../Small_Components/Icon';
 
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
@@ -25,7 +25,7 @@ const ViewDetail_Type = ({route, navigation}) => {
             await db.transaction(async (tx) =>{
                 var List = []
                 await tx.executeSql(
-                  `SELECT * FROM GIAODICH WHERE MaDanhMuc == '${data.MaDanhMuc}' ORDER BY Date `,
+                  `SELECT * FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND  GIAODICH.MaDanhMuc == '${data.MaDanhMuc}' ORDER BY Date `,
                   [],
                   async (tx, results) =>{
                     for (let i = 0; i < results.rows.length; i++){
@@ -42,7 +42,7 @@ const ViewDetail_Type = ({route, navigation}) => {
             await db.transaction(async (tx) =>{
                 var List = []
                 await tx.executeSql(
-                `SELECT * FROM GIAODICH WHERE MaVi == '${data.MaVi}' AND MaDanhMuc == '${data.MaDanhMuc}'`,
+                `SELECT * FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND GIAODICH.MaVi == '${data.MaVi}' AND GIAODICH.MaDanhMuc == '${data.MaDanhMuc}'`,
                 [],
                 async (tx, results) =>{
                     var sum = 0
@@ -58,7 +58,21 @@ const ViewDetail_Type = ({route, navigation}) => {
             })
          
     }
-
+    // const getIcon =(x, color) =>{
+    //     if (x != null){
+    //         var img
+    //         for (let  i = 0; i < ListIcon.length; i++){
+    //             if (ListIcon[i].key == x)
+    //                 img = ListIcon[i].img
+    //             }
+    //         return (
+    //             <Image
+    //                 source={img}
+    //                 style={{width: 40, height: 40, tintColor: color}}
+    //                 />
+    //         )
+    //     }
+    // }
     let listItemView = (item) => {
         return (
             <Pressable
@@ -68,9 +82,11 @@ const ViewDetail_Type = ({route, navigation}) => {
             onPress={ () =>{navigation.navigate('ViewDetail', {data0:data, data1: item})} }
             >
                <View style= {{marginTop: 20}}>
-                    <View style = {{flexDirection : 'row', justifyContent:'space-between', marginLeft:5, marginRight : 5}}>
-                        <Text style = {{fontSize : 17}}> {data.TenDanhMuc} </Text>
-                        <Text style = {{fontSize : 17}}> {new Intl.NumberFormat().format(item.Tien) + ' ₫'}</Text>
+                    <View style = {{flexDirection : 'row',alignItems:'center', marginLeft:5, marginRight : 5}}>
+                        {getIcon(item.Icon, item.Color, ListIcon)}
+
+                        <Text style = {{fontSize : 17}}>    {data.TenDanhMuc} </Text>
+                        <Text  style={{fontSize: 17, textAlign:'right', flex:1}} >{new Intl.NumberFormat().format(item.Tien)}₫ </Text>
                     </View>
                 </View>
             </Pressable>

@@ -23,7 +23,7 @@ import { Agenda, Calendar } from 'react-native-calendars';
 import Categories from './Categories'
 import RadioButtonRN from 'radio-buttons-react-native';
 
-import ListIcon from '../Small_Components/Icon';
+import {ListIcon} from '../Small_Components/Icon';
 
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
@@ -163,11 +163,25 @@ const showCate = (isIncome)=>{
           await db.transaction(async (tx)=> {
             await tx.executeSql(
             "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Date, MaDanhMuc, GhiChu ) VALUES(?,?,?,?,?,?)",
-            [MaGD,WalletChoose,newMoney,Date_s, MaDanhMuc, GhiChu]
+            [MaGD,WalletChoose,newMoney,Date_s, MaDanhMuc, GhiChu],
+            (tx, results) => {
+              console.log('Results', results.rowsAffected);
+              if (results.rowsAffected > 0) {
+                Alert.alert(
+                  'Success',
+                  'You are Registered Successfully',
+                  [
+                    {
+                      text: 'Ok',
+                      onPress: () => navigation.navigate('Home'),
+                    },
+                  ],
+                  {cancelable: false},
+                );
+              } else alert('Registration Failed');
+            },
             )
-            console.log(MaGD,WalletChoose,newMoney,Date_s, MaDanhMuc, GhiChu)
-        })
-        Alert.alert('Giao dịch đã được thêm')
+          })
         }
         catch (error){
           console.log('error')

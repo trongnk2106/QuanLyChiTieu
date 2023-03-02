@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, Modal, Pressable, Button, SafeAreaView, FlatList} from 'react-native'
+import {Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, Modal, Pressable, Button, SafeAreaView, FlatList, Image} from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import RadioButtonRN from 'radio-buttons-react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -8,9 +8,9 @@ import { SwipeListView } from 'react-native-swipe-list-view'
 // import Icon from 'react-native-vector-icons'
 import { TimeDatePicker } from 'react-native-time-date-picker';
 import { openDatabase } from 'react-native-sqlite-storage';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useIsFocused } from '@react-navigation/native';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
+import {ListIcon, getIcon} from '../Small_Components/Icon';
 import moment from 'moment';
 // import ViewDetail from '../Small_Components/ViewDetail';
 import ViewDetail_Type from './ViewDetail_Type';
@@ -200,7 +200,7 @@ const Home = ({ navigation }) => {
             await db.transaction(async (tx) =>{
                 var List = []
                 await tx.executeSql(
-                  `SELECT GIAODICH.MaDanhMuc, DANHMUC.TenDanhMuc, SUM(Tien) FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND DANHMUC.ThuChi == ${isIncome} GROUP BY GIAODICH.MaDanhMuc`,
+                  `SELECT GIAODICH.MaDanhMuc, DANHMUC.TenDanhMuc,DANHMUC.Icon,DANHMUC.Color , SUM(Tien) FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND DANHMUC.ThuChi == ${isIncome} GROUP BY GIAODICH.MaDanhMuc`,
                   [],
                   async (tx, results) =>{
                     var sum = 0
@@ -222,7 +222,7 @@ const Home = ({ navigation }) => {
             await db.transaction(async (tx) =>{
                 var List = []
                 await tx.executeSql(
-                `SELECT GIAODICH.MaDanhMuc,GIAODICH.MaVi ,DANHMUC.TenDanhMuc, SUM(Tien) FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND GIAODICH.MaVi == '${ID}' AND DANHMUC.ThuChi == ${IsThu} GROUP BY GIAODICH.MaDanhMuc`,
+                `SELECT GIAODICH.MaDanhMuc,GIAODICH.MaVi ,DANHMUC.TenDanhMuc,DANHMUC.Icon,DANHMUC.Color, SUM(Tien) FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND GIAODICH.MaVi == '${ID}' AND DANHMUC.ThuChi == ${IsThu} GROUP BY GIAODICH.MaDanhMuc`,
                 [],
                 async (tx, results) =>{
                     var sum = 0
@@ -338,18 +338,14 @@ const Home = ({ navigation }) => {
         GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome)
     }, [WalletChoose, isIncome])
 
-    // let listItemView = (item) => {
-    //     return (
-    //         <TouchableOpacity
-    //         onPress={() => {SetModalViewVisible(true)
-    //         setSelectedGD(item)
-    //         }}
-    //         >
-    //             <Text style = {styles.Row_view}> MaDanhMuc: {item.MaDanhMuc}       {new Intl.NumberFormat().format(item['SUM(Tien)'])}₫ </Text>
-    //         </TouchableOpacity>
-    //     );
-    //   };
-    // console.log(SelectedGD)
+    const isFocused = useIsFocused()
+
+    useEffect(() => {
+        if(isFocused){
+            GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome)
+        }
+    }, [isFocused])
+
 
 
      let listItemView = (item) => {
@@ -358,10 +354,12 @@ const Home = ({ navigation }) => {
             <Pressable
             onPress={() => { 
                 navigation.navigate('ViewDetail_Type', {data : item})
-           
             }}
-            >
-                <Text style = {styles.Row_view}> MaDanhMuc: {item.MaDanhMuc}       {new Intl.NumberFormat().format(item['SUM(Tien)'])}₫ </Text>
+            style = {styles.Row_view}
+            >   
+                {getIcon(item.Icon, item.Color, ListIcon)}
+                <Text  style={{fontSize: 18, flex:1}}>  {item.TenDanhMuc}</Text>
+                <Text  style={{fontSize: 18, textAlign:'right', flex:1}} >{new Intl.NumberFormat().format(item['SUM(Tien)'])}₫ </Text>
             </Pressable>
         );
       };
@@ -375,7 +373,6 @@ const Home = ({ navigation }) => {
                     <View style={{flex: 1}}>
                         <FlatList
                             data={SelectedList}
-                            // ItemSeparatorComponent={listViewItemSeparator}
                             keyExtractor={(item, index) => index.toString()}
                             renderItem={({item}) =>listItemView(item)}
                     />
@@ -574,8 +571,8 @@ const styles = StyleSheet.create({
         borderRadius : 10,
         marginLeft : 20,
         marginTop: 5,
-
-
+        flexDirection:'row',
+        alignItems:'center'
 
     },
     Date_s: {
