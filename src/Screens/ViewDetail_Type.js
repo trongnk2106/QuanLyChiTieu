@@ -14,6 +14,7 @@ const ViewDetail_Type = ({route, navigation}) => {
     const {data} = route.params
     const [modalViewDetail, setModalViewDtail] = useState(false)
     const [List, setList] = useState([])
+    const [WalletChoose, setWalletChoose] = useState('Vi00')
     const [SelectedGD, setSelectedGD] = useState('')
 
     // console.log(data.MaVi)

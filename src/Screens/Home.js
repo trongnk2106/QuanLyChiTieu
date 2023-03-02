@@ -16,7 +16,6 @@ import moment from 'moment';
 import ViewDetail_Type from './ViewDetail_Type';
 import ViewDetail from '../Small_Components/ViewDetail';
 
-import Add from './Add';
 
 
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
@@ -207,6 +206,7 @@ const Home = ({ navigation }) => {
                     var sum = 0
                     for (let i = 0; i < results.rows.length; i++){
                         var a = results.rows.item(i)
+                        console.log(a)
                         List.push(a)
                         // List[i].MaVi = 'Vi00'
                         
@@ -269,40 +269,65 @@ const Home = ({ navigation }) => {
     const AddGD = async()=>{
         await db.transaction(async (tx)=> {
             await tx.executeSql(
-            "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
-            ['GD01', 'Vi01', 50000, 1,'2023/22/02', 'MDM1', 'asd']
+                "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Date, MaDanhMuc, GhiChu ) VALUES(?,?,?,?,?,?)",
+            ['GD01', 'Vi01', 50000,'2023/22/02', 'MDMDichuyen', '']
             )
-            await tx.executeSql(
-            "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
-            ['GD02', 'Vi01', 20000, 1,'2023/22/02', 'MDM1', 'asd']
-            )
-            await tx.executeSql(
-            "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
-            ['GD03', 'Vi01', 20000, 1,'2023/22/02', 'MDM1', 'asd']
-            )
-            await tx.executeSql(
-            "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
-            ['GD04', 'Vi01', -10000, 0,'2023/22/02', 'MDM2', 'asd']
-            )
-            await tx.executeSql(
-            "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
-            ['GD05', 'Vi02', 50000, 1,'2023/22/02', 'MDM3', 'asd']
-            )
-            await tx.executeSql(
-            "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
-            ['GD06', 'Vi02', -10000, 0,'2023/22/02', 'MDM2', 'asd']
-            )
-            await tx.executeSql(
-            "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
-            ['GD07', 'Vi02', -30000, 0,'2023/22/02', 'MDM2', 'asd']
-            )
+            console.log(1)
+            // await tx.executeSql(
+            // "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
+            // ['GD02', 'Vi01', 20000, 1,'2023/22/02', 'MDM1', 'asd']
+            // )
+            // await tx.executeSql(
+            // "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
+            // ['GD03', 'Vi01', 20000, 1,'2023/22/02', 'MDM1', 'asd']
+            // )
+            // await tx.executeSql(
+            // "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
+            // ['GD04', 'Vi01', -10000, 0,'2023/22/02', 'MDM2', 'asd']
+            // )
+            // await tx.executeSql(
+            // "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
+            // ['GD05', 'Vi02', 50000, 1,'2023/22/02', 'MDM3', 'asd']
+            // )
+            // await tx.executeSql(
+            // "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
+            // ['GD06', 'Vi02', -10000, 0,'2023/22/02', 'MDM2', 'asd']
+            // )
+            // await tx.executeSql(
+            // "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
+            // ['GD07', 'Vi02', -30000, 0,'2023/22/02', 'MDM2', 'asd']
+            // )
         })
     }
-    
+    const Get = async()=>{
+            await db.transaction(async (tx) =>{
+                var List = []
+                await tx.executeSql(
+                  `SELECT * FROM GIAODICH`,
+                  [],
+                  async (tx, results) =>{
+                    var sum = 0
+                    console.log(results.rows.length)
+                    for (let i = 0; i < results.rows.length; i++){
+                        var a = results.rows.item(i)
+                        console.log(a)
+                        List.push(a)
+                        // List[i].MaVi = 'Vi00'
+                        
+                    }
+                    setSelectedList(List)
+                    return List
+                  }
+                )
+                
+            })
+         
+    }
     
     useEffect(() => {
-        // AddVi()
-        // AddGD()
+        AddVi()
+        Get()
+        AddGD()
         // AddDM()
         // getSoduVi()
         
@@ -456,7 +481,7 @@ const Home = ({ navigation }) => {
                     <View style={{alignItems:'flex-end', marginBottom: 10, marginRight:10}}>
                         <TouchableOpacity
                             onPress = {() => {
-                                navigation.navigate("Thêm giao dịch");
+                                navigation.navigate("Thêm giao dịch", {DataListVi: ListVi.slice(1), MaVi: WalletChoose} );
                             }}
                         >
                             <Ionicons name = 'md-add-circle-sharp' color = 'yellow' size = {40}/>
