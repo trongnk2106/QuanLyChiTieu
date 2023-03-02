@@ -11,17 +11,145 @@ import {
   SafeAreaView, 
   FlatList, 
   Keyboard,
-  TextInput} from 'react-native'
+  TextInput,
+  SectionList} from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { ScrollView } from 'react-native-gesture-handler';
 import { openDatabase } from 'react-native-sqlite-storage';
 import { onChange } from 'react-native-reanimated';
 import SwitchButton from "@freakycoder/react-native-switch-button";
+import ListIcon from '../Small_Components/Icon';
 
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
 
 const Categories = ({ navigation }) => {
+  const [Categories, setCategories] = useState([])
+  const GetCategories = async()=>{
+    //Get Danh sách Ví: ID ví, Tên Ví, Tiền ban đầu lúc tạo ví
+    await db.transaction(async (tx) =>{
+        await tx.executeSql(
+          "SELECT * FROM DANHMUC",
+          [],
+          (tx, results) =>{
+            var sum = 0
+            var List = []
+            var vi = {"ID": '', "Tien": 0, label: '', 'SoDu': 0}
+            for (let i = 0; i < results.rows.length; i++){
+                var a = results.rows.item(i)
+                List.push(a)
+                
+                // console.log(a)
+            }
+            setCategories(List)
+          }
+        )
+    })
+}
+  const getIcon =(x) =>{
+    for (let  i = 0; i < ListIcon.length; i++){
+      if (ListIcon[i].key == x)
+        return ListIcon[i].img
+    }
+  }
+
+  // const show =  ()=>{
+  //   if (Categories.length > 0){
+  //     // console.log(Categories[0].Icon.slice(13))
+  //     const k = {key: "food2.png"}
+      
+
+  //     // var x = require(`../../assets/${k.key}`)
+  //     return (
+        // <SwitchButton style={{marginLeft: 20}}
+        //     inactiveImageSource={getIcon(Categories[1].Icon)}
+        //     activeImageSource={getIcon(Categories[1].Icon)}
+        //     mainColor="#587DB6"
+        //     tintColor="#587DB6"
+        //     text= {Categories[0].TenDanhMuc}
+        //     textStyle={{
+        //       color: "#8F2F42",
+        //       fontWeight: "600",
+        //       marginLeft: 20,
+        //       marginBottom: 10
+        //     }}
+        //     // onPress={(isActive: boolean) => console.log(isActive)}
+        // />
+  //     )
+  //   }
+      
+  // }
+  let listItemView = (item) => {
+        
+    return (
+        <SwitchButton style={{marginLeft: 40}}
+            inactiveImageSource={getIcon(item.Icon)}
+            activeImageSource={getIcon(item.Icon)}
+            mainColor= {item.Color}
+            tintColor={item.Color}
+            text= {item.TenDanhMuc}
+            textStyle={{
+              color: item.Color,
+              fontWeight: "600",
+              marginLeft: 35,
+              marginBottom: 10
+            }}
+        />
+    );
+  };
+
+
+const show = (data)=>{
+        return(
+            <SafeAreaView style={{flex: 1}}>
+
+                <View style={{flex: 1}}>
+                    <FlatList
+                        horizontal={false}
+                        numColumns = {4}
+                        data={data}
+                        // ItemSeparatorComponent={listViewItemSeparator}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({item}) =>listItemView(item)}
+                />
+                 </View>
+        
+            </SafeAreaView>
+            
+        )
+    
+        
+}
+const showonRow= () =>{
+  if (Categories.length> 0){
+  const data = [...Categories];
+    
+  const newArr = [];
+  while(data.length) newArr.push(data.splice(0,4));
+  console.log(newArr)
+  return(
+    <SafeAreaView style={{flex: 1}}>
+    <View style={{flex: 1}}>
+        <View style={{flex: 1}}>
+            <FlatList
+                data={newArr}
+                // ItemSeparatorComponent={listViewItemSeparator}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({item}) =>show(item)}
+        />
+         </View>
+
+     </View>
+    </SafeAreaView>
+    
+)
+  }
+}
+  useEffect(()=>{
+    // showonRow()
+    GetCategories()
+    getIcon('Luong')
+  }, [])
 
   return(
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -51,7 +179,7 @@ const Categories = ({ navigation }) => {
           marginTop: 30,
           maxWidth: 360}}>
             
-        <SwitchButton style={{marginLeft: 20}}
+        {/* <SwitchButton style={{marginLeft: 20}}
             inactiveImageSource={require("../../assets/food.png")}
             activeImageSource={require("../../assets/food.png")}
             mainColor="#f1bb7b"
@@ -219,9 +347,11 @@ const Categories = ({ navigation }) => {
               marginBottom: 10
             }}
             onPress={() => navigation.navigate("CreateCategory")}
-        />
+        /> */}
+      
       </View>
-
+    {/* {showonRow() }         */}
+    {show(Categories)}
     </View>
 
     </TouchableWithoutFeedback>
