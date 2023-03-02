@@ -1,4 +1,5 @@
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import {Text, View, StyleSheet, Dimensions , TouchableOpacity, Modal, Pressable, Alert, SafeAreaView, FlatList, SectionList, Image } from 'react-native'
 
 const ListIcon = [
     {key: "Dichuyen", img: require('../../assets/car.png')},
@@ -17,5 +18,19 @@ const ListIcon = [
     {key: "Luong", img: require('../../assets/salary.png')},
 
 ] 
-
-export default ListIcon
+const getIcon =(x, color, List) =>{
+    if (x != null){
+        var img
+        for (let  i = 0; i < List.length; i++){
+            if (List[i].key == x)
+                img = List[i].img
+            }
+        return (
+            <Image
+                source={img}
+                style={{width: 40, height: 40, tintColor: color}}
+                />
+        )
+    }
+}
+export {ListIcon, getIcon}
