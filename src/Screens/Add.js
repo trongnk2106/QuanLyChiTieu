@@ -155,7 +155,7 @@ const showCate = (isIncome)=>{
         MaGD =MaGD.replaceAll(' ','')
         MaGD ='GD' + MaGD.replaceAll(':','').slice(0,17)
         var newMoney = Tien
-        if (isIncome == true){
+        if (isIncome == false){
           var newMoney = -Tien
         }
         console.log(1)

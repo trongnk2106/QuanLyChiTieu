@@ -160,6 +160,7 @@ const Home = ({ navigation }) => {
                 var sum = 0
                 for (let i = 0; i < results.rows.length; i++){
                     var a = results.rows.item(i)
+                    console.log(a)
                     sum += a["SUM(Tien)"]
                     for (let i = 1; i < List.length; i++){
                         if (List[i].MaVi == a.MaVi)
@@ -167,6 +168,7 @@ const Home = ({ navigation }) => {
                     }
                 }
                 List[0].SoDu = List[0].Tien + sum
+                console.log(List)
                 setListVi(List)
               }
             )
@@ -327,7 +329,6 @@ const Home = ({ navigation }) => {
     useEffect(() => {
         AddVi()
         Get()
-        AddGD()
         // AddDM()
         // getSoduVi()
         
@@ -342,6 +343,7 @@ const Home = ({ navigation }) => {
 
     useEffect(() => {
         if(isFocused){
+            GetListWallet()
             GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome)
         }
     }, [isFocused])
@@ -373,6 +375,7 @@ const Home = ({ navigation }) => {
                     <View style={{flex: 1}}>
                         <FlatList
                             data={SelectedList}
+                            scrollEnabled= {false}
                             keyExtractor={(item, index) => index.toString()}
                             renderItem={({item}) =>listItemView(item)}
                     />
@@ -514,11 +517,12 @@ const Home = ({ navigation }) => {
                   
 
                 </View>
+                {show()}
                 {/* <View>
-
+            
                 </View> */}
             </ScrollView>
-        {show()}
+        
 
         </View>
     )
