@@ -159,8 +159,9 @@ const Add = ({route, navigation }) => {
         MaGD ='GD' + MaGD.replaceAll(':','').slice(0,17)
         var newMoney = Tien
         if (isIncome == false){
-          var newMoney = -Tien
-        }
+            var newMoney = -Math.abs(Tien)
+          }
+    
         console.log(1)
         try{
           await db.transaction(async (tx)=> {

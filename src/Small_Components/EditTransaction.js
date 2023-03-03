@@ -214,7 +214,7 @@ const EditTransaction = ({route, navigation }) => {
         // getID()
         var newMoney = Tien
         if (isIncome == false){
-          var newMoney = -Tien
+          var newMoney = -Math.abs(Tien)
         }
         // console.log(1)
         try{
