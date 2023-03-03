@@ -249,7 +249,7 @@ const EditTransaction = ({route, navigation }) => {
     }
 }
   useEffect(()=>{
-    test()
+    // test()
     GetCategories()
     // showCate(true)
   }, [])
