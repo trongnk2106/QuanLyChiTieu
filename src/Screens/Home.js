@@ -12,6 +12,11 @@ import { NavigationContainer, useIsFocused } from '@react-navigation/native';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {ListIcon, getIcon, getItem} from '../Small_Components/Icon';
 import { Button, Icon } from 'react-native-elements';
+import { Agenda, Calendar } from 'react-native-calendars';
+import {ScrollMonthCalender} from 'react-native-scroll-month-calender'
+import DonutChart from 'react-donut-chart';
+import { VictoryBar, VictoryChart, VictoryTheme, VictoryPie } from "victory-native";
+
 
 import moment from 'moment';
 // import ViewDetail from '../Small_Components/ViewDetail';
@@ -33,8 +38,14 @@ const Home = ({ navigation }) => {
     const [SelectedList, setSelectedList] = useState([])
     const [SelectedGD, setSelectedGD] = useState('')
     const [Key, SetKey] = useState([])
+    const [acctionTrigger, setAcctionTrigger] = useState('')
+    const [Date_s, setdate] = useState('2023-03-02')
+    const [Thang, setThang] = useState('')
+    const [graphicData, setGraphicData] = useState([])
+    const [graphicColor, setGraphicColor] = useState([])
     // const [style_choose, setStyle_choose] = useState('bold')
     // load vao day ten cac vi, cac vi chon duoc se nam trong bien WalletChoose
+    // console.log(new Date().getDate())
     const listWallet = [
         {
             label : 'Vi tong'
@@ -46,6 +57,32 @@ const Home = ({ navigation }) => {
             label: 'Vi 2'
         }
     ]
+
+    // const graphicData= [
+    //     { y: 20, x: 'swim'},
+    //     { y: 10, x: 'eat'},
+    //     { y: 50, x: 'luong'},
+    //     { y: 10, x: 'cho vay'},
+    //     { y: 10, x: 'hoc'},
+    //     ]
+
+
+    const myHistory= [
+        {month:"January", content: ""},
+      {month:"February", content:""},
+      {month:"March", content:""},
+      {month:"April", content:""},
+      {month:"May", content:""},
+      {month:"June", content:""},
+      {month:"July", content:""},
+      {month:"August", content:""},
+      {month:"September", content:""},
+      {month:"October", content:""},
+      {month:"November", content:""},
+      {month:"December", content:""}
+  ]
+
+
 
     // console.log(SelectedGD)
 
@@ -66,43 +103,7 @@ const Home = ({ navigation }) => {
     useShadowColorFromDataset: false // optional
     };
     
-    const LoadingMapType = (choosemap) => {
-        if (choosemap === true) {
-            return (
-                <View style = {{alignItems : 'center', margin:5}}>
-                    <Text> Thu Nhap Map</Text>
-                     <ProgressChart
-                        data={data_plot}
-                        width={Dimensions.get('window').width * 0.8}
-                        height={200}
-                        strokeWidth={16}
-                        radius={20}
-                        chartConfig={chartConfig}
-                        hideLegend={false}
-                    />
-                </View>
-               
-            )
-        }   
-        else{
-            return (
-                <View style = {{alignItems : 'center', margin:5}}>
-                    <Text> Thu Nhap Map</Text>
-                    <ProgressChart
-                        data={data_plot}
-                        width={Dimensions.get('window').width * 0.8}
-                        height={200}
-                        strokeWidth={16}
-                        radius={20}
-                        chartConfig={chartConfig}
-                        hideLegend={false}
-                    />
-                </View>
-                
-            )
-        }
-    }
-
+   
     const DeletaDanhMuc = () => {
 
         // goi ham xoa giao dich
@@ -169,29 +170,6 @@ const Home = ({ navigation }) => {
                     }
                 }
                 List[0].SoDu = List[0].Tien + sum
-                // setListVi(List)
-              }
-            )
-        })
-        await db.transaction(async (tx) =>{
-            await tx.executeSql(
-                `SELECT * FROM GD_TK`,
-                [],
-              (tx, results) =>{
-                var sum = 0
-                for (let i = 0; i < results.rows.length; i++){
-                    var a = results.rows.item(i)
-                    // console.log(a)
-                    // sum += a["SUM(Tien)"]
-                    // console.log(List[1])
-                    for (let i = 1; i < List.length; i++){
-                        if (List[i].MaVi == a.FromAcc)
-                            List[i].SoDu -=a.Money
-                        if (List[i].MaVi == a.ToAcc)
-                            List[i].SoDu +=a.Money
-                    }
-                }
-                // List[0].SoDu = List[0].Tien + sum
                 setListVi(List)
               }
             )
@@ -204,7 +182,6 @@ const Home = ({ navigation }) => {
                     return ListVi[i].TenVi
             }
         }
-
     }
     const GetSoDuByMaVi= (ID) =>{
         if (ListVi.length > 0){
@@ -215,29 +192,43 @@ const Home = ({ navigation }) => {
         }
 
     }
-    const GetGDByMaViGrByMaDanhMuc = async(ID, IsThu)=>{
-        console.log(ID, IsThu)
+    const GetGDByMaViGrByMaDanhMuc = async(ID, IsThu, ngay)=>{
+        console.log('jkhasjfh',ID, IsThu, ngay)
         if (IsThu == true)
             IsThu = 1
         else
             IsThu = 0
+        
+        if (ngay !== null)
         if (ID == 'Vi00'){
             await db.transaction(async (tx) =>{
                 var List = []
                 await tx.executeSql(
-                  `SELECT GIAODICH.MaDanhMuc, DANHMUC.TenDanhMuc,DANHMUC.Icon,DANHMUC.Color , SUM(Tien) FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND DANHMUC.ThuChi == ${isIncome} GROUP BY GIAODICH.MaDanhMuc`,
+                  `SELECT GIAODICH.MaDanhMuc, DANHMUC.TenDanhMuc,DANHMUC.Icon,DANHMUC.Color , SUM(Tien), GIAODICH.Date FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND DANHMUC.ThuChi == ${isIncome} AND GIAODICH.Date == "${ngay}" GROUP BY GIAODICH.MaDanhMuc`,
                   [],
                   async (tx, results) =>{
                     var sum = 0
+                    var chart = []
+                    var charcolor = []
                     console.log(results.rows.length)
                     for (let i = 0; i < results.rows.length; i++){
                         var a = results.rows.item(i)
                         List.push(a)
-                        console.log(a)
+                        // console.log(a)
+                        const ite = {
+                            y : Math.abs(a[`SUM(Tien)`]),
+                            x : a.TenDanhMuc
+                        }
+                        charcolor.push(a.Color)
+                        chart.push(ite)
+                        // console.log(a.Date)
+
                         // List[i].MaVi = 'Vi00'
                         
                     }
+                    setGraphicData(chart)
                     setSelectedList(List)
+                    setGraphicColor(charcolor)
                     return List
                   }
                 )
@@ -248,18 +239,34 @@ const Home = ({ navigation }) => {
             await db.transaction(async (tx) =>{
                 var List = []
                 await tx.executeSql(
-                `SELECT GIAODICH.MaDanhMuc,GIAODICH.MaVi ,DANHMUC.TenDanhMuc,DANHMUC.Icon,DANHMUC.Color, SUM(Tien) FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND GIAODICH.MaVi == '${ID}' AND DANHMUC.ThuChi == ${IsThu} GROUP BY GIAODICH.MaDanhMuc`,
+                `SELECT GIAODICH.MaDanhMuc,GIAODICH.MaVi ,DANHMUC.TenDanhMuc,DANHMUC.Icon,DANHMUC.Color, SUM(Tien), GIAODICH.Date FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND GIAODICH.MaVi == '${ID}' AND DANHMUC.ThuChi == ${IsThu} AND GIAODICH.Date == "${ngay}" GROUP BY GIAODICH.MaDanhMuc`,
                 [],
                 async (tx, results) =>{
                     var sum = 0
+                    var chart = []
+                    var charcolor = []
                     for (let i = 0; i < results.rows.length; i++){
                         console.log(results.rows.length)
                         var a = results.rows.item(i)
-                        console.log(a)
+                        // console.log(a)
                         List.push(a)
+                        // console.log(List)
+                        const itedate= {
+                            y : Math.abs(a[`SUM(Tien)`]),
+                            x : a.TenDanhMuc
+                        }
+                        console.log('vi 1', a.Date)
+
+                        
+                        console.log('mau trong vi 1', a.Color)
+                        charcolor.push(a.Color)
+                        // console.log(ite)
+                        chart.push(itedate)
 
                     }
                     setSelectedList(List)
+                    setGraphicData(chart)
+                    setGraphicColor(charcolor)
                     return List
                 }
                 )
@@ -267,7 +274,9 @@ const Home = ({ navigation }) => {
             })
          
     }
+    // console.log(SelectedList)
 
+    // console.log(graphicData)
     // const AddVi = async()=>{
     //     await db.transaction(async (tx)=> {
     //         await tx.executeSql(
@@ -325,32 +334,75 @@ const Home = ({ navigation }) => {
             // )
     //     })
     // }
-    const Get = async()=>{
-            await db.transaction(async (tx) =>{
-                var List = []
-                await tx.executeSql(
-                  `SELECT * FROM GIAODICH`,
-                  [],
-                  async (tx, results) =>{
-                    var sum = 0
-                    console.log(results.rows.length)
-                    for (let i = 0; i < results.rows.length; i++){
-                        var a = results.rows.item(i)
-                        console.log(a)
-                        List.push(a)
-                        // List[i].MaVi = 'Vi00'
+    // const Get = async()=>{
+    //         await db.transaction(async (tx) =>{
+    //             var List = []
+    //             await tx.executeSql(
+    //               `SELECT * FROM GIAODICH`,
+    //               [],
+    //               async (tx, results) =>{
+    //                 var sum = 0
+    //                 console.log(results.rows.length)
+    //                 for (let i = 0; i < results.rows.length; i++){
+    //                     var a = results.rows.item(i)
+    //                     console.log(a)
+    //                     List.push(a)
+    //                     // List[i].MaVi = 'Vi00'
                         
-                    }
-                  }
-                )
+    //                 }
+    //                 setSelectedList(List)
+    //                 return List
+    //               }
+    //             )
                 
-            })
+    //         })
          
+    // }
+    console.log(graphicColor)
+
+    const LoadingMapType = (choosemap) => {
+        if (choosemap === true) {
+            return (
+                <View style = {{alignItems : 'center'}}>
+                    <VictoryPie
+                        data={graphicData}
+                        colorScale = {graphicColor}
+                        width={250}
+                        height={250}
+                        innerRadius={40}
+                        style={{
+                        labels: {
+                        fill: 'red', fontSize: 15, padding: 5,
+                        }, }}
+                        /> 
+                </View>
+               
+            )
+        }   
+        else{
+            return (
+                <View style = {{alignItems : 'center'}}>
+                    <VictoryPie
+                        data={graphicData}
+                        colorScale = {graphicColor}
+                        width={250}
+                        height={250}
+                        innerRadius={40}
+                        style={{
+                        labels: {
+                        fill: 'red', fontSize: 15, padding: 5,
+                        }, }}
+                        /> 
+                </View>
+                
+            )
+        }
     }
+
     
     useEffect(() => {
         // AddVi()
-        Get()
+        // Get()
         // AddDM()
         // getSoduVi()
         // AddGD()
@@ -358,15 +410,15 @@ const Home = ({ navigation }) => {
         // GetGDByMaViGrByMaDanhMuc('Vi01', 1)
       }, [])
     useEffect(() => {
-        GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome)
-    }, [WalletChoose, isIncome])
+        GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome, Date_s)
+    }, [WalletChoose, isIncome, Date_s])
 
     const isFocused = useIsFocused()
 
     useEffect(() => {
         if(isFocused){
             GetListWallet()
-            GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome)
+            GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome, Date_s)
         }
     }, [isFocused])
 
@@ -434,33 +486,69 @@ const Home = ({ navigation }) => {
                                 visible = {modalVisible}
                                 onRequestClose={() => setModalVisible(!modalVisible)}    
                             >
+                                {acctionTrigger ==='wallet'? 
                                 <View style = {styles.showContainer}>
-                                    <View style ={styles.showContainerCenter}>
-                                        <Text style = {{marginLeft : 15, marginTop :10, fontSize:20}}>Chon tai khoan</Text>
-                                        <ScrollView>
-                                            <View>
-                                                <RadioButtonRN 
-                                                    data = {ListVi}
-                                                    selectedBtn = {(e) => {console.log(e.MaVi)
-                                                    setWalletChoose(e.MaVi)}}
-                                                        />
-                                            </View>
-                                        </ScrollView>
-                                       
-                                    <Pressable onPress = {() => setModalVisible(!modalVisible)}>
-                                            <Text style = {{fontSize:15, color:'green', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:10}}> Chon </Text>
-                                        </Pressable>
-                                    </View>
-                                    
+                                <View style ={styles.showContainerCenter}>
+                                    <Text style = {{marginLeft : 15, marginTop :10, fontSize:20}}>Chon tai khoan</Text>
+                                    <ScrollView>
+                                        <View>
+                                            <RadioButtonRN 
+                                                data = {ListVi}
+                                                selectedBtn = {(e) => {console.log(e.MaVi)
+                                                setWalletChoose(e.MaVi)}}
+                                                    />
+                                        </View>
+                                    </ScrollView>
+                                   
+                                <Pressable onPress = {() => setModalVisible(!modalVisible)}>
+                                        <Text style = {{fontSize:15, color:'green', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:10}}> Chon </Text>
+                                    </Pressable>
                                 </View>
+                                
+                            </View>
 
-                               
+                            : acctionTrigger === 'ngay' ?
+                                <View style={styles.centeredView}>
+                                <View style={styles.modalView}>
+                                    <Calendar style={{borderRadius: 15}}
+                                        onDayPress={(day) => {
+                                            setdate(day.dateString)
+                                        }}
+                                        onDayLongPress={(day) => console.log('onDayLongPress', day) }
+                                        onMonthChange={(date) => console.log('onMonthChange', date) }
+                                        onPressArrowLeft={(goToPreviousMonth) => {
+                                        console.log('onPressArrowLeft'); goToPreviousMonth();
+                                        }}
+                                        onPressArrowRight={(goToNextMonth) => {
+                                        console.log('onPressArrowRight'); goToNextMonth();
+                                        }}
+                                        markedDates={{
+                                            [Date_s] : {selected: true, marked: true, selectedColor: '#466A8F'}
+                                        }}
+                                    />
+
+                                    <TouchableOpacity 
+                                        style={styles.doneButton2} 
+                                        onPress = {() => setModalVisible(!modalVisible)}>
+                                        <Text style={{color:'#FFFFFF'}}>Done</Text>
+                                    </TouchableOpacity>
+                                                    
+
+                                    </View>
+                            </View>                    
+                           
+                            : null
+                            }
+                                
 
 
                             </Modal>
 
                             <Pressable
-                                onPress={() => setModalVisible(true)}
+                                onPress={() => {setModalVisible(true)
+                                setAcctionTrigger('wallet')
+                                
+                                }}
                             >
                                 <Ionicons name = 'caret-down-outline' color = 'white' fontSize='20'/>
 
@@ -495,20 +583,23 @@ const Home = ({ navigation }) => {
             <ScrollView>
                 <View style = {styles.body}>
                     <View style = {{flexDirection:'row', justifyContent:'space-between', paddingLeft:50, paddingRight:50, paddingTop:10}}>
-                        <TouchableOpacity>
-                            <Text style = {styles.Date_s}> Ngay</Text>
+                        <TouchableOpacity onPress = {() => {
+                            setAcctionTrigger('ngay')
+                            setModalVisible(true)
+                        }}>
+                            <Text style = {styles.text_date}> Ngay</Text>
                         </TouchableOpacity>
                         <TouchableOpacity>
-                            <Text style = {styles.Date_s}> Thang</Text>
+                            <Text style = {styles.text_date}> Thang</Text>
                         </TouchableOpacity>
                         <TouchableOpacity>
-                            <Text style = {styles.Date_s}> Nam</Text>
+                            <Text style = {styles.text_date}> Nam</Text>
                         </TouchableOpacity>
                     </View>
                 
                     {isIncome === true ? LoadingMapType(true) : LoadingMapType(false)}
 
-                    <View style={{alignItems:'flex-end', marginBottom: 10, marginRight:10}}>
+                    <View style={{alignItems:'flex-end', marginBottom: 10, marginRight:10,  position: 'absolute',alignSelf: 'flex-end', marginTop: 250}}>
                         <TouchableOpacity
                             onPress = {() => {
                                 navigation.navigate("Thêm giao dịch", {DataListVi: ListVi.slice(1), MaVi: WalletChoose} );
@@ -520,38 +611,24 @@ const Home = ({ navigation }) => {
                 </View>
                 <View>
           
+{/*     
+                <View style={{flex: 1}}>
+                    <ScrollMonthCalender history={myHistory} 
+                    style={{marginTop:100}} onMonthChange={()=>{}}/>
+                </View> */}
 
-                        {/* <Modal 
-                            animationType='slide'
-                            transparent={false}
-                            visible = {modalView}
-                            onRequestClose={() => SetModalViewVisible(!modalView)}    
-                        >
-                            <View style = {styles.showContainer}>
-                              
-                                
-
-                                <ViewDetail_Type data = {SelectedGD} />
-                                 
-                                <Pressable onPress = {() => {
-                                    
-                                    AlerBottom()
-                                
-                                }}>
-                                    <Text style = {{fontSize:15, color:'red', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:10, backgroundColor :'white'}}> XOA </Text>
-                                </Pressable>
-                                
-                            </View>
-                        </Modal> */}
-                        
+    
                   
 
                 </View>
                 {show()}
                 {/* <View>
-            
+                   <ScrollMonthCalender history={myHistory}
+                   onMonthChange={() => {console.log('thang')}} />
+
                 </View> */}
             </ScrollView>
+           
         
 
         </View>
@@ -609,9 +686,33 @@ const styles = StyleSheet.create({
         alignItems:'center'
 
     },
-    Date_s: {
+    text_date: {
         fontSize : 15
-    }
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+        backgroundColor: "rgba(0,0,0, 0.4)",
+      },
+      modalView: {
+        backgroundColor: "#fff",
+        width: Dimensions.get("screen").width - 40,
+        height: Dimensions.get("screen").height - 500,
+        borderRadius: 15
+      },
+      doneButton2: {
+        backgroundColor: "#466A8F",
+        padding: 10,
+        width: 100,
+        flexDirection: "row",
+        justifyContent: 'center',
+        borderRadius: 6,
+        alignSelf: 'flex-end',
+        marginTop: 20,
+        marginRight: 16
+      },
 
 })
 
