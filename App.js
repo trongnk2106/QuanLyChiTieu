@@ -54,9 +54,7 @@ export default function App() {
         drawerActiveTintColor:'#C4DDCA',
         drawerInactiveTintColor:'#C4DDCA',
       }}>
-        <Drawer.Screen name="Calculator" component={Cal} options={{drawerItemStyle:{height:0}}} />
-        <Drawer.Screen name="CreateCategory" component={CreateCategory} options={{drawerItemStyle:{height:0}}} />
-        <Drawer.Screen name="EditCategory" component={EditCategory} options={{drawerItemStyle:{height:0}}} />
+        
         <Drawer.Screen name="Trang chính" component={HomeStack} 
           options={{ drawerIcon: config => <Icon size={25} name={'home'} color={'#C4DDCA'}></Icon> }}/> 
         <Drawer.Screen name="Tài khoản" component={CreateAcc_Stack}
@@ -69,6 +67,9 @@ export default function App() {
         <Drawer.Screen name = "EditTransaction" component={EditTransaction} /> */}
         <Drawer.Screen name="Danh mục" component={CategoriesStack}
           options={{ drawerIcon: config => <Icon size={25} name={'list'} color={'#C4DDCA'}></Icon> }}/> 
+        <Drawer.Screen name="Calculator" component={Cal} options={{drawerItemStyle:{height:0}}} />
+        <Drawer.Screen name="CreateCategory" component={CreateCategory} options={{drawerItemStyle:{height:0}}} />
+        <Drawer.Screen name="EditCategory" component={EditCategory} options={{drawerItemStyle:{height:0}}} />
         
       </Drawer.Navigator>
     </NavigationContainer>
