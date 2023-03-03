@@ -169,6 +169,29 @@ const Home = ({ navigation }) => {
                     }
                 }
                 List[0].SoDu = List[0].Tien + sum
+                // setListVi(List)
+              }
+            )
+        })
+        await db.transaction(async (tx) =>{
+            await tx.executeSql(
+                `SELECT * FROM GD_TK`,
+                [],
+              (tx, results) =>{
+                var sum = 0
+                for (let i = 0; i < results.rows.length; i++){
+                    var a = results.rows.item(i)
+                    // console.log(a)
+                    // sum += a["SUM(Tien)"]
+                    // console.log(List[1])
+                    for (let i = 1; i < List.length; i++){
+                        if (List[i].MaVi == a.FromAcc)
+                            List[i].SoDu -=a.Money
+                        if (List[i].MaVi == a.ToAcc)
+                            List[i].SoDu +=a.Money
+                    }
+                }
+                // List[0].SoDu = List[0].Tien + sum
                 setListVi(List)
               }
             )
@@ -302,34 +325,32 @@ const Home = ({ navigation }) => {
             // )
     //     })
     // }
-    // const Get = async()=>{
-    //         await db.transaction(async (tx) =>{
-    //             var List = []
-    //             await tx.executeSql(
-    //               `SELECT * FROM GIAODICH`,
-    //               [],
-    //               async (tx, results) =>{
-    //                 var sum = 0
-    //                 console.log(results.rows.length)
-    //                 for (let i = 0; i < results.rows.length; i++){
-    //                     var a = results.rows.item(i)
-    //                     console.log(a)
-    //                     List.push(a)
-    //                     // List[i].MaVi = 'Vi00'
+    const Get = async()=>{
+            await db.transaction(async (tx) =>{
+                var List = []
+                await tx.executeSql(
+                  `SELECT * FROM GIAODICH`,
+                  [],
+                  async (tx, results) =>{
+                    var sum = 0
+                    console.log(results.rows.length)
+                    for (let i = 0; i < results.rows.length; i++){
+                        var a = results.rows.item(i)
+                        console.log(a)
+                        List.push(a)
+                        // List[i].MaVi = 'Vi00'
                         
-    //                 }
-    //                 setSelectedList(List)
-    //                 return List
-    //               }
-    //             )
+                    }
+                  }
+                )
                 
-    //         })
+            })
          
-    // }
+    }
     
     useEffect(() => {
         // AddVi()
-        // Get()
+        Get()
         // AddDM()
         // getSoduVi()
         // AddGD()

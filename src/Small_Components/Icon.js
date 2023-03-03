@@ -12,13 +12,19 @@ const ListIcon = [
     {title: 'GiaoDuc', name:'school', type:'ionicon', iconColor:'#4A648B'},
     {title: 'ChoVay', name:'comments-dollar', type:'font-awesome-5', iconColor:'#A2BAB0'},
     {title: 'KhacChi', name:'question', type:'font-awesome', iconColor:'#E0C0C0'},
-    {title: 'TaoChi', name:'plus', type:'font-awesome-5', iconColor:'#C0C0C0'},
     {title: 'Luong', name:'attach-money', type:'material-icons', iconColor:'#549470'},
     {title: 'TienThuong', name:'money', type:'font-awesome', iconColor:'#8F3842'},
     {title: 'QuaTang', name:'ios-gift', type:'ionicon', iconColor:'#ADAD53'},
     {title: 'SoThich', name:'search-dollar', type:'font-awesome-5', iconColor:'#f1bb7b'},
     {title: 'KhacThu', name:'question', type:'font-awesome', iconColor:'#9371A5'},
     {title: 'Tao', name:'plus', type:'font-awesome-5', iconColor:'#C0C0C0'},
+    {title: 'La', name:'leaf', type:'ionicon', iconColor:'#579CCF'},
+    {title: 'ThuVien', name:'library', type:'ionicon', iconColor:'#579CCF'},
+    {title: 'ChanThu', name:'paw', type:'ionicon', iconColor:'#579CCF'},
+    {title: 'CaiBua', name:'hammer', type:'ionicon', iconColor:'#579CCF'},
+    {title: 'TraiDat', name:'earth', type:'ionicon', iconColor:'#579CCF'},
+
+
 ] 
 const getIcon =(x, color, List) =>{
     if (x != null){

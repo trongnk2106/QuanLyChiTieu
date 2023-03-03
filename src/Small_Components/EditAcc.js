@@ -13,7 +13,7 @@ const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation :
 const EditAcc = ({route, navigation}) => {
 
 
-    const {TenTk, money, MaVi} = route.params
+    const {TenTk, money, MaVi, SoDu} = route.params
     console.log(TenTk, money, MaVi)
     const [changeMoney, setChangeMoney] = useState(money)
     const [nameAcc, setNameAcc] = useState(TenTk)
@@ -22,7 +22,15 @@ const EditAcc = ({route, navigation}) => {
     const Delete = async () =>{
         // console.log(data1.MaGD)    
         await db.transaction(async (tx) =>{
-            await tx.executeSql(
+          await tx.executeSql(
+            `DELETE FROM GIAODICH WHERE MaVi = ?`,
+            [MaVi],
+          )
+          await tx.executeSql(
+            `DELETE FROM GD_TK WHERE FromAcc = ? OR ToAcc = ?`,
+            [MaVi, MaVi],
+          )
+          await tx.executeSql(
             `DELETE FROM DS_VI WHERE MaVi = ?`,
             [MaVi],
             (tx, results) => {
@@ -102,8 +110,15 @@ const EditAcc = ({route, navigation}) => {
                 </Pressable>
                 <Text style = {{color:'white', fontSize: 20, marginTop:20}}> {TenTk}</Text>
             </View>
+            <Text style={{fontSize: 15, color:'#4CA07C', marginTop:20}}>Số dư: </Text>
 
-            <View style = {{flexDirection: 'row', justifyContent:'center', marginTop:15}}>
+              <View style = {{flexDirection: 'row', justifyContent:'center',}}>
+                <Text style={{fontSize: 15, marginTop:20}}>{SoDu - money + Number(changeMoney)} </Text>
+                  <Text style={{fontSize: 15, color:'#4CA07C', marginTop:20}}>VNĐ </Text>
+              </View>
+            <Text style={{fontSize: 15, color:'#4CA07C', marginTop:20}}> Tiền lúc khởi tạo: </Text>
+
+            <View style = {{flexDirection: 'row', justifyContent:'center',}}>
                 <TextInput
                         style={styles.inputText2}
                         // placeholder='0'
@@ -125,7 +140,7 @@ const EditAcc = ({route, navigation}) => {
                 />
 
             </View>
-            <View style = {{backgroundColor:'white', height: Dimensions.get('window').height * 0.6 }}></View>
+            <View style = {{backgroundColor:'white', height: Dimensions.get('window').height * 0.5 }}></View>
             <View>
                 <View>
                     <TouchableOpacity style={styles.floatingButton}
@@ -135,8 +150,23 @@ const EditAcc = ({route, navigation}) => {
                 </View>  
                 <View>
                 <TouchableOpacity style={styles.floatingButton_2}
-                    onPress = {() =>Delete()}>
-                    <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Xoa</Text>
+                    onPress = {() =>{Alert.alert(
+                      'Warning',
+                      'Xóa tài khoản sẽ xóa tất cả giao dịch bao gồm các giao dịch chuyển khoản. Vẫn tiếp tục xóa?',
+                      [
+                        {
+                          text: 'Ok',
+                          onPress: () => Delete(),
+                        },
+                        {
+                          text: 'Cancel',
+                          onPress: () => console.log('Cancel Pressed'),
+                          style: 'cancel',
+                        },
+                      ],
+                      {cancelable: true},
+                    )}}>
+                    <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Xóa</Text>
                 </TouchableOpacity>
                 </View>  
             </View>

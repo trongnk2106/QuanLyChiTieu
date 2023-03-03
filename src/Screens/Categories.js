@@ -18,6 +18,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import { onChange } from 'react-native-reanimated';
 import SwitchButton from "@freakycoder/react-native-switch-button";
 import { Button, Icon } from 'react-native-elements';
+import { NavigationContainer, useIsFocused } from '@react-navigation/native';
 import {ListIncomeCategory, ListExpenseCategory, ListIcon, getItem} from '../Small_Components/Icon';
 
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
@@ -123,10 +124,13 @@ const Categories = ({ navigation }) => {
 //   }
 // }
 
-useEffect(() =>{
-  GetCategories()
-  console.log(getItem('Tao', ListIcon))
-},[])
+const isFocused = useIsFocused()
+
+    useEffect(() => {
+        if(isFocused){
+            GetCategories()
+        }
+    }, [isFocused])
 let listItemView = (item) => {
   return (
       <View style={{flexDirection:'column', marginHorizontal:8}}>

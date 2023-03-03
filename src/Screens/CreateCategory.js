@@ -20,6 +20,8 @@ import { onChange } from 'react-native-reanimated';
 import { Icon, Button } from 'react-native-elements'
 import RadioButtonRN from 'radio-buttons-react-native';
 import ColorPicker from 'react-native-wheel-color-picker';
+import { ListIcon } from '../Small_Components/Icon';
+import Add from './Add';
 
 
 
@@ -28,18 +30,86 @@ const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation :
 const CreateCategory = ({ navigation }) => {
 
   const [iconName, setIconName] = useState('help');
+  const [iconType, setIconType] = useState('ionicon')
   const [iconColor, setIconColor] = useState('#A8ADAB');
-  // const [color, setColor] = useState('');
-
+  const [icon, setIcon] = useState('KhacThu')
+  const [color, setColor] = useState('');
+  const [isIncome, setIsIncome] = useState('')
+  const [tenDM, setTenDM] = useState('')
   const onColorChange = iconColor => {
     setIconColor(iconColor);
   };
 
   const data = [
-    { label: 'Chi phí' },
-    { label: 'Thu nhập' }
+    { label: 'Chi phí', thu: 0 },
+    { label: 'Thu nhập', thu: 1 }
   ];
+  const AddCate = async () =>{
+    if (isIncome == null || tenDM == null){
+        Alert.alert('Vui lòng điền đầy đủ thông tin trước khi thêm giao dịch!!!')
+    }
+    else {
+        // getID()
+        var MaDM = new Date().toString()
+        MaDM =MaDM.replaceAll(' ','')
+        MaDM ='DM' + MaDM.replaceAll(':','').slice(0,17)
+        console.log(1)
+        try{
+          await db.transaction(async (tx)=> {
+            await tx.executeSql(
+            "INSERT INTO DANHMUC (MaDanhMuc, TenDanhMuc, ThuChi, Color, Icon) VALUES(?,?,?,?,?)",
+            [MaDM, tenDM, isIncome, iconColor, icon],
+            (tx, results) => {
+              console.log('Results', results.rowsAffected);
+              if (results.rowsAffected > 0) {
+                Alert.alert(
+                  'Success',
+                  'Thêm danh mục thành công',
+                  [
+                    {
+                      text: 'Ok',
+                      onPress: () => navigation.navigate('Categories'),
+                    },
+                  ],
+                  {cancelable: false},
+                );
+              } else Alert.alert('Hệ thống đang xử lý. Vui lòng thử lại sau.');
+            },
+            )
+          })
+        }
+        catch (error){
+          console.log('error')
+        }
+        
+        // setModifine(!modifine)
+    }
+}
+  let listItemView = (item) => {
+    return (
+        <View style={{flexDirection:'column', marginHorizontal:8}}>
+          <Button
+            buttonStyle={{
+              backgroundColor: 'transparent',
+              width: 80, height: 80,
+              borderRadius: 10,
+            }}
+            icon={
+              <Icon
+                reverse 
+                type={item.type}
+                size={30}
+                name={item.name}
+                color={iconColor}
+              />
+            }
+            onPress={() => {setIconName(item.name), setIconType(item.type), setIcon(item.title)}}
 
+          />
+        </View>
+      );
+    };
+  
   return(
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style = {{backgroundColor: '#ffffff', flex:1}}>
@@ -71,14 +141,14 @@ const CreateCategory = ({ navigation }) => {
           <Icon
               reverse
               name={iconName}
-              type='ionicon'
+              type={iconType}
               color={iconColor}
               size={20}
             />
           <TextInput
             style={styles.inputText}
             placeholder='Tên danh mục'
-            // onChangeText={}
+            onChangeText={(newTen)=> setTenDM(newTen)}
           />
         </View>
 
@@ -87,13 +157,13 @@ const CreateCategory = ({ navigation }) => {
               data={data}
               box={false}
               activeColor='#54b38a'
-              // selectedBtn={(e) => console.log(e)}
+              selectedBtn={(e) => setIsIncome(e.thu)}
           />
         </View>
         {/* end of danh muc */}
 
         {/* ke hoach chi tieu */}
-        <Text style={styles.title}>Kế hoạch chi tiêu</Text>
+        {/* <Text style={styles.title}>Kế hoạch chi tiêu</Text>
         <View style = {{ 
           flexDirection: 'row', 
           marginLeft: 18,
@@ -106,47 +176,24 @@ const CreateCategory = ({ navigation }) => {
           />
 
           <Text style={{fontSize: 15, color:'#4CA07C', marginTop:10}}>VNĐ mỗi tháng</Text>
-        </View>
+        </View> */}
         {/* end of ke hoach chi tieu */}
 
         {/* bieu tuong */}
         <Text style={styles.title}>Biểu tượng</Text>
-        <View style={{
-          flexDirection:'row', 
-          flexWrap:'wrap', 
-          justifyContent:'space-between', 
-          alignContent: 'flex-start',
-          marginTop: 10,
-          marginHorizontal: 20,
-          maxWidth: 360}}>
-
-          <Icon reverse type='ionicon' size={30}
-            name='leaf'
-            color={iconColor}
-            onPress={() => setIconName('leaf')}
-          />
-          <Icon reverse type='ionicon' size={30}
-            name='library'
-            color={iconColor}
-            onPress={() => setIconName('library')}
-          />
-          <Icon reverse type='ionicon' size={30}
-            name='paw'
-            color={iconColor}
-            onPress={() => setIconName('paw')}
-          />
-          <Icon reverse type='ionicon' size={30}
-            name='hammer'
-            color={iconColor}
-            onPress={() => setIconName('hammer')}
-          />
-          <Icon reverse type='ionicon' size={30}
-            name='earth'
-            color={iconColor}
-            onPress={() => setIconName('earth')}
-          />
-        </View>
-        {/* end of bieu tuong */}
+        <SafeAreaView style={{flex: 1}}>
+                <View style={{flex: 1}}>
+                    <FlatList 
+                        contentContainerStyle={{justifyContent:'center', alignItems:'flex-start', alignSelf:'center'}}
+                        horizontal={false}
+                        numColumns = {4}
+                        data={ListIcon}
+                        scrollEnabled= {false}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({item}) => listItemView(item)}
+                    />
+                 </View>
+      </SafeAreaView>
 
         {/* mau sac */}
         <Text style={styles.title}>Màu sắc</Text>
@@ -164,7 +211,7 @@ const CreateCategory = ({ navigation }) => {
         {/* end of mau sac */}
 
       </ScrollView>
-      <TouchableOpacity style={styles.floatingButton}>
+      <TouchableOpacity style={styles.floatingButton} onPress = {()=>AddCate()}>
           <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Tạo</Text>
       </TouchableOpacity>
 

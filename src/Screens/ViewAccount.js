@@ -84,8 +84,31 @@ const Acc = ({ route, navigation }) => {
                     }
                 }
                 List[0].SoDu = List[0].Tien + sum
-                setListVi(List)
+                // setListVi(List)
                 setSumTien(List[0].SoDu)
+              }
+            )
+        })
+        await db.transaction(async (tx) =>{
+            await tx.executeSql(
+                `SELECT * FROM GD_TK`,
+                [],
+              (tx, results) =>{
+                var sum = 0
+                for (let i = 0; i < results.rows.length; i++){
+                    var a = results.rows.item(i)
+                    // console.log(a)
+                    // sum += a["SUM(Tien)"]
+                    // console.log(List[1])
+                    for (let i = 1; i < List.length; i++){
+                        if (List[i].MaVi == a.FromAcc)
+                            List[i].SoDu -=a.Money
+                        if (List[i].MaVi == a.ToAcc)
+                            List[i].SoDu +=a.Money
+                    }
+                }
+                // List[0].SoDu = List[0].Tien + sum
+                setListVi(List)
               }
             )
         })
@@ -105,9 +128,7 @@ const Acc = ({ route, navigation }) => {
         }
     }, [isFocused])
     
-    const renderItem = () => {
 
-    }
 
 
     const RowDislay = () => {
@@ -117,15 +138,15 @@ const Acc = ({ route, navigation }) => {
                 <View> 
                     <Pressable style = {{backgroundColor : 'white',height:50, marginTop:5, borderRadius:10}}
                     onPress = {() => {
-                        navigation.navigate('EditAcc',{TenTk: ListVi[i].TenVi, money : ListVi[i].Tien, MaVi:ListVi[i].MaVi})
+                        navigation.navigate('EditAcc',{TenTk: ListVi[i].TenVi, money : ListVi[i].Tien, MaVi:ListVi[i].MaVi, SoDu: ListVi[i].SoDu})
                     }}
                     >
                         <View style = {{flexDirection :'row', justifyContent:'space-between'}}>
                             {/* <Text style = {{marginLeft: 10, marginTop:10, fontSize: 18}}>{i.MaVi}</Text>
                              */}
-                             {console.log(ListVi[i].MaVi)}
+                             {/* {console.log(ListVi[i].MaVi)} */}
                             <Text style = {{marginLeft: 10, marginTop:10, fontSize: 18}}>{ListVi[i].TenVi}</Text>
-                            <Text style = {{marginRight:10, marginTop: 10,fontSize: 18}}>{ListVi[i].SoDu} VND</Text>
+                            <Text style = {{marginRight:10, marginTop: 10,fontSize: 18}}>{new Intl.NumberFormat().format(ListVi[i].SoDu)} VND</Text>
                         </View>
                     
                     </Pressable>
@@ -155,8 +176,8 @@ const Acc = ({ route, navigation }) => {
                 </View>
             </View>
             <View>
-                <Text style = {{textAlign:'center', marginTop:20, fontSize:18}}> Tong Cong : </Text>
-                <Text style = {{textAlign:'center', fontSize:18, fontWeight:'bold'}}> {sumTien} VND</Text>
+                <Text style = {{textAlign:'center', marginTop:20, fontSize:18}}> Tổng cộng : </Text>
+                <Text style = {{textAlign:'center', fontSize:18, fontWeight:'bold'}}> {new Intl.NumberFormat().format(sumTien)} VND</Text>
             </View>
             <View style = {{flexDirection : 'row', justifyContent : 'space-between', marginTop:20}}>
                 <View>
