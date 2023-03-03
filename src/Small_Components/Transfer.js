@@ -33,8 +33,8 @@ const Transfer = ({navigation}) => {
     const fulltime = `${namnay}-${thangnay}-${homnay}`
     const [Date_s, setdate] = useState(`${fulltime}`)
     const [ListVi, setListVi] = useState([])
-    const [WalletChoose_CH, setWalletChoose_CH] = useState('chua chon')
-    const [WalletChoose_NH, setWalletChoose_NH] = useState('chua chon')
+    const [WalletChoose_CH, setWalletChoose_CH] = useState('Chưa chọn')
+    const [WalletChoose_NH, setWalletChoose_NH] = useState('Chưa chọn')
 
     const GetListWallet = async()=>{
         var List = []
@@ -84,7 +84,7 @@ const Transfer = ({navigation}) => {
 
 
     const setData = async () =>{
-        if (WalletChoose_CH === 'chua chon' || WalletChoose_NH === 'chua chon' || Tien === 0){
+        if (WalletChoose_CH === 'Chưa chọn' || WalletChoose_NH === 'Chưa chọn' || Tien === 0){
             Alert.alert('Vui lòng điền đầy đủ thông tin trước khi thêm giao dịch!!!')
         }
         else {
@@ -135,8 +135,8 @@ const Transfer = ({navigation}) => {
         }
       }
     const GetTenViByMaVi= (ID) =>{
-        if (ID === 'chua chon') {
-            return 'chua chon'
+        if (ID === 'Chưa chọn') {
+            return 'Chưa chọn'
         }
         if (ListVi.length > 0){
             for( let i = 0; i < ListVi.length; i++){
@@ -184,10 +184,12 @@ const Transfer = ({navigation}) => {
     return(
         <ScrollView>
             <View style = {styles.header}>
-                <Pressable style = {{paddingRight: 30, size: 30, marginTop:20}} onPress={() => {navigation.goBack(null)}}>
+              <View style = {{ flexDirection: 'row', margin: 20, marginTop: 25}}>
+                <Pressable style = {{paddingRight: 30, size: 30}} onPress={() => {navigation.goBack(null)}}>
                                 <Ionicons name = 'arrow-back' color = 'white' size={25}/>
                     </Pressable>
-                    <Text style = {{color:'white', fontSize: 20, marginTop:20}}> Tao chuyen khoan</Text>
+                    <Text style = {{color:'white', fontSize: 18, fontWeight:'bold', marginRight:5}}>Tạo chuyển khoản</Text>
+              </View>
             </View>
             <View>
                 <Modal
@@ -198,7 +200,7 @@ const Transfer = ({navigation}) => {
                     {acctionTrigger === 'taikhoanchuyen' ?
                    <View style = {styles.showContainer}>
                         <View style ={styles.showContainerCenter}>
-                            <Text style = {{marginLeft : 15, marginTop :10, fontSize:20}}>Chon tai khoan</Text>
+                            <Text style = {{marginLeft: 20, marginTop: 15, fontSize:20}}>Chọn tài khoản</Text>
                             <ScrollView>
                                 <View>
                                     <RadioButtonRN 
@@ -210,7 +212,7 @@ const Transfer = ({navigation}) => {
                             </ScrollView>
                             
                         <Pressable onPress = {() => setModalVisible(!modalVisible)}>
-                            <Text style = {{fontSize:15, color:'green', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:10}}> Chon </Text>
+                            <Text style = {{fontSize:17, color:'green', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:15}}> Chọn </Text>
                         </Pressable>
                          </View>
                    
@@ -219,7 +221,7 @@ const Transfer = ({navigation}) => {
                     : acctionTrigger === 'taikhoannhan' ? 
                     <View style = {styles.showContainer}>
                     <View style ={styles.showContainerCenter}>
-                        <Text style = {{marginLeft : 15, marginTop :10, fontSize:20}}>Chon tai khoan</Text>
+                        <Text style = {{marginLeft: 20, marginTop: 15, fontSize:20}}>Chọn tài khoản</Text>
                         <ScrollView>
                             <View>
                                 <RadioButtonRN 
@@ -231,7 +233,7 @@ const Transfer = ({navigation}) => {
                         </ScrollView>
                         
                     <Pressable onPress = {() => setModalVisible(!modalVisible)}>
-                        <Text style = {{fontSize:15, color:'green', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:10}}> Chon </Text>
+                    <Text style = {{fontSize:17, color:'green', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:15}}> Chọn </Text>
                     </Pressable>
                      </View>
                
@@ -280,7 +282,7 @@ const Transfer = ({navigation}) => {
                       
                 }}
                 >
-                    <Text style={styles.title}>Chuyen tu tai khoan</Text>
+                    <Text style={styles.title}>Chuyển từ tài khoản</Text>
                     <Text style={{marginLeft: 18, marginBottom: 5, fontSize: 18, color: '#4CA07C'}}>{GetTenViByMaVi(WalletChoose_CH)}</Text>   
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -290,19 +292,19 @@ const Transfer = ({navigation}) => {
                     setAcctionTrigger('taikhoannhan');
                     }}
                 >
-                    <Text style={styles.title}>Chuyen vao tai khoan</Text>
+                    <Text style={styles.title}>Chuyển vào tài khoản</Text>
                     <Text style={{marginLeft: 18, marginBottom: 5, fontSize: 18, color: '#4CA07C'}}>{GetTenViByMaVi(WalletChoose_NH)}</Text>   
                 </TouchableOpacity>
 
                 <View>
                     <Text style = {styles.title}>
-                        So tien chuyen khoan
+                        Số tiền chuyển khoản
                     </Text>
                     <View style = {{ 
                         flexDirection: 'row', 
                         // textAlign: 'center',
                         marginLeft: 18,
-                        marginTop: 10,
+                        // marginTop: 10,
                     }}>
 
 
@@ -318,7 +320,7 @@ const Transfer = ({navigation}) => {
                 </View>
                 <View>
                     <Text style = {[styles.title]}>
-                        Ngay
+                        Ngày
                     </Text>
                     <Pressable
                       onPress={() => {
@@ -358,11 +360,12 @@ const Transfer = ({navigation}) => {
 
 
 const styles = StyleSheet.create({
-    header: {
+      header:{
         height : Dimensions.get('window').height * 0.1,
         width: Dimensions.get('window').width,
         backgroundColor: '#54b38a',
-        flexDirection:'row'
+        borderBottomLeftRadius:40,
+        borderBottomRightRadius:40,
     },
     inputText: {
       fontSize: 25, 
@@ -370,7 +373,7 @@ const styles = StyleSheet.create({
       borderBottomColor:'#4CA07C',
       width: 125,
       marginRight: 5,
-      marginBottom: 30,
+      marginBottom: 15,
       textAlign:'center',
     },
     title: {
