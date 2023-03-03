@@ -27,8 +27,9 @@ import Add from './Add';
 
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
-const CreateCategory = ({ navigation }) => {
-
+const CreateCategory = ({ route, navigation }) => {
+  const {Thu} = route.params;
+  console.log(Thu)
   const [iconName, setIconName] = useState('help');
   const [iconType, setIconType] = useState('ionicon')
   const [iconColor, setIconColor] = useState('#A8ADAB');
@@ -68,7 +69,7 @@ const CreateCategory = ({ navigation }) => {
                   [
                     {
                       text: 'Ok',
-                      onPress: () => navigation.navigate('Categories'),
+                      onPress: () => navigation.goBack(),
                     },
                   ],
                   {cancelable: false},
@@ -156,6 +157,7 @@ const CreateCategory = ({ navigation }) => {
           <RadioButtonRN 
               data={data}
               box={false}
+              initial = {Thu ? 2 : 1}
               activeColor='#54b38a'
               selectedBtn={(e) => setIsIncome(e.thu)}
           />

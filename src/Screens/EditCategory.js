@@ -27,19 +27,83 @@ const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation :
 const EditCategory = ({ navigation, route }) => {
 
   const {iconEdit} = route.params;
-  // const [iconName, setIconName] = useState('help');
-  const [iconColor, setIconColor] = useState('#A8ADAB');
-  // const [color, setColor] = useState('');
-
+  console.log(iconEdit)
+  const [iconName, setIconName] = useState('');
+  const [iconType, setIconType] = useState('')
+  const [iconColor, setIconColor] = useState(iconEdit.Color);
+  const [icon, setIcon] = useState(iconEdit.Icon)
+  const [color, setColor] = useState('');
+  const [isIncome, setIsIncome] = useState()
+  const [tenDM, setTenDM] = useState(iconEdit.TenDanhMuc)
   const onColorChange = iconColor => {
     setIconColor(iconColor);
   };
-
   const data = [
-    { label: 'Chi phí' },
-    { label: 'Thu nhập' }
+    { label: 'Chi phí', thu: 0 },
+    { label: 'Thu nhập', thu: 1 }
   ];
+  let listItemView = (item) => {
+    return (
+        <View style={{flexDirection:'column', marginHorizontal:8}}>
+          <Button
+            buttonStyle={{
+              backgroundColor: 'transparent',
+              width: 80, height: 80,
+              borderRadius: 10,
+            }}
+            icon={
+              <Icon
+                reverse 
+                type={item.type}
+                size={30}
+                name={item.name}
+                color={iconColor}
+              />
+            }
+            onPress={() => {setIconName(item.name), setIconType(item.type), setIcon(item.title)}}
 
+          />
+        </View>
+      );
+    };
+    const UpdateCate = async () =>{
+      if (tenDM.length == 0){
+          Alert.alert('Vui lòng điền đầy đủ thông tin trước khi thêm giao dịch!!!')
+      }
+      else {
+          try{
+            await db.transaction(async (tx)=> {
+              console.log(tenDM,isIncome,iconColor, icon, iconEdit.MaDanhMuc)
+              await tx.executeSql(
+              "UPDATE DANHMUC set TenDanhMuc = ?, ThuChi = ?, Color = ?, Icon = ? WHERE MaDanhMuc = ?",
+              [tenDM,isIncome,iconColor, icon, iconEdit.MaDanhMuc],
+              (tx, results) => {
+                console.log('Results', results.rowsAffected);
+                if (results.rowsAffected > 0) {
+                  Alert.alert(
+                    'Success',
+                    'Danh mục đã được thay đổi',
+                    [
+                      {
+                        text: 'Ok',
+                        onPress: () => navigation.goBack(),
+                      },
+                    ],
+                    {cancelable: false},
+                  );
+                } else Alert.alert('Hệ thống đang xử lý.');
+              },
+              )
+            })
+          }
+          catch (error){
+            console.log('error')
+          }
+          
+          // setModifine(!modifine)
+      }
+  }  
+  
   return(
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style = {{backgroundColor: '#ffffff', flex:1}}>
@@ -48,7 +112,7 @@ const EditCategory = ({ navigation, route }) => {
       <View style = {styles.header}>
         <View style = {{ flexDirection: 'row', margin: 20, marginTop: 25}}>
 
-          <Pressable style = {{paddingRight: 30, size: 30}} onPress={() => {navigation.navigate('Danh mục')}}>
+          <Pressable style = {{paddingRight: 30, size: 30}} onPress={() => {navigation.goBack()}}>
             <Ionicons name = 'arrow-back' color = 'white' size={25}/>
           </Pressable>
 
@@ -71,16 +135,16 @@ const EditCategory = ({ navigation, route }) => {
           <Icon
               reverse
               //name={iconName}
-              type={getItem(iconEdit.Icon, ListIcon)[0]}
-              name={getItem(iconEdit.Icon, ListIcon)[1]}
-              color={iconEdit.Color}
+              type={iconType == '' ? getItem(iconEdit.Icon, ListIcon)[0]: iconType}
+              name={iconName == '' ? getItem(iconEdit.Icon, ListIcon)[1] :iconName}
+              color={iconColor== '' ? iconEdit.Color : iconColor}
               size={20}
             />
           <TextInput
             style={styles.inputText}
             defaultValue={iconEdit.TenDanhMuc}
             // placeholder='Tên danh mục'
-            // onChangeText={}
+            onChangeText={(newText) => {setTenDM(newText)}}
           />
         </View>
 
@@ -88,14 +152,15 @@ const EditCategory = ({ navigation, route }) => {
           <RadioButtonRN 
               data={data}
               box={false}
+              initial = {iconEdit.ThuChi == 1 ? 2 : 1}
               activeColor='#54b38a'
-              selectedBtn={(e) => console.log(e)}
+              selectedBtn={(e) => setIsIncome(e.thu)}
           />
         </View>
         {/* end of danh muc */}
 
         {/* ke hoach chi tieu */}
-        <Text style={styles.title}>Kế hoạch chi tiêu</Text>
+        {/* <Text style={styles.title}>Kế hoạch chi tiêu</Text>
         <View style = {{ 
           flexDirection: 'row', 
           marginLeft: 18,
@@ -104,50 +169,27 @@ const EditCategory = ({ navigation, route }) => {
             style={styles.inputText2}
             placeholder='0'
             keyboardType="numeric"
-            // onChangeText={}
           />
 
           <Text style={{fontSize: 15, color:'#4CA07C', marginTop:10}}>VNĐ mỗi tháng</Text>
-        </View>
+        </View> */}
         {/* end of ke hoach chi tieu */}
 
         {/* bieu tuong */}
         <Text style={styles.title}>Biểu tượng</Text>
-        <View style={{
-          flexDirection:'row', 
-          flexWrap:'wrap', 
-          justifyContent:'space-between', 
-          alignContent: 'flex-start',
-          marginTop: 10,
-          marginHorizontal: 20,
-          maxWidth: 360}}>
-
-          <Icon reverse type='ionicon' size={30}
-            name='leaf'
-            color={iconColor}
-            onPress={() => setIconName('leaf')}
-          />
-          <Icon reverse type='ionicon' size={30}
-            name='library'
-            color={iconColor}
-            onPress={() => setIconName('library')}
-          />
-          <Icon reverse type='ionicon' size={30}
-            name='paw'
-            color={iconColor}
-            onPress={() => setIconName('paw')}
-          />
-          <Icon reverse type='ionicon' size={30}
-            name='hammer'
-            color={iconColor}
-            onPress={() => setIconName('hammer')}
-          />
-          <Icon reverse type='ionicon' size={30}
-            name='earth'
-            color={iconColor}
-            onPress={() => setIconName('earth')}
-          />
-        </View>
+        <SafeAreaView style={{flex: 1}}>
+                <View style={{flex: 1}}>
+                    <FlatList 
+                        contentContainerStyle={{justifyContent:'center', alignItems:'flex-start', alignSelf:'center'}}
+                        horizontal={false}
+                        numColumns = {4}
+                        data={ListIcon}
+                        scrollEnabled= {false}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({item}) => listItemView(item)}
+                    />
+                 </View>
+      </SafeAreaView>
         {/* end of bieu tuong */}
 
         {/* mau sac */}
@@ -166,7 +208,7 @@ const EditCategory = ({ navigation, route }) => {
         {/* end of mau sac */}
 
       </ScrollView>
-      <TouchableOpacity style={styles.floatingButton}>
+      <TouchableOpacity style={styles.floatingButton} onPress = {()=>UpdateCate()}>
           <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Lưu</Text>
       </TouchableOpacity>
 

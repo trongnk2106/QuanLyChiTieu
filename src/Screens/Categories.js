@@ -150,7 +150,7 @@ let listItemView = (item) => {
             />
           }
           onPress={() => {
-            item.Icon == 'Tao' ? navigation.navigate('CreateCategory') : 
+            item.Icon == 'Tao' ? navigation.navigate('CreateCategory', {Thu: isIncome }) : 
                             navigation.navigate('EditCategory',{iconEdit:item}) 
           }}
         />

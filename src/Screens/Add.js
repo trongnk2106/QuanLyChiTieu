@@ -19,6 +19,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import { onChange } from 'react-native-reanimated';
 import { Icon, Button } from 'react-native-elements'
 import SwitchButton from "@freakycoder/react-native-switch-button";
+import { NavigationContainer, useIsFocused } from '@react-navigation/native';
 import { Agenda, Calendar } from 'react-native-calendars';
 import Categories from './Categories'
 import RadioButtonRN from 'radio-buttons-react-native';
@@ -142,12 +143,6 @@ const Add = ({route, navigation }) => {
         )
     } 
 
-  const test = ()=>{
-    var x = new Date().toString()
-    x =x.replaceAll(' ','')
-    x ='GD' + x.replaceAll(':','').slice(0,17)
-    console.log(x)
-  }
   const setData = async () =>{
     if (Date_s.length == 0 || Tien == 0 || WalletChoose.length == 0 || MaDanhMuc.length == 0 ||WalletChoose == 'Vi00'){
         Alert.alert('Vui lòng điền đầy đủ thông tin trước khi thêm giao dịch!!!')
@@ -194,13 +189,14 @@ const Add = ({route, navigation }) => {
         // setModifine(!modifine)
     }
 }
-  useEffect(()=>{
-    test()
-    GetCategories()
-    // showCate(true)
-  }, [])
 
-  
+  const isFocused = useIsFocused()
+
+    useEffect(() => {
+        if(isFocused){
+            GetCategories()
+        }
+    }, [isFocused])
   return(
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style = {{backgroundColor: '#ffffff', flex:1}}>

@@ -6,6 +6,7 @@ import Home from './Home';
 import Add from './Add';
 import Categories from './Categories';
 import CreateCategory from './CreateCategory';
+import EditCategory from './EditCategory';
 const Stack = createNativeStackNavigator();
 
 function CategoriesStack() {
@@ -13,6 +14,7 @@ function CategoriesStack() {
     <Stack.Navigator screenOptions={{headerShown : false}}>
         <Stack.Screen name="Categories" component={Categories} />
         <Stack.Screen name = 'CreateCategory' component={CreateCategory} />
+        <Stack.Screen name = 'EditCategory' component={EditCategory} />
     </Stack.Navigator>
   );
 }
