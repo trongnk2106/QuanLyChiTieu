@@ -22,15 +22,17 @@ const Transfer_History = ({route, navigation}) => {
 
     const Display_View = () => {
         return(
-            <View style = {{flexDirection:'row', justifyContent:'space-between'}}>
+            <View style = {{flexDirection:'row', justifyContent:'space-between', marginHorizontal:15, marginTop:10}}>
                     <View style = {{marginTop:10}}>
-                        <Text> {TGian}</Text>
-                        <Text> {TKChuyen}</Text>
-                        <Ionicons name = 'arrow-down-outline' size = {20} style = {{marginLeft: 40}}></Ionicons>
-                        <Text> {TKNhan}</Text>
+                        <Text style={{marginBottom:3}}> {TGian}</Text>
+                        <View style={{alignItems:'center'}}>
+                            <Text style={{color:'black'}}> {TKChuyen}</Text>
+                            <Ionicons name = 'arrow-down-outline' size = {20} color='black'></Ionicons>
+                            <Text style={{color:'black'}}> {TKNhan}</Text>
+                        </View>
                     </View>
                     <View >
-                        <Text style = {{marginTop:50}}> {sotien}</Text>
+                        <Text style = {{marginTop:50, color:'black'}}> {sotien}</Text>
                     </View>
                 </View>
         )
@@ -39,20 +41,21 @@ const Transfer_History = ({route, navigation}) => {
     return (
        <View style= {{backgroundColor:'#edece8'}}>
             <View style = {styles.header}>
-                <Pressable style = {{paddingRight: 30, size: 30, marginTop:20}} onPress={() => {navigation.goBack(null)}}>
+                <View style = {{flexDirection:'row', marginTop:25, margin:20}}>
+                <Pressable style = {{paddingRight: 30, size: 30}} onPress={() => {navigation.goBack(null)}}>
                                 <Ionicons name = 'arrow-back' color = 'white' size={25}/>
                     </Pressable>
-                <Text style = {{color:'white', fontSize: 20, marginTop:20}}> Chuyen khoan</Text>
+                <Text style = {{color:'white', fontSize:18, fontWeight:'bold', marginRight: 5}}>Lịch sử chuyển khoản</Text>
+                </View>
             </View>
-            <View style = {styles.showContainerCenter}>
+            <ScrollView 
+                style = {styles.showContainerCenter}>
                 
                 <Display_View/>    
                 <Display_View/>    
-
                 <Display_View/>    
 
-
-            </View>
+            </ScrollView>
        
        </View>
     )
@@ -65,8 +68,8 @@ const styles = StyleSheet.create({
         height : Dimensions.get('window').height * 0.1,
         width: Dimensions.get('window').width,
         backgroundColor: '#54b38a',
-        flexDirection:'row'
-
+        borderBottomLeftRadius:40,
+        borderBottomRightRadius:40,
     },
     title: {
         marginLeft: 18,
@@ -117,16 +120,11 @@ const styles = StyleSheet.create({
       },
       showContainerCenter:{
         backgroundColor : 'white',
-        // flexDirection:'column',
-        // marginTop : Dimensions.get('window').height * 0.2,
-        
-        width : Dimensions.get('window').width ,
+        width : Dimensions.get('window').width - 30,
         height : Dimensions.get('window').height * 0.8,
         borderRadius:20,
         marginTop: 20,
-        // alignItems: 'center',
-        // justifyContent: 'center',
-        // alignItems:'center'
+        alignSelf: 'center'
     },
 
 })

@@ -450,6 +450,7 @@ const styles = StyleSheet.create({
       borderBottomWidth: 0.8,
       borderBottomColor:'#4CA07C',
       marginLeft: 20,
+      marginBottom: 85
     },
     floatingButton: {
       width: 160,  
