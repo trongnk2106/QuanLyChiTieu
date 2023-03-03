@@ -15,7 +15,8 @@ function HomeStack() {
         <Stack.Screen name = "ViewDetail" component={ViewDetail} />
         <Stack.Screen name = "EditTransaction" component={EditTransaction} />
         <Stack.Screen name="Thêm giao dịch" component={Add} />
-        <Stack.Screen name = 'Thêm danh mục' component={CreateCategory} />
+        {/* <Stack.Screen name = 'Thêm danh mục' component={CreateCategory} /> */}
+        <Stack.Screen name = 'CreateCategory' component={CreateCategory} />
 
     </Stack.Navigator>
   );

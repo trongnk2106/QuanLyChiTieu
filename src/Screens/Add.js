@@ -23,7 +23,7 @@ import { Agenda, Calendar } from 'react-native-calendars';
 import Categories from './Categories'
 import RadioButtonRN from 'radio-buttons-react-native';
 
-import {ListIncomeCategory, ListExpenseCategory} from '../Small_Components/Icon';
+import {ListIncomeCategory, ListExpenseCategory, ListIcon, getItem} from '../Small_Components/Icon';
 
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
@@ -88,42 +88,43 @@ const Add = ({route, navigation }) => {
         <View style={{flexDirection:'column', marginHorizontal:8}}>
           <Button
             buttonStyle={{
-              backgroundColor: MaDanhMuc === item.title ? item.iconColor : 'transparent',
+              backgroundColor: MaDanhMuc == item.MaDanhMuc ? item.Color : 'transparent',
               width: 80, height: 80,
               borderRadius: 10,
             }}
             icon={
               <Icon
-                reverse 
-                type={item.type}
-                size={30}
-                name={item.name}
-                color={item.iconColor}
+              reverse 
+              type={getItem(item.Icon, ListIcon)[0]}
+              size={30}
+              name={getItem(item.Icon, ListIcon)[1]}
+              color={item.Color}
               />
             }
             onPress={() => {
-              // item.title == 'Xem thêm' ? navigation.navigate('ShowMoreCategories',{moneyType:isIncome,cateName:MaDanhMuc}) 
-              //               : setMadanhMuc(item.title)
-              item.title == 'Tạo' ? navigation.navigate('CreateCategory') : setMadanhMuc(item.title)
+              item.Icon == 'Tao' ? navigation.navigate('CreateCategory') : setMadanhMuc(item.MaDanhMuc)
             }}
           />
           <Text style={{
             textAlign:'center', 
             marginTop: 1,
             marginBottom: 8, 
-            color:item.iconColor,
-            fontWeight:'bold'}}>{item.title}</Text>
+            color:item.Color,
+            fontWeight:'bold'}}>{item.TenDanhMuc}</Text>
         </View>
     );
   };
 
-
-const showCate = (isIncome)=>{
-  if (Categories.length > 0) {
-    var data = []    
-    for (let i = 0; i < Categories.length; i++)
-      if (Categories[i].ThuChi == isIncome)
-        data.push(Categories[i])
+  const showCate = (isIncome)=>{
+    if (Categories.length > 0){
+      var data = []
+      for (let i = 0; i < Categories.length; i++){
+        if (Categories[i].ThuChi == isIncome)
+          data.push(Categories[i])
+      }
+      var x = {"Color": "#C0C0C0", "Icon": "Tao", "MaDanhMuc": "xxx", "TenDanhMuc": "Tạo", "ThuChi": 1}
+      data.push(x)
+    }  
     return(
             <SafeAreaView style={{flex: 1}}>
                 <View style={{flex: 1}}>
@@ -131,7 +132,7 @@ const showCate = (isIncome)=>{
                         contentContainerStyle={{justifyContent:'center', alignItems:'flex-start', alignSelf:'center'}}
                         horizontal={false}
                         numColumns = {4}
-                        data={isIncome ? ListIncomeCategory : ListExpenseCategory}
+                        data={data}
                         scrollEnabled= {false}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({item}) => listItemView(item)}
@@ -139,8 +140,8 @@ const showCate = (isIncome)=>{
                  </View>
             </SafeAreaView>
         )
-  }      
-}
+    } 
+
   const test = ()=>{
     var x = new Date().toString()
     x =x.replaceAll(' ','')
@@ -171,7 +172,7 @@ const showCate = (isIncome)=>{
               if (results.rowsAffected > 0) {
                 Alert.alert(
                   'Success',
-                  'You are Registered Successfully',
+                  'Thêm giao dịch thành công',
                   [
                     {
                       text: 'Ok',
@@ -180,7 +181,7 @@ const showCate = (isIncome)=>{
                   ],
                   {cancelable: false},
                 );
-              } else alert('Registration Failed');
+              } else Alert.alert('Hệ thống đang xử lý. Vui lòng thử lại sau.');
             },
             )
           })

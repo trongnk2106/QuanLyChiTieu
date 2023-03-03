@@ -23,23 +23,23 @@ import { Agenda, Calendar } from 'react-native-calendars';
 import RadioButtonRN from 'radio-buttons-react-native';
 import { NavigationContainer, useIsFocused } from '@react-navigation/native';
 
-import {ListIcon} from '../Small_Components/Icon';
+import {ListIcon, getItem} from '../Small_Components/Icon';
 
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
 
 const EditTransaction = ({route, navigation }) => {
-    const {data1} = route.params
-    console.log(data1)
+    const {data} = route.params
+    console.log(data)
     // const {DataListVi, MaVi} = route.params
     const [ListVi, setListVi] = useState([])
     const [modalVisible, setModalVisible] = useState(false);
     const [modalView, SetModalViewVisible] = useState(false)
-    const [isIncome, setIsIncome] = useState(data1.ThuChi);
-    const [Tien, setTien] = useState(data1.Tien);
-    const [WalletChoose, setWalletChoose] = useState(data1.MaVi);
-    const [Date_s, setdate] = useState(data1.Date)
-    const [MaDanhMuc, setMadanhMuc] = useState(data1.MaDanhMuc)
+    const [isIncome, setIsIncome] = useState(data.ThuChi);
+    const [Tien, setTien] = useState(data.Tien);
+    const [WalletChoose, setWalletChoose] = useState(data.MaVi);
+    const [Date_s, setdate] = useState(data.Date)
+    const [MaDanhMuc, setMadanhMuc] = useState(data.MaDanhMuc)
     const [GhiChu, setGhiChu] = useState('')
   
   // const [Date, setdate] = useState('');
@@ -141,53 +141,65 @@ const EditTransaction = ({route, navigation }) => {
     }
   }
   let listItemView = (item) => {
-        
     return (
-        <SwitchButton style={{marginLeft: 40}}
-            inactiveImageSource={getIcon(item.Icon)}
-            activeImageSource={getIcon(item.Icon)}
-            mainColor= {item.Color}
-            tintColor={item.Color}
-            text= {item.TenDanhMuc}
-            textStyle={{
-              color: item.Color,
-              fontWeight: "600",
-              marginLeft: 35,
-              marginBottom: 10
+        <View style={{flexDirection:'column', marginHorizontal:8}}>
+          <Button
+            buttonStyle={{
+              backgroundColor: MaDanhMuc == item.MaDanhMuc ? item.Color : 'transparent',
+              width: 80, height: 80,
+              borderRadius: 10,
             }}
-            onPress={() => setMadanhMuc(item.MaDanhMuc)}
-        />
+            icon={
+              <Icon
+              reverse 
+              type={getItem(item.Icon, ListIcon)[0]}
+              size={30}
+              name={getItem(item.Icon, ListIcon)[1]}
+              color={item.Color}
+              />
+            }
+            onPress={() => {
+              // item.title == 'Xem thêm' ? navigation.navigate('ShowMoreCategories',{moneyType:isIncome,cateName:MaDanhMuc}) 
+              //               : setMadanhMuc(item.title)
+              item.Icon == 'Tao' ? navigation.navigate('CreateCategory') : setMadanhMuc(item.MaDanhMuc)
+            }}
+          />
+          <Text style={{
+            textAlign:'center', 
+            marginTop: 1,
+            marginBottom: 8, 
+            color:item.Color,
+            fontWeight:'bold'}}>{item.TenDanhMuc}</Text>
+        </View>
     );
   };
 
-
-const showCate = (isIncome)=>{
-  if (Categories.length > 0) {
-    var data = []    
-    for (let i = 0; i < Categories.length; i++)
-      if (Categories[i].ThuChi == isIncome)
-        data.push(Categories[i])
+  const showCate = (isIncome)=>{
+    if (Categories.length > 0){
+      var data = []
+      for (let i = 0; i < Categories.length; i++){
+        if (Categories[i].ThuChi == isIncome)
+          data.push(Categories[i])
+      }
+      var x = {"Color": "#C0C0C0", "Icon": "Tao", "MaDanhMuc": "xxx", "TenDanhMuc": "Tạo", "ThuChi": 1}
+      data.push(x)
+    }  
     return(
             <SafeAreaView style={{flex: 1}}>
-
                 <View style={{flex: 1}}>
-                    <FlatList
+                    <FlatList 
+                        contentContainerStyle={{justifyContent:'center', alignItems:'flex-start', alignSelf:'center'}}
                         horizontal={false}
                         numColumns = {4}
                         data={data}
                         scrollEnabled= {false}
-                        // ItemSeparatorComponent={listViewItemSeparator}
                         keyExtractor={(item, index) => index.toString()}
-                        renderItem={({item}) =>listItemView(item)}
-                />
+                        renderItem={({item}) => listItemView(item)}
+                    />
                  </View>
-        
             </SafeAreaView>
-            
         )
-    
-        }      
-}
+    } 
   const test = ()=>{
     var x = new Date().toString()
     x =x.replaceAll(' ','')
@@ -209,7 +221,7 @@ const showCate = (isIncome)=>{
           await db.transaction(async (tx)=> {
             await tx.executeSql(
             "UPDATE GIAODICH set MaVi= ?, Tien= ?, Date= ?, MaDanhMuc= ?, GhiChu= ? WHERE MaGD = ?",
-            [WalletChoose,newMoney,Date_s, MaDanhMuc, GhiChu, data1.MaGD],
+            [WalletChoose,newMoney,Date_s, MaDanhMuc, GhiChu, data.MaGD],
             (tx, results) => {
               console.log('Results', results.rowsAffected);
               if (results.rowsAffected > 0) {
@@ -219,12 +231,12 @@ const showCate = (isIncome)=>{
                   [
                     {
                       text: 'Ok',
-                      onPress: () => navigation.navigate('Home'),
+                      onPress: () => navigation.goBack(),
                     },
                   ],
                   {cancelable: false},
                 );
-              } else alert('Registration Failed');
+              } else Alert.alert('Hệ thống đang xử lý.');
             },
             )
           })
@@ -343,7 +355,7 @@ const showCate = (isIncome)=>{
           // multiline={true}
           // numberOfLines={15}
           onChangeText={newghichu => setGhiChu(newghichu)}
-          defaultValue={data1.GhiChu}
+          defaultValue={data.GhiChu}
       />
 
       {/* <Text style={styles.title}>Ảnh</Text> */}

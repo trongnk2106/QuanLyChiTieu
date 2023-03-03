@@ -19,7 +19,7 @@ import { onChange } from 'react-native-reanimated';
 import { Icon, Button } from 'react-native-elements'
 import RadioButtonRN from 'radio-buttons-react-native';
 import ColorPicker from 'react-native-wheel-color-picker';
-
+import { ListIcon, getItem } from '../Small_Components/Icon';
 
 
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
@@ -27,7 +27,7 @@ const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation :
 const EditCategory = ({ navigation, route }) => {
 
   const {iconEdit} = route.params;
-  const [iconName, setIconName] = useState('help');
+  // const [iconName, setIconName] = useState('help');
   const [iconColor, setIconColor] = useState('#A8ADAB');
   // const [color, setColor] = useState('');
 
@@ -71,14 +71,14 @@ const EditCategory = ({ navigation, route }) => {
           <Icon
               reverse
               //name={iconName}
-              name={iconEdit.name}
-              type={iconEdit.type}
-              color={iconEdit.iconColor}
+              type={getItem(iconEdit.Icon, ListIcon)[0]}
+              name={getItem(iconEdit.Icon, ListIcon)[1]}
+              color={iconEdit.Color}
               size={20}
             />
           <TextInput
             style={styles.inputText}
-            defaultValue={iconEdit.title}
+            defaultValue={iconEdit.TenDanhMuc}
             // placeholder='Tên danh mục'
             // onChangeText={}
           />
@@ -89,7 +89,7 @@ const EditCategory = ({ navigation, route }) => {
               data={data}
               box={false}
               activeColor='#54b38a'
-              // selectedBtn={(e) => console.log(e)}
+              selectedBtn={(e) => console.log(e)}
           />
         </View>
         {/* end of danh muc */}

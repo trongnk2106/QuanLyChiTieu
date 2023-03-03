@@ -4,16 +4,39 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import RadioButtonRN from 'radio-buttons-react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import EditTransaction from './EditTransaction';
-import { ListIcon, getIcon } from './Icon';
+import { NavigationContainer, useIsFocused } from '@react-navigation/native';
+import { ListIcon, getItem } from './Icon';
 import { openDatabase } from 'react-native-sqlite-storage';
+import { Icon } from 'react-native-elements';
+
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
+
+// Chi tiết giao dịch được chọn
 const ViewDetail = ({route, navigation}) => {
-    const {data0, data1} = route.params
+    const {MaGD} = route.params
     const [modalEdit, setModalEdit] = useState(false);
     const [ListVi, setListVi] = useState([])
-    const [ListDanhMuc, SetListDanhMuc] = useState([])
+    const [data, setData] = useState('')
 
+    // Lấy chi tiết giao dịch được chọn --> data
+    const getGD =async () =>{
+        console.log('check')   
+        await db.transaction(async (tx) =>{
+            await tx.executeSql(
+                `SELECT * FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND GIAODICH.MaGD == '${MaGD}'`,
+                [],
+            (tx, results) =>{
+                for (let i = 0; i < results.rows.length; i++){
+                    var a = results.rows.item(i)
+                    console.log(a)
+                    setData(a)
+                }
+                // setdata(a)
+            }
+            )
+        })
+    }
 
     const getListVi = async () =>{    
         await db.transaction(async (tx) =>{
@@ -31,30 +54,12 @@ const ViewDetail = ({route, navigation}) => {
             )
         })
     }
-    const GetListDanhMuc = async () =>{
-        await db.transaction(async (tx) =>{
-            var List = []
-            await tx.executeSql(
-              "SELECT * FROM DANHMUC",
-              [],
-              async (tx, results) =>{
-                var sum = 0
-                for (let i = 0; i < results.rows.length; i++){
-                    var a = results.rows.item(i)
-                    List.push(a)
-                }
-                SetListDanhMuc(List)
-              }
-            )
-            
-        })
-    }
     const Delete = async () =>{
-        console.log(data1.MaGD)    
+        console.log(data.MaGD)    
         await db.transaction(async (tx) =>{
             await tx.executeSql(
             `DELETE FROM GIAODICH WHERE MaGD = ?`,
-            [data1.MaGD],
+            [data.MaGD],
             (tx, results) => {
                 console.log('Results', results.rowsAffected);
                 if (results.rowsAffected > 0) {
@@ -64,7 +69,7 @@ const ViewDetail = ({route, navigation}) => {
                     [
                       {
                         text: 'Ok',
-                        onPress: () => navigation.navigate('Home'),
+                        onPress: () => navigation.goBack(),
                       },
                     ],
                     {cancelable: false},
@@ -76,12 +81,19 @@ const ViewDetail = ({route, navigation}) => {
             )
         })
     }
-    useEffect(() => {
-        getListVi()
-        GetListDanhMuc()
-      }, [])
-    const getTenVi = (MaVi) =>{
+    // useEffect(() => {
+    //     getListVi()
 
+    //   }, [])
+    const isFocused = useIsFocused()
+
+      useEffect(() => {
+          if(isFocused){
+            getListVi()
+            getGD()
+          }
+      }, [isFocused])  
+    const getTenVi = (MaVi) =>{
         if (MaVi == 'Vi00')
             return 'Ví tổng'
         else if (ListVi.length > 0){
@@ -90,36 +102,15 @@ const ViewDetail = ({route, navigation}) => {
                     return ListVi[i].TenVi
         }
     }
-    const GetTenDanhMuc = (MaDM) => {
-        if (ListDanhMuc.length > 0)
-            for (let  i = 0; i < ListDanhMuc.length; i++)
-                if (ListDanhMuc[i].MaDanhMuc == MaDM)
-                    return ListDanhMuc[i].TenDanhMuc
-    }
-    const AlerBottom = () => {
-        Alert.alert('Canh bao','Ban co chac chan muon xoa giao dich khong', [
-            {
-                text: 'Roll Back',
-                onPress: () => {
-                    console.log('quay tro lai')
-                    setModalEdit(!modalEdit)
-                }
-            },
-            {
-              text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
-              style: 'cancel',
-            },
-            {text: 'OK', onPress: () => {
-                console.log('da luu thay doi')
-                setModalEdit(!modalEdit)}},
-          ]);
-    }
+
     const changeFormatDate = (day)  =>{
+        if (day !=null){
         var yyyy = day.slice(0,4)
         var mm = Number(day.slice(5,7))
         var dd = Number(day.slice(8,10))
         return ( dd + ' tháng ' + mm + ', ' + yyyy)
+        }
+        return []
     }
 
 
@@ -132,32 +123,8 @@ const ViewDetail = ({route, navigation}) => {
                         <Ionicons name='md-arrow-back' color='white' size={30} style={{marginLeft:10}}/>
                     </Pressable>
                     
-                    <Text style= {{color:'white', fontSize:20}}> Chi tiet giao dich </Text>
-
-                    {/* <Modal
-                    animationType='slide'
-                    transparent={false}
-                    visible = {modalEdit}
-                    onRequestClose={() => setModalEdit(!modalEdit)}
-                    >
-
-                        <EditTransaction data = {data}
-                        TenTK = {getTenVi(data.MaVi)}
-                        />
-
-                        <Pressable onPress ={() => {
-                            AlerBottom()
-                        }}> 
-                            <Text style = {{textAlign:'center'}}> Luu </Text>
-                        </Pressable>
-
-
-                    </Modal> */}
-                    {/* <Pressable onPress = { () => setModalEdit(true)}>
-                        <Ionicons name ='md-pencil' color='white' size={30} style={{marginRight:10}}/>
-                    </Pressable> */}
-                    <Pressable onPress={() => navigation.navigate('EditTransaction', {data0:data0, data1: data1, 
-                    TenTK: getTenVi(data1.MaVi) })}>
+                    <Text style= {{color:'white', fontSize:20}}>  Chi tiết giao dịch </Text>
+                    <Pressable onPress={() => navigation.navigate('EditTransaction', {data: data })}>
                         <Ionicons name ='md-pencil' color='white' size={30} style={{marginRight:10}}/>
                     </Pressable>
                    
@@ -167,24 +134,30 @@ const ViewDetail = ({route, navigation}) => {
             <View>
                 <View>
                     <Text> Số tiền</Text>
-                    <Text> {new Intl.NumberFormat().format(data1.Tien) + ' ₫'}</Text>
+                    <Text> {new Intl.NumberFormat().format(data.Tien) + ' ₫'}</Text>
                 </View>
                 <View>
                     <Text> Tài khoản</Text>
-                    <Text> {getTenVi(data1.MaVi)}</Text>
+                    <Text> {getTenVi(data.MaVi)}</Text>
                 </View>
                 <View>
                     <Text> Danh mục</Text>
                     <View style = {{flexDirection : 'row',alignItems:'center', marginLeft:5, marginRight : 5}}>
-                        {getIcon(data1.Icon, data1.Color, ListIcon)}
+                    <Icon
+                        reverse 
+                        type={getItem(data.Icon, ListIcon)[0]}
+                        size={20}
+                        name={getItem(data.Icon, ListIcon)[1]}
+                        color={data.Color}
+                        />
 
-                        <Text style = {{fontSize : 17}}>    {data1.TenDanhMuc} </Text>
-                        <Text  style={{fontSize: 17, textAlign:'right', flex:1}} >{new Intl.NumberFormat().format(data1.Tien)}₫ </Text>
+                        <Text style = {{fontSize : 17}}>    {data.TenDanhMuc} </Text>
+                        <Text  style={{fontSize: 17, textAlign:'right', flex:1}} >{new Intl.NumberFormat().format(data.Tien)}₫ </Text>
                     </View>
                 </View>
                 <View>
                     <Text> Ngày</Text>
-                    <Text> {changeFormatDate(data1.Date)}</Text>
+                    <Text> {changeFormatDate(data.Date)}</Text>
                 </View>
             </View>
             <Button

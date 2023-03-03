@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, Modal, Pressable, Button, SafeAreaView, FlatList, Image} from 'react-native'
+import {Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, Modal, Pressable, SafeAreaView, FlatList, Image} from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import RadioButtonRN from 'radio-buttons-react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -10,7 +10,9 @@ import { TimeDatePicker } from 'react-native-time-date-picker';
 import { openDatabase } from 'react-native-sqlite-storage';
 import { NavigationContainer, useIsFocused } from '@react-navigation/native';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import {ListIcon, getIcon} from '../Small_Components/Icon';
+import {ListIcon, getIcon, getItem} from '../Small_Components/Icon';
+import { Button, Icon } from 'react-native-elements';
+
 import moment from 'moment';
 // import ViewDetail from '../Small_Components/ViewDetail';
 import ViewDetail_Type from './ViewDetail_Type';
@@ -160,7 +162,6 @@ const Home = ({ navigation }) => {
                 var sum = 0
                 for (let i = 0; i < results.rows.length; i++){
                     var a = results.rows.item(i)
-                    console.log(a)
                     sum += a["SUM(Tien)"]
                     for (let i = 1; i < List.length; i++){
                         if (List[i].MaVi == a.MaVi)
@@ -168,7 +169,6 @@ const Home = ({ navigation }) => {
                     }
                 }
                 List[0].SoDu = List[0].Tien + sum
-                console.log(List)
                 setListVi(List)
               }
             )
@@ -206,10 +206,11 @@ const Home = ({ navigation }) => {
                   [],
                   async (tx, results) =>{
                     var sum = 0
+                    console.log(results.rows.length)
                     for (let i = 0; i < results.rows.length; i++){
                         var a = results.rows.item(i)
-                        console.log(a)
                         List.push(a)
+                        console.log(a)
                         // List[i].MaVi = 'Vi00'
                         
                     }
@@ -272,7 +273,7 @@ const Home = ({ navigation }) => {
         await db.transaction(async (tx)=> {
             await tx.executeSql(
                 "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Date, MaDanhMuc, GhiChu ) VALUES(?,?,?,?,?,?)",
-            ['GD01', 'Vi01', 50000,'2023/22/02', 'MDMDichuyen', '']
+            ['GD01', 'Vi01', 50000,'2023/22/02', 'DMDiChuyen', '']
             )
             console.log(1)
             // await tx.executeSql(
@@ -331,8 +332,8 @@ const Home = ({ navigation }) => {
         Get()
         // AddDM()
         // getSoduVi()
-        
-        GetListWallet()
+        // AddGD()
+        // GetListWallet()
         // GetGDByMaViGrByMaDanhMuc('Vi01', 1)
       }, [])
     useEffect(() => {
@@ -351,21 +352,29 @@ const Home = ({ navigation }) => {
 
 
      let listItemView = (item) => {
-        
         return (
+            
             <Pressable
+
             onPress={() => { 
                 navigation.navigate('ViewDetail_Type', {data : item})
             }}
             style = {styles.Row_view}
             >   
-                {getIcon(item.Icon, item.Color, ListIcon)}
+
+            <Icon
+              reverse 
+              type={getItem(item.Icon, ListIcon)[0]}
+              size={20}
+              name={getItem(item.Icon, ListIcon)[1]}
+              color={item.Color}
+            />
                 <Text  style={{fontSize: 18, flex:1}}>  {item.TenDanhMuc}</Text>
                 <Text  style={{fontSize: 18, textAlign:'right', flex:1}} >{new Intl.NumberFormat().format(item['SUM(Tien)'])}₫ </Text>
             </Pressable>
         );
       };
-
+      
 
     const show = ()=>{
         if (SelectedList != null){

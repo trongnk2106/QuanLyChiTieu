@@ -3,41 +3,45 @@ import {Text, View, StyleSheet, Dimensions , TouchableOpacity, Modal, Pressable,
 import { openDatabase } from 'react-native-sqlite-storage';
 import { Line } from 'react-native-svg';
 import { getUriFromSource } from 'react-native-svg/lib/typescript/LocalSvg';
+import { NavigationContainer, useIsFocused } from '@react-navigation/native';
+
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import {ListIcon, getIcon} from '../Small_Components/Icon';
+import {ListIcon, getItem} from '../Small_Components/Icon';
+import { Button, Icon } from 'react-native-elements';
 
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
 
 const ViewDetail_Type = ({route, navigation}) => {
-    // console.log(route.params)
     const {data} = route.params
     const [modalViewDetail, setModalViewDtail] = useState(false)
     const [List, setList] = useState([])
-    const [WalletChoose, setWalletChoose] = useState('Vi00')
-    const [SelectedGD, setSelectedGD] = useState('')
+    const [sum, setsum] = useState(0)
 
-    // console.log(data.MaVi)
-
+    // Lấy danh sách giao dịch theo ví đã chọn hoặc tất cả và theo danh mục --> List và tính tổng --> sum
     const getListGD = async()=>{
+        // Lấy tất cả giao dịch nếu chưa chọn ví
         if (data.MaVi == null){
-            // console.log(data)
             await db.transaction(async (tx) =>{
                 var List = []
+                var summ = 0
                 await tx.executeSql(
                   `SELECT * FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND  GIAODICH.MaDanhMuc == '${data.MaDanhMuc}' ORDER BY Date `,
                   [],
                   async (tx, results) =>{
                     for (let i = 0; i < results.rows.length; i++){
                         var a = results.rows.item(i)
+                        summ = summ + a.Tien
                         List.push(a)
                     }
+                    setsum(summ)
                     setList(List)
                   }
                 )
                 
             })
         }
+        // Lấy theo ví đã chọn
         else
             await db.transaction(async (tx) =>{
                 var List = []
@@ -45,12 +49,13 @@ const ViewDetail_Type = ({route, navigation}) => {
                 `SELECT * FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND GIAODICH.MaVi == '${data.MaVi}' AND GIAODICH.MaDanhMuc == '${data.MaDanhMuc}'`,
                 [],
                 async (tx, results) =>{
-                    var sum = 0
+                    var summ = 0
                     for (let i = 0; i < results.rows.length; i++){
                         var a = results.rows.item(i)
                         List.push(a)
-                        sum += Number(a.Tien)
+                        summ += Number(a.Tien)
                     }
+                    setsum(summ)
                     setList(List)
                 }
                 )
@@ -58,32 +63,20 @@ const ViewDetail_Type = ({route, navigation}) => {
             })
          
     }
-    // const getIcon =(x, color) =>{
-    //     if (x != null){
-    //         var img
-    //         for (let  i = 0; i < ListIcon.length; i++){
-    //             if (ListIcon[i].key == x)
-    //                 img = ListIcon[i].img
-    //             }
-    //         return (
-    //             <Image
-    //                 source={img}
-    //                 style={{width: 40, height: 40, tintColor: color}}
-    //                 />
-    //         )
-    //     }
-    // }
     let listItemView = (item) => {
         return (
             <Pressable
-            // onPress={() => {setModalViewDtail(true)
-            // setSelectedGD(item)
-            // }}
-            onPress={ () =>{navigation.navigate('ViewDetail', {data0:data, data1: item})} }
+            onPress={ () =>{navigation.navigate('ViewDetail', {MaGD : item.MaGD, data0: item})} }
             >
                <View style= {{marginTop: 20}}>
                     <View style = {{flexDirection : 'row',alignItems:'center', marginLeft:5, marginRight : 5}}>
-                        {getIcon(item.Icon, item.Color, ListIcon)}
+                    <Icon
+                        reverse 
+                        type={getItem(item.Icon, ListIcon)[0]}
+                        size={20}
+                        name={getItem(item.Icon, ListIcon)[1]}
+                        color={item.Color}
+                        />
 
                         <Text style = {{fontSize : 17}}>    {data.TenDanhMuc} </Text>
                         <Text  style={{fontSize: 17, textAlign:'right', flex:1}} >{new Intl.NumberFormat().format(item.Tien)}₫ </Text>
@@ -93,38 +86,21 @@ const ViewDetail_Type = ({route, navigation}) => {
         );
       };
 
-    const AlerBottom = () => {
-        Alert.alert('Canh bao','Ban co chac chan muon xoa giao dich khong', [
-            {
-                text: 'Roll Back',
-                onPress : () => {
-                    setModalViewDtail(!modalViewDetail)
-                }
-            },
-            {
-              text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
-              style: 'cancel',
-            },
-            {text: 'OK', onPress: () => {
-                DeletaDanhMuc()
-                setModalViewDtail(!modalViewDetail)}},
-           
-          ]);
-    }
+    // Show giao dịch theo ngày
     const show = ()=>{
         if (List != null){
             const dat = [...List]
-        const a =   groupBy(dat, 'Date')
-        var key = Object.keys(a)
-        var list = []
-        for (let i = 0; i < key.length; i++){
-            var ob = {
-                title: key[i],
-                data: a[key[i]],
+            // group giao dịch theo ngày
+            const a =   groupBy(dat, 'Date')
+            var key = Object.keys(a)
+            var list = []
+            for (let i = 0; i < key.length; i++){
+                var ob = {
+                    title: key[i],
+                    data: a[key[i]],
+                }
+                list.push(ob)
             }
-            list.push(ob)
-        }
             return(
                 <SafeAreaView style={styles.container}>
                 <SectionList
@@ -147,9 +123,13 @@ const ViewDetail_Type = ({route, navigation}) => {
         }, {});
     };
 
-    useEffect(() =>{
-        getListGD()
-    },[data.MaVi, data.MaDanhMuc])
+    const isFocused = useIsFocused()
+
+    useEffect(() => {
+        if(isFocused){
+            getListGD()
+        }
+    }, [isFocused])
 
     return(
         <View style={{backgroundColor : 'white', flex:1}}>
@@ -161,40 +141,13 @@ const ViewDetail_Type = ({route, navigation}) => {
                 </View>
                 <View style ={{alignItems :'center'}}>
                     <Text style = {{textAlign: 'center', color:'white', fontSize:20, marginTop:5}}> {data.TenDanhMuc} </Text>
-                    <Text style = {{textAlign:'center', color:'white', fontSize:20, fontWeight:'bold'}}> {new Intl.NumberFormat().format(data['SUM(Tien)']) + ' ₫'} </Text>
-                    {/* <Text> in 1111</Text> */}
+                    <Text style = {{textAlign:'center', color:'white', fontSize:20, fontWeight:'bold'}}> {new Intl.NumberFormat().format(sum) + ' ₫'} </Text>
                 </View>
                 
                
             </View>
             
             <View>
-                {/* <Pressable >
-                    
-                </Pressable> */}
-                {/* <Modal 
-                animationType='None'
-                transparent={false}
-                visible = {modalViewDetail}
-                onRequestClose = {() => modalViewDetail(!modalViewDetail)}
-                >
-                    <View style = {styles.showContainer}>
-                        <Text> Goi trang viewdetail cho nay, m lam database vao roi nen t goi bi loi</Text>
-                        <ViewDetail data = {SelectedGD}/>
-                                
-                        <Pressable onPress = {() => {
-                                    SetModalViewVisible(!modalView)
-                                    AlerBottom()
-                                
-                                }}>
-                                    <Text style = {{fontSize:15, color:'red', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:10, backgroundColor :'white'}}> XOA </Text>
-                                </Pressable>
-
-                    </View>
-
-
-                </Modal> */}
-             
                 {show()}
 
             </View>

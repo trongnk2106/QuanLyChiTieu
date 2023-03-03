@@ -18,7 +18,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import { onChange } from 'react-native-reanimated';
 import SwitchButton from "@freakycoder/react-native-switch-button";
 import { Button, Icon } from 'react-native-elements';
-import {ListIncomeCategory, ListExpenseCategory} from '../Small_Components/Icon';
+import {ListIncomeCategory, ListExpenseCategory, ListIcon, getItem} from '../Small_Components/Icon';
 
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
@@ -38,6 +38,7 @@ const Categories = ({ navigation }) => {
             var vi = {"ID": '', "Tien": 0, label: '', 'SoDu': 0}
             for (let i = 0; i < results.rows.length; i++){
                 var a = results.rows.item(i)
+                console.log(a)
                 List.push(a)
                 
                 // console.log(a)
@@ -122,6 +123,10 @@ const Categories = ({ navigation }) => {
 //   }
 // }
 
+useEffect(() =>{
+  GetCategories()
+  console.log(getItem('Tao', ListIcon))
+},[])
 let listItemView = (item) => {
   return (
       <View style={{flexDirection:'column', marginHorizontal:8}}>
@@ -134,14 +139,14 @@ let listItemView = (item) => {
           icon={
             <Icon
               reverse 
-              type={item.type}
+              type={getItem(item.Icon, ListIcon)[0]}
               size={30}
-              name={item.name}
-              color={item.iconColor}
+              name={getItem(item.Icon, ListIcon)[1]}
+              color={item.Color}
             />
           }
           onPress={() => {
-            item.title == 'Tạo' ? navigation.navigate('CreateCategory') : 
+            item.Icon == 'Tao' ? navigation.navigate('CreateCategory') : 
                             navigation.navigate('EditCategory',{iconEdit:item}) 
           }}
         />
@@ -149,13 +154,22 @@ let listItemView = (item) => {
           textAlign:'center', 
           marginTop: 1,
           marginBottom: 8, 
-          color:item.iconColor,
-          fontWeight:'bold'}}>{item.title}</Text>
+          color:item.Color,
+          fontWeight:'bold'}}>{item.TenDanhMuc}</Text>
       </View>
     );
   };
 
   const showCate = (isIncome)=>{
+  if (Categories.length > 0){
+    var data = []
+    for (let i = 0; i < Categories.length; i++){
+      if (Categories[i].ThuChi == isIncome)
+        data.push(Categories[i])
+    }
+    var x = {"Color": "#C0C0C0", "Icon": "Tao", "MaDanhMuc": "xxx", "TenDanhMuc": "Tạo", "ThuChi": 1}
+    data.push(x)
+  }  
   return(
           <SafeAreaView style={{flex: 1}}>
               <View style={{flex: 1}}>
@@ -163,7 +177,7 @@ let listItemView = (item) => {
                       contentContainerStyle={{justifyContent:'center', alignItems:'flex-start', alignSelf:'center'}}
                       horizontal={false}
                       numColumns = {4}
-                      data={isIncome ? ListIncomeCategory : ListExpenseCategory}
+                      data={data}
                       scrollEnabled= {false}
                       keyExtractor={(item, index) => index.toString()}
                       renderItem={({item}) => listItemView(item)}
@@ -180,7 +194,7 @@ let listItemView = (item) => {
         <View style = {styles.header}>
           <View style = {{ flexDirection: 'row', margin: 20, marginTop: 25}}>
 
-            <Pressable style = {{paddingRight: 30, size: 30}} onPress={() => {navigation.goBack(null)}}>
+            <Pressable style = {{paddingRight: 30, size: 30}} onPress={() => {navigation.goBack()}}>
               <Ionicons name = 'arrow-back' color = 'white' size={25}/>
             </Pressable>
 
