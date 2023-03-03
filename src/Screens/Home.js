@@ -245,37 +245,37 @@ const Home = ({ navigation }) => {
          
     }
 
-    const AddVi = async()=>{
-        await db.transaction(async (tx)=> {
-            await tx.executeSql(
-            "INSERT INTO DS_VI (MaVi, TenVi, Tien) VALUES(?,?,?)",
-            ['Vi01', 'Ví 1', 100000]
-            )
-            await tx.executeSql(
-            "INSERT INTO DS_VI (MaVi, TenVi, Tien) VALUES(?,?,?)",
-            ['Vi02', 'Ví 2', 200000]
-            )
-        })
-    }
-    const AddDM = async()=>{
-        await db.transaction(async (tx)=> {
-            await tx.executeSql(
-            "INSERT INTO DANHMUC (MaDanhMuc, TenDanhMuc, ThuChi) VALUES(?,?,?)",
-            ['MDM1', 'Lương', 1]
-            )
-            await tx.executeSql(
-            "INSERT INTO DANHMUC (MaDanhMuc, TenDanhMuc, ThuChi) VALUES(?,?,?)",
-            ['MDM2', 'Quà tặng', 1]
-            )
-        })
-    }
-    const AddGD = async()=>{
-        await db.transaction(async (tx)=> {
-            await tx.executeSql(
-                "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Date, MaDanhMuc, GhiChu ) VALUES(?,?,?,?,?,?)",
-            ['GD01', 'Vi01', 50000,'2023/22/02', 'DMDiChuyen', '']
-            )
-            console.log(1)
+    // const AddVi = async()=>{
+    //     await db.transaction(async (tx)=> {
+    //         await tx.executeSql(
+    //         "INSERT INTO DS_VI (MaVi, TenVi, Tien) VALUES(?,?,?)",
+    //         ['Vi01', 'Ví 1', 100000]
+    //         )
+    //         await tx.executeSql(
+    //         "INSERT INTO DS_VI (MaVi, TenVi, Tien) VALUES(?,?,?)",
+    //         ['Vi02', 'Ví 2', 200000]
+    //         )
+    //     })
+    // }
+    // const AddDM = async()=>{
+    //     await db.transaction(async (tx)=> {
+    //         await tx.executeSql(
+    //         "INSERT INTO DANHMUC (MaDanhMuc, TenDanhMuc, ThuChi) VALUES(?,?,?)",
+    //         ['MDM1', 'Lương', 1]
+    //         )
+    //         await tx.executeSql(
+    //         "INSERT INTO DANHMUC (MaDanhMuc, TenDanhMuc, ThuChi) VALUES(?,?,?)",
+    //         ['MDM2', 'Quà tặng', 1]
+    //         )
+    //     })
+    // }
+    // const AddGD = async()=>{
+    //     await db.transaction(async (tx)=> {
+    //         await tx.executeSql(
+    //             "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Date, MaDanhMuc, GhiChu ) VALUES(?,?,?,?,?,?)",
+    //         ['GD01', 'Vi01', 50000,'2023/22/02', 'DMDiChuyen', '']
+    //         )
+    //         console.log(1)
             // await tx.executeSql(
             // "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
             // ['GD02', 'Vi01', 20000, 1,'2023/22/02', 'MDM1', 'asd']
@@ -300,36 +300,36 @@ const Home = ({ navigation }) => {
             // "INSERT INTO GIAODICH (MaGD, MaVi, Tien, Thu, Date, MaDanhMuc, GhiChu) VALUES(?,?,?,?,?,?,?)",
             // ['GD07', 'Vi02', -30000, 0,'2023/22/02', 'MDM2', 'asd']
             // )
-        })
-    }
-    const Get = async()=>{
-            await db.transaction(async (tx) =>{
-                var List = []
-                await tx.executeSql(
-                  `SELECT * FROM GIAODICH`,
-                  [],
-                  async (tx, results) =>{
-                    var sum = 0
-                    console.log(results.rows.length)
-                    for (let i = 0; i < results.rows.length; i++){
-                        var a = results.rows.item(i)
-                        console.log(a)
-                        List.push(a)
-                        // List[i].MaVi = 'Vi00'
+    //     })
+    // }
+    // const Get = async()=>{
+    //         await db.transaction(async (tx) =>{
+    //             var List = []
+    //             await tx.executeSql(
+    //               `SELECT * FROM GIAODICH`,
+    //               [],
+    //               async (tx, results) =>{
+    //                 var sum = 0
+    //                 console.log(results.rows.length)
+    //                 for (let i = 0; i < results.rows.length; i++){
+    //                     var a = results.rows.item(i)
+    //                     console.log(a)
+    //                     List.push(a)
+    //                     // List[i].MaVi = 'Vi00'
                         
-                    }
-                    setSelectedList(List)
-                    return List
-                  }
-                )
+    //                 }
+    //                 setSelectedList(List)
+    //                 return List
+    //               }
+    //             )
                 
-            })
+    //         })
          
-    }
+    // }
     
     useEffect(() => {
-        AddVi()
-        Get()
+        // AddVi()
+        // Get()
         // AddDM()
         // getSoduVi()
         // AddGD()

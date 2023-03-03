@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, Modal, Pressable, Button} from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -7,15 +7,23 @@ import RadioButtonRN from 'radio-buttons-react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { ProgressChart } from 'react-native-chart-kit';
 import EditAcc from '../Small_Components/EditAcc'
+import { NavigationContainer, useIsFocused } from '@react-navigation/native';
+
+import { openDatabase } from 'react-native-sqlite-storage';
 
 
+const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
 
 const Acc = ({ route, navigation }) => {
 
-    const sotien = Number(10000) //load gia tien cua tong cong cac vi vao
+    // const sotien = Number(10000) //load gia tien cua tong cong cac vi vao
 
     const [modalAcc, SetModalAccVisible] = useState(false)
+    const [sumTien, setSumTien] = useState(0)
+    const [listWallet, setListWallet] = useState([])
+    // console.log(listWallet)
+    const [ListVi, setListVi] = useState([])
 
     const AlerBottom = () => {
         Alert.alert('Canh bao','Ban co chac chan muon xoa giao dich khong', [
@@ -36,26 +44,98 @@ const Acc = ({ route, navigation }) => {
           ]);
     }
 
-    const RowDislay = () => {
 
+    const GetListWallet = async()=>{
+        var List = [{"MaVi" : 'Vi00','TenVi': 'Ví Tổng' ,label :'Ví tổng', "Tien": 0, "SoDu": 0 }]
+        //Get Danh sách Ví: ID ví, Tên Ví, Tiền ban đầu lúc tạo ví
+        await db.transaction(async (tx) =>{
+            await tx.executeSql(
+              "SELECT * FROM DS_VI",
+              [],
+              (tx, results) =>{
+                var sum = 0
+                var vi = {"ID": '', "Tien": 0, label: '', 'SoDu': 0}
+                for (let i = 0; i < results.rows.length; i++){
+                    var a = results.rows.item(i)
+                    vi.ID = a.MaVi
+                    a.label = a.TenVi
+                    vi.Tien = a.Tien
+                    sum += a.Tien
+                    a.SoDu = a.Tien
+                    List.push(a)
+                }
+                List[0].Tien = sum
+                List[0].SoDu = sum
+              }
+            )
+        })
+        await db.transaction(async (tx) =>{
+            await tx.executeSql(
+              "SELECT MaVi, SUM(Tien) FROM GIAODICH GROUP BY MaVi",
+              [],
+              (tx, results) =>{
+                var sum = 0
+                for (let i = 0; i < results.rows.length; i++){
+                    var a = results.rows.item(i)
+                    sum += a["SUM(Tien)"]
+                    for (let i = 1; i < List.length; i++){
+                        if (List[i].MaVi == a.MaVi)
+                            List[i].SoDu = List[i].Tien + a["SUM(Tien)"]
+                    }
+                }
+                List[0].SoDu = List[0].Tien + sum
+                setListVi(List)
+                setSumTien(List[0].SoDu)
+              }
+            )
+        })
+    }
+
+    // console.log(listWallet)
+
+    // useEffect(() => {
+    //     GetListWallet()
+    // }, [])
+
+    const isFocused = useIsFocused()
+
+    useEffect(() => {
+        if(isFocused){
+            GetListWallet()
+        }
+    }, [isFocused])
+    
+    const renderItem = () => {
+
+    }
+
+
+    const RowDislay = () => {
+        var output = []
+        for (let i = 1; i < ListVi.length; i++){
+            var setitem = ( 
+                <View> 
+                    <Pressable style = {{backgroundColor : 'white',height:50, marginTop:5, borderRadius:10}}
+                    onPress = {() => {
+                        navigation.navigate('EditAcc',{TenTk: ListVi[i].TenVi, money : ListVi[i].Tien, MaVi:ListVi[i].MaVi})
+                    }}
+                    >
+                        <View style = {{flexDirection :'row', justifyContent:'space-between'}}>
+                            {/* <Text style = {{marginLeft: 10, marginTop:10, fontSize: 18}}>{i.MaVi}</Text>
+                             */}
+                             {console.log(ListVi[i].MaVi)}
+                            <Text style = {{marginLeft: 10, marginTop:10, fontSize: 18}}>{ListVi[i].TenVi}</Text>
+                            <Text style = {{marginRight:10, marginTop: 10,fontSize: 18}}>{ListVi[i].SoDu} VND</Text>
+                        </View>
+                    
+                    </Pressable>
         
-        return (
-            <View>
-                <Pressable style = {{backgroundColor : 'white',height:50, marginTop:5, borderRadius:10}}
-                 onPress = {() => {
-                    navigation.navigate('EditAcc',{TenTk: 'Hien thi ten tk', money : 10000})
-                 }}
-                 >
-                    <View>
-                        <Text> Hien thi tai khoan</Text>
-                    </View>
-                
-                </Pressable>
-                
-            </View>
-           
+                 </View>
+            )
+            output.push(setitem)
+        }
         
-        )
+        return output
     }
 
 
@@ -76,7 +156,7 @@ const Acc = ({ route, navigation }) => {
             </View>
             <View>
                 <Text style = {{textAlign:'center', marginTop:20, fontSize:18}}> Tong Cong : </Text>
-                <Text style = {{textAlign:'center', fontSize:18, fontWeight:'bold'}}> {sotien} VND</Text>
+                <Text style = {{textAlign:'center', fontSize:18, fontWeight:'bold'}}> {sumTien} VND</Text>
             </View>
             <View style = {{flexDirection : 'row', justifyContent : 'space-between', marginTop:20}}>
                 <View>
@@ -91,7 +171,7 @@ const Acc = ({ route, navigation }) => {
                     <Text style = {{marginLeft:15, marginTop:5}}> Lich su chuyen khoan</Text>
                 </View>
                 <View>
-                    <Pressable onPress = {() => navigation.navigate('Transfer', {data : 'list ma vi'})}>
+                    <Pressable onPress = {() => navigation.navigate('Transfer')}>
                         <Oct name = 'arrow-switch' size = {40} style = {{marginRight: 60}}/>
                     </Pressable>
                    
@@ -102,15 +182,7 @@ const Acc = ({ route, navigation }) => {
             <View style = {{marginTop:20}}>
                 <ScrollView style = {styles.body}>
                         <RowDislay/>
-                        <RowDislay/>
-                        <RowDislay/>
-                        <RowDislay/>
-                        <RowDislay/>
-                        <RowDislay/>
-                        <RowDislay/>
-                        <RowDislay/>
-                        <RowDislay/>
-                        <RowDislay/>
+                      
                 </ScrollView>
                
                 

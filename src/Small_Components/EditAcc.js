@@ -5,16 +5,94 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import Oct from 'react-native-vector-icons/Octicons'
 import RadioButtonRN from 'radio-buttons-react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import { openDatabase } from 'react-native-sqlite-storage';
 
+const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
 
 const EditAcc = ({route, navigation}) => {
 
 
-    const {TenTk, money} = route.params
-    console.log(TenTk, money)
+    const {TenTk, money, MaVi} = route.params
+    console.log(TenTk, money, MaVi)
     const [changeMoney, setChangeMoney] = useState(money)
     const [nameAcc, setNameAcc] = useState(TenTk)
+
+
+    const Delete = async () =>{
+        // console.log(data1.MaGD)    
+        await db.transaction(async (tx) =>{
+            await tx.executeSql(
+            `DELETE FROM DS_VI WHERE MaVi = ?`,
+            [MaVi],
+            (tx, results) => {
+                console.log('Results', results.rowsAffected);
+                if (results.rowsAffected > 0) {
+                  Alert.alert(
+                    'Success',
+                    'Giao dịch đã được xóa',
+                    [
+                      {
+                        text: 'Ok',
+                        onPress: () => navigation.navigate('Acc'),
+                      },
+                    ],
+                    {cancelable: false},
+                  );
+                } else {
+                  Alert.alert('Hệ thống đang xử lý');
+                }
+            }
+            )
+        })
+    }
+
+    const UpdateData = async () =>{
+        if (nameAcc.length == 0){
+            Alert.alert('Vui lòng điền đầy đủ thông tin trước khi thêm giao dịch!!!')
+        }
+        else {
+            // getID()
+            // var newMoney = Tien
+            // if (isIncome == false){
+            //   var newMoney = -Tien
+            // }
+            // console.log(1)
+            var newmavi =  MaVi
+            try{
+              await db.transaction(async (tx)=> {
+                await tx.executeSql(
+                "UPDATE DS_VI set TenVi = ? ,Tien= ? WHERE Mavi = ?",
+                [nameAcc,changeMoney, newmavi],
+                (tx, results) => {
+                  console.log('Results', results.rowsAffected);
+                  if (results.rowsAffected > 0) {
+                    Alert.alert(
+                      'Success',
+                      'You are Registered Successfully',
+                      [
+                        {
+                          text: 'Ok',
+                          onPress: () => navigation.navigate('Acc'),
+                        },
+                      ],
+                      {cancelable: false},
+                    );
+                  } else alert('Registration Failed');
+                },
+                )
+              })
+            }
+            catch (error){
+              console.log('error')
+            }
+            
+            // setModifine(!modifine)
+        }
+    }
+
+
+
 
     return (
         <View style = {{backgroundColor:'white' , flex: 1}}>
@@ -51,16 +129,16 @@ const EditAcc = ({route, navigation}) => {
             <View>
                 <View>
                     <TouchableOpacity style={styles.floatingButton}
-                        onPress = {() => Alert.alert('tao accont')}>
-                        <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Tạo</Text>
+                        onPress = {() => UpdateData()}>
+                        <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Luu</Text>
                     </TouchableOpacity>
                 </View>  
                 <View>
                 <TouchableOpacity style={styles.floatingButton_2}
-                    onPress = {() => Alert.alert('xoa acc')}>
+                    onPress = {() =>Delete()}>
                     <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Xoa</Text>
                 </TouchableOpacity>
-            </View>  
+                </View>  
             </View>
            
         </View>

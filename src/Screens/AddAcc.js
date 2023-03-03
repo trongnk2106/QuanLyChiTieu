@@ -25,18 +25,111 @@ import Categories from './Categories'
 
 import ColorPicker from 'react-native-wheel-color-picker';
 
+const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
+
 
 const AddAcc = ({navigation}) => {
 
-    const [newmoney, setMoney] = useState(0)
+    const [money, setMoney] = useState(0)
     const [account, setAccount] = useState('')
     const [iconName, setIconName] = useState('help');
     const [iconColor, setIconColor] = useState('#A8ADAB');
-
+    const [wallet, setWallet] = useState([])
 
     const onColorChange = iconColor => {
       setIconColor(iconColor);
     };
+
+
+    const GetWallet = async()=>{
+      //Get Danh sách Ví: ID ví, Tên Ví, Tiền ban đầu lúc tạo ví
+      await db.transaction(async (tx) =>{
+          await tx.executeSql(
+            "SELECT * FROM DS_VI",
+            [],
+            (tx, results) =>{
+              // console.log('o trong vi')
+              // console.log(results)
+              var sum = 0
+              var List = []
+              var vi = {"ID": '', "Tien": 0, label: '', 'SoDu': 0}
+              for (let i = 0; i < results.rows.length; i++){
+                  var a = results.rows.item(i)
+                  // console.log(a)
+                  List.push(a)
+                  
+                  // console.log(a)
+              }
+              setWallet(List)
+            }
+          )
+      })
+    }
+
+    // console.log(wallet)
+
+    // GetWallet()
+    useEffect(() => {
+      GetWallet()
+
+    }, [])
+
+    const setData = async () =>{
+      if (account.length == 0 || money == 0 ){
+          Alert.alert('Vui lòng điền đầy đủ thông tin trước khi thêm giao dịch!!!')
+      }
+      else {
+          // getID()
+          var MaVi = new Date().toString()
+       
+          MaVi =MaVi.replaceAll(' ','')
+          MaVi ='VI' + MaVi.replaceAll(':','').slice(6,17)
+          var Name_Vi = account
+          // var newMoney = Tien
+          // if (isIncome == false){
+          //   var newMoney = -Tien
+          // }
+          // console.log(1)
+          // console.log(MaVi,Name_Vi,money)
+          try{
+            await db.transaction(async (tx)=> {
+              await tx.executeSql(
+              "INSERT INTO DS_VI (MaVi,TenVi,Tien) VALUES(?,?,?)",
+              [MaVi,Name_Vi,money],
+
+              
+              (tx, results) => {
+                // console.log('Results', results.rowsAffected);
+                if (results.rowsAffected > 0) {
+                  Alert.alert(
+                    'Success',
+                    'You are Registered Successfully',
+                    [
+                      {
+                        text: 'Ok',
+                        onPress: () => navigation.navigate('Acc'),
+                      },
+                    ],
+                    {cancelable: false},
+                  );
+                } else alert('Registration Failed');
+              },
+              )
+            })
+          }
+          catch (error){
+            console.log('error')
+          }
+          
+          // setModifine(!modifine)
+      }
+    }
+
+
+
+
+
+
   
 
     return(
@@ -79,62 +172,10 @@ const AddAcc = ({navigation}) => {
                 />
 
             </View>
-            {/* <Text style={styles.title}>Biểu tượng</Text>
-
-            <View style={{
-          flexDirection:'row', 
-          flexWrap:'wrap', 
-          justifyContent:'space-between', 
-          alignContent: 'flex-start',
-          marginTop: 10,
-          marginHorizontal: 20,
-          maxWidth: 360}}>
-
-          <Icon reverse type='ionicon' size={30}
-            name='leaf'
-            color={iconColor}
-            onPress={() => setIconName('leaf')}
-          />
-          <Icon reverse type='ionicon' size={30}
-            name='library'
-            color={iconColor}
-            onPress={() => setIconName('library')}
-          />
-          <Icon reverse type='ionicon' size={30}
-            name='paw'
-            color={iconColor}
-            onPress={() => setIconName('paw')}
-          />
-          <Icon reverse type='ionicon' size={30}
-            name='hammer'
-            color={iconColor}
-            onPress={() => setIconName('hammer')}
-          />
-          <Icon reverse type='ionicon' size={30}
-            name='earth'
-            color={iconColor}
-            onPress={() => setIconName('earth')}
-          />
-        </View> */}
-        {/* end of bieu tuong */}
-
-        {/* mau sac */}
-        {/* <Text style={styles.title}>Màu sắc</Text>
-        <View style={{marginBottom: 70, paddingHorizontal: 30}}>
-          <ColorPicker
-            color={iconColor}
-            onColorChange={(iconColor) => onColorChange(iconColor)}
-            // onColorChangeComplete={color => alert(`Color selected: ${color}`)}
-            thumbSize={30}
-            sliderSize={30}
-            noSnap={true}
-            row={false}
-          />
-        </View> */}
-
+          
         <View style = {{marginTop:300}}>
             <TouchableOpacity style={styles.floatingButton}
-            onPress = {() => Alert.alert('tao accont')}>
+            onPress = {() => setData()}>
                  <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Tạo</Text>
             </TouchableOpacity>
             </View>  
