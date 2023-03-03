@@ -8,62 +8,53 @@ import { ScrollView, TextInput } from 'react-native-gesture-handler';
 
 
 
-const EditAcc = ({route, navigation}) => {
+const Transfer_History = ({route, navigation}) => {
 
 
-    const {TenTk, money} = route.params
-    console.log(TenTk, money)
-    const [changeMoney, setChangeMoney] = useState(money)
-    const [nameAcc, setNameAcc] = useState(TenTk)
+    // const {TenTk, money} = route.params
+    // // console.log(TenTk, money)
+    // const [changeMoney, setChangeMoney] = useState(money)
+    // const [nameAcc, setNameAcc] = useState(TenTk)
+
+    const {TKChuyen, TKNhan, TGian,sotien} = route.params
+    console.log(TKChuyen, TKNhan, TGian, sotien)
+
+
+    const Display_View = () => {
+        return(
+            <View style = {{flexDirection:'row', justifyContent:'space-between'}}>
+                    <View style = {{marginTop:10}}>
+                        <Text> {TGian}</Text>
+                        <Text> {TKChuyen}</Text>
+                        <Ionicons name = 'arrow-down-outline' size = {20} style = {{marginLeft: 40}}></Ionicons>
+                        <Text> {TKNhan}</Text>
+                    </View>
+                    <View >
+                        <Text style = {{marginTop:50}}> {sotien}</Text>
+                    </View>
+                </View>
+        )
+    }
 
     return (
-        <View style = {{backgroundColor:'white' , flex: 1}}>
+       <View style= {{backgroundColor:'#edece8'}}>
             <View style = {styles.header}>
                 <Pressable style = {{paddingRight: 30, size: 30, marginTop:20}} onPress={() => {navigation.goBack(null)}}>
-                            <Ionicons name = 'arrow-back' color = 'white' size={25}/>
-                </Pressable>
-                <Text style = {{color:'white', fontSize: 20, marginTop:20}}> {TenTk}</Text>
+                                <Ionicons name = 'arrow-back' color = 'white' size={25}/>
+                    </Pressable>
+                <Text style = {{color:'white', fontSize: 20, marginTop:20}}> Chuyen khoan</Text>
             </View>
+            <View style = {styles.showContainerCenter}>
+                
+                <Display_View/>    
+                <Display_View/>    
 
-            <View style = {{flexDirection: 'row', justifyContent:'center', marginTop:15}}>
-                <TextInput
-                        style={styles.inputText2}
-                        // placeholder='0'
-                        keyboardType="numeric"
-                        onChangeText={(newmoney) => setChangeMoney(newmoney)}
-                        value = {changeMoney.toString()}
-                    />
-                <Text style={{fontSize: 15, color:'#4CA07C', marginTop:20}}>VNĐ </Text>
-            </View>
-            <Text style={styles.title}>Ten tai khoan</Text>
-            <View style = {{ 
-                flexDirection: 'row', 
-                marginLeft: 18,
-                }}>
-                <TextInput
-                    style={styles.inputText}
-                    onChangeText={(newacc) => setNameAcc(newacc)}
-                    value = {nameAcc}
-                />
+                <Display_View/>    
+
 
             </View>
-            <View style = {{backgroundColor:'white', height: Dimensions.get('window').height * 0.6 }}></View>
-            <View>
-                <View>
-                    <TouchableOpacity style={styles.floatingButton}
-                        onPress = {() => Alert.alert('tao accont')}>
-                        <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Tạo</Text>
-                    </TouchableOpacity>
-                </View>  
-                <View>
-                <TouchableOpacity style={styles.floatingButton_2}
-                    onPress = {() => Alert.alert('xoa acc')}>
-                    <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Xoa</Text>
-                </TouchableOpacity>
-            </View>  
-            </View>
-           
-        </View>
+       
+       </View>
     )
 
 }
@@ -123,8 +114,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         alignSelf: 'flex-start',
-      }
-
+      },
+      showContainerCenter:{
+        backgroundColor : 'white',
+        // flexDirection:'column',
+        // marginTop : Dimensions.get('window').height * 0.2,
+        
+        width : Dimensions.get('window').width ,
+        height : Dimensions.get('window').height * 0.8,
+        borderRadius:20,
+        marginTop: 20,
+        // alignItems: 'center',
+        // justifyContent: 'center',
+        // alignItems:'center'
+    },
 
 })
-export default EditAcc;
+export default Transfer_History;

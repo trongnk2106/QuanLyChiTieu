@@ -16,7 +16,6 @@ const ListIcon = [
     {key: "ChoVay", img: require('../../assets/loan.png')},
     {key: "Khac", img: require('../../assets/more.png')},
     {key: "Luong", img: require('../../assets/salary.png')},
-
 ] 
 const getIcon =(x, color, List) =>{
     if (x != null){
@@ -33,4 +32,30 @@ const getIcon =(x, color, List) =>{
         )
     }
 }
-export {ListIcon, getIcon}
+  
+
+const ListExpenseCategory = [
+    {title: 'Ăn uống', name:'fast-food', type:'ionicon', iconColor:'#f1bb7b'},
+    {title: 'Gia đình', name:'people', type:'ionicon', iconColor:'#579CCF'},
+    {title: 'Cà phê', name:'coffee', type:'font-awesome', iconColor:'#549470'},
+    {title: 'Giải trí', name:'gamepad', type:'font-awesome', iconColor:'#8F3842'},
+    {title: 'Di chuyển', name:'car', type:'font-awesome', iconColor:'#9371A5'},
+    {title: 'Tạp phẩm', name:'local-grocery-store', type:'material-icons', iconColor:'#ADAD53'},
+    {title: 'Sức khỏe', name:'clinic-medical', type:'font-awesome-5', iconColor:'#D39376'},
+    {title: 'Giáo dục', name:'school', type:'ionicon', iconColor:'#4A648B'},
+    {title: 'Cho vay', name:'comments-dollar', type:'font-awesome-5', iconColor:'#A2BAB0'},
+    {title: 'Khác', name:'question', type:'font-awesome', iconColor:'#E0C0C0'},
+    {title: 'Tạo', name:'plus', type:'font-awesome-5', iconColor:'#C0C0C0'},
+] 
+
+const ListIncomeCategory = [
+    {title: 'Lương', name:'attach-money', type:'material-icons', iconColor:'#549470'},
+    {title: 'Thu', name:'money', type:'font-awesome', iconColor:'#8F3842'},
+    {title: 'Quà tặng', name:'ios-gift', type:'ionicon', iconColor:'#ADAD53'},
+    {title: 'Sở thích', name:'search-dollar', type:'font-awesome-5', iconColor:'#f1bb7b'},
+    {title: 'Khác', name:'question', type:'font-awesome', iconColor:'#9371A5'},
+    {title: 'Tạo', name:'plus', type:'font-awesome-5', iconColor:'#C0C0C0'},
+] 
+
+
+export {ListIcon, ListExpenseCategory, ListIncomeCategory, getIcon}
