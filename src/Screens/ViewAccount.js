@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from 'react'
 import {Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, Modal, Pressable, Button} from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import Icon from 'react-native-vector-icons/FontAwesome'
-import Oct from 'react-native-vector-icons/Octicons'
+// import Icon from 'react-native-vector-icons/FontAwesome'
+// import Oct from 'react-native-vector-icons/Octicons'
+import { Icon } from 'react-native-elements'
 import RadioButtonRN from 'radio-buttons-react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { ProgressChart } from 'react-native-chart-kit';
@@ -136,17 +137,17 @@ const Acc = ({ route, navigation }) => {
         for (let i = 1; i < ListVi.length; i++){
             var setitem = ( 
                 <View> 
-                    <Pressable style = {{backgroundColor : 'white',height:50, marginTop:5, borderRadius:10}}
+                    <Pressable style = {{backgroundColor : 'white',height:50, marginTop:5, borderRadius:10, marginBottom: 2}}
                     onPress = {() => {
                         navigation.navigate('EditAcc',{TenTk: ListVi[i].TenVi, money : ListVi[i].Tien, MaVi:ListVi[i].MaVi, SoDu: ListVi[i].SoDu})
                     }}
                     >
-                        <View style = {{flexDirection :'row', justifyContent:'space-between'}}>
+                        <View style = {{flexDirection :'row', justifyContent:'space-between',alignContent:'center'}}>
                             {/* <Text style = {{marginLeft: 10, marginTop:10, fontSize: 18}}>{i.MaVi}</Text>
                              */}
                              {/* {console.log(ListVi[i].MaVi)} */}
-                            <Text style = {{marginLeft: 10, marginTop:10, fontSize: 18}}>{ListVi[i].TenVi}</Text>
-                            <Text style = {{marginRight:10, marginTop: 10,fontSize: 18}}>{new Intl.NumberFormat().format(ListVi[i].SoDu)} VND</Text>
+                            <Text style = {{marginLeft: 13, marginTop:12, fontSize: 16}}>{ListVi[i].TenVi}</Text>
+                            <Text style = {{marginRight:13, marginTop:12,fontSize: 16}}>{new Intl.NumberFormat().format(ListVi[i].SoDu)} VNĐ</Text>
                         </View>
                     
                     </Pressable>
@@ -170,33 +171,33 @@ const Acc = ({ route, navigation }) => {
                     </Pressable>
 
                     <Text style = {{fontSize:18, fontWeight:'bold', color:'white', marginRight:5}}>
-                        TÀI KHOẢN
+                        Tài khoản
                     </Text>
                         
                 </View>
             </View>
             <View>
-                <Text style = {{textAlign:'center', marginTop:20, fontSize:18}}> Tổng cộng : </Text>
-                <Text style = {{textAlign:'center', fontSize:18, fontWeight:'bold'}}> {new Intl.NumberFormat().format(sumTien)} VND</Text>
+                <Text style = {{textAlign:'center', marginTop:20, fontSize:18}}> Tổng cộng: </Text>
+                <Text style = {{textAlign:'center', fontSize:25, fontWeight:'bold', color:'black'}}> {new Intl.NumberFormat().format(sumTien)} VND</Text>
             </View>
             <View style = {{flexDirection : 'row', justifyContent : 'space-between', marginTop:20}}>
-                <View>
-                <Pressable
-                 onPress = {() => {
-                    navigation.navigate('Transfer_History',{TKChuyen: 'Ten tk chuyen', TKNhan : 'Ten TK nhan', TGian: 'Thoi gian chuyen', sotien: 10000})
-                 }}
-                 >
-                        <Icon name = 'history' size = {40} style = {{marginLeft: 60}}/>
+            <View style={{justifyContent:'center', alignItems:'center'}}>
+                    <Pressable
+                    onPress = {() => {
+                        navigation.navigate('Transfer_History',{TKChuyen: 'Ten tk chuyen', TKNhan : 'Ten TK nhan', TGian: 'Thoi gian chuyen', sotien: 10000})
+                    }}
+                    >
+                        <Icon reverse name='history' size={25} color='#54b38a'/>
                     </Pressable>
                   
-                    <Text style = {{marginLeft:15, marginTop:5}}> Lich su chuyen khoan</Text>
+                    <Text style = {{marginLeft:15, marginTop:5}}>Lịch sử chuyển khoản</Text>
                 </View>
-                <View>
+                <View style={{justifyContent:'center', alignItems:'center', marginRight: 40}}>
                     <Pressable onPress = {() => navigation.navigate('Transfer')}>
-                        <Oct name = 'arrow-switch' size = {40} style = {{marginRight: 60}}/>
+                        <Icon reverse name='arrow-swap' size={25} type='fontisto' color='#54b38a'/>
                     </Pressable>
                    
-                    <Text style = {{paddingRight:20, marginTop:5}}>Chuyen khoan</Text>
+                    <Text>Chuyển khoản</Text>
                 </View>
             </View>
 
@@ -212,7 +213,7 @@ const Acc = ({ route, navigation }) => {
                 onPress = {() => navigation.navigate('AddAcc')}
                 >
       
-                <Ionicons name = 'md-add-circle-sharp' color = 'black' size = {50} style = {{justifyContent:'flex-end'}}/>
+                <Ionicons name = 'md-add-circle-sharp' color = '#DCBE45' size = {60} style = {{justifyContent:'flex-end'}}/>
       
                 </Pressable>
             
@@ -228,8 +229,8 @@ const styles = StyleSheet.create({
         height : Dimensions.get('window').height * 0.1,
         width: Dimensions.get('window').width,
         backgroundColor: '#54b38a',
-        borderBottomLeftRadius:30,
-        borderBottomRightRadius:30,
+        borderBottomLeftRadius:40,
+        borderBottomRightRadius:40,
     },
 
     body: {

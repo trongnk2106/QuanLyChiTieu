@@ -305,10 +305,11 @@ const Add = ({route, navigation }) => {
         {actionTriggered === 'taikhoan' ?
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-          <Text style = {{marginLeft : 15, marginTop :10, fontSize:20}}>Chon tai khoan</Text>
+          <Text style = {{marginLeft: 20, marginTop: 15, fontSize:20}}>Chọn tài khoản</Text>
             <ScrollView>
-                <View>
+                <View style={{marginLeft: 10}}>
                     <RadioButtonRN 
+                        box = {false}
                         data = {ListVi}
                         selectedBtn = {(e) => {console.log(e.MaVi)
                         setWalletChoose(e.MaVi)}}
@@ -316,8 +317,8 @@ const Add = ({route, navigation }) => {
                 </View>
             </ScrollView>
             <Pressable onPress = {() => setModalVisible(!modalVisible)}>
-                                            <Text style = {{fontSize:15, color:'green', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:10}}> Chon </Text>
-                                        </Pressable>              
+              <Text style = {{fontSize:17, color:'green', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:15}}> Chọn </Text>
+            </Pressable>              
             {/* <View style={styles.row}>
               <TouchableOpacity 
                   style={styles.doneButton} 
@@ -450,6 +451,7 @@ const styles = StyleSheet.create({
       borderBottomWidth: 0.8,
       borderBottomColor:'#4CA07C',
       marginLeft: 20,
+      marginBottom: 85
     },
     floatingButton: {
       width: 160,  

@@ -68,8 +68,8 @@ const ViewDetail_Type = ({route, navigation}) => {
             <Pressable
             onPress={ () =>{navigation.navigate('ViewDetail', {MaGD : item.MaGD, data0: item})} }
             >
-               <View style= {{marginTop: 20}}>
-                    <View style = {{flexDirection : 'row',alignItems:'center', marginLeft:5, marginRight : 5}}>
+               <View style= {{marginTop: 10, marginHorizontal:5}}>
+                    <View style = {{flexDirection : 'row',alignItems:'center'}}>
                     <Icon
                         reverse 
                         type={getItem(item.Icon, ListIcon)[0]}
@@ -102,7 +102,7 @@ const ViewDetail_Type = ({route, navigation}) => {
                 list.push(ob)
             }
             return(
-                <SafeAreaView style={styles.container}>
+                <SafeAreaView style={{marginHorizontal: 15}}>
                 <SectionList
                   sections={list}
                   keyExtractor={(item, index) => item + index}
@@ -133,16 +133,17 @@ const ViewDetail_Type = ({route, navigation}) => {
 
     return(
         <View style={{backgroundColor : 'white', flex:1}}>
-            <View style = {styles.header}>
-                <View style = {{marginLeft: 20, marginTop:20, marginRight: Dimensions.get('window').width / 5}}>
-                    <Pressable style = {{paddingRight: 30, size: 30}} onPress={() => {navigation.goBack()}}>
-                        <Ionicons name = 'arrow-back' color = 'white' size={25}/>
+            <View style = {styles.header}> 
+                <View style = {{ flexDirection:'row',marginTop:13}}> 
+                    <Pressable onPress={() => {navigation.goBack()}} style = {{size: 30}}>
+                        <Ionicons name = 'arrow-back' color = 'white' size={30} style={{marginLeft:25, marginTop:12}}/>
                     </Pressable>
+                    <View style ={{alignItems :'center', justifyContent:'center', marginLeft: 95}}>
+                        <Text style = {{color:'white', fontSize:20}}> {data.TenDanhMuc} </Text>
+                        <Text style = {{color:'white', fontSize:20, fontWeight:'bold'}}> {new Intl.NumberFormat().format(sum) + ' ₫'} </Text>
+                    </View>
                 </View>
-                <View style ={{alignItems :'center'}}>
-                    <Text style = {{textAlign: 'center', color:'white', fontSize:20, marginTop:5}}> {data.TenDanhMuc} </Text>
-                    <Text style = {{textAlign:'center', color:'white', fontSize:20, fontWeight:'bold'}}> {new Intl.NumberFormat().format(sum) + ' ₫'} </Text>
-                </View>
+                
                 
                
             </View>
@@ -160,9 +161,9 @@ const styles = StyleSheet.create({
         height : Dimensions.get('window').height * 0.1,
         width: Dimensions.get('window').width,
         backgroundColor: '#54b38a',
-        borderBottomLeftRadius:30,
-        borderBottomRightRadius:30,
-        flexDirection:'row'
+        borderBottomLeftRadius:40,
+        borderBottomRightRadius:40,
+        marginBottom: 20
     },
 })
 
