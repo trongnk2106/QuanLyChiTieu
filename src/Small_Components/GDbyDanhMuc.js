@@ -200,8 +200,9 @@ const styles = StyleSheet.create({
         height : Dimensions.get('window').height * 0.1,
         width: Dimensions.get('window').width,
         backgroundColor: '#54b38a',
-        borderBottomLeftRadius:30,
-        borderBottomRightRadius:30,
+        borderBottomLeftRadius:40,
+        borderBottomRightRadius:40,
+        marginBottom: 20
     },
 })
 

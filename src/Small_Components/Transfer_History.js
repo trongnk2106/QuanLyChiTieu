@@ -86,15 +86,17 @@ const Transfer_History = ({route, navigation}) => {
                     <Pressable onPress = {() => navigation.navigate('ViewTranfer', {MaGD:i.MaGDTK, 
                     FrAcc : i.FromAcc, ToAcc : i.ToAcc, Money : i.Money, date : i.Date, ghichu : i.GhiChu
                     })}>
-                        <View style = {{flexDirection:'row', justifyContent:'space-between'}}>
+                        <View style = {{flexDirection:'row', justifyContent:'space-between', marginHorizontal:15, marginTop:10}}>
 
-                            <View style = {{marginTop:20}}>
+                            <View style = {{marginTop:10}}>
                                 {console.log(i.MaGDTK)}
                             
-                                    <Text style = {{color:'black'}}> {i.Date}</Text>
-                                    <Text style = {{color:'red'}}> {GetTenVibyMavi(i.FromAcc)}</Text>
-                                    <Ionicons name = 'arrow-down-outline' size = {20} style = {{marginLeft: 40}}></Ionicons>
-                                    <Text style = {{color:'green'}}> {GetTenVibyMavi(i.ToAcc)}</Text>
+                                    <Text style = {{color:'black',marginBottom:3}}> {i.Date}</Text>
+                                    <View style={{alignItems:'center'}}>
+                                        <Text style = {{color:'red'}}> {GetTenVibyMavi(i.FromAcc)}</Text>
+                                        <Ionicons name = 'arrow-down-outline' size = {20} style = {{marginVertical:2}}></Ionicons>
+                                        <Text style = {{color:'green'}}> {GetTenVibyMavi(i.ToAcc)}</Text>
+                                    </View>
                                 
                                 
                             </View>
@@ -103,7 +105,7 @@ const Transfer_History = ({route, navigation}) => {
                                     <Text style = {{marginTop:50}}> {new Intl.NumberFormat().format(i.Money)} </Text>
                                 </View>
                                 <View>
-                                    <Text style = {{marginTop:50}}> VND</Text>
+                                    <Text style = {{marginTop:50}}> VNĐ</Text>
                                 </View>
                             </View>
                             
@@ -137,18 +139,16 @@ const Transfer_History = ({route, navigation}) => {
     return (
        <View style= {{backgroundColor:'#edece8'}}>
             <View style = {styles.header}>
-                <Pressable style = {{paddingRight: 30, size: 30, marginTop:20}} onPress={() => {navigation.goBack(null)}}>
-                                <Ionicons name = 'arrow-back' color = 'white' size={25}/>
-                    </Pressable>
-                <Text style = {{color:'white', fontSize: 20, marginTop:20}}> Chuyen khoan</Text>
+            <View style = {{flexDirection:'row', marginTop:25, margin:20}}>
+                <Pressable style = {{paddingRight: 30, size: 30}} onPress={() => {navigation.goBack(null)}}>
+                    <Ionicons name = 'arrow-back' color = 'white' size={25}/>
+                </Pressable>
+                    <Text style = {{color:'white', fontSize:18, fontWeight:'bold', marginRight: 5}}>Lịch sử chuyển khoản</Text>
             </View>
-            <View style = {styles.showContainerCenter}>
-
-                <ScrollView>
-                    <Display_View/>    
-                </ScrollView>
-
             </View>
+            <ScrollView  style = {styles.showContainerCenter}>
+                <Display_View/>    
+            </ScrollView >
        
        </View>
     )
@@ -161,8 +161,8 @@ const styles = StyleSheet.create({
         height : Dimensions.get('window').height * 0.1,
         width: Dimensions.get('window').width,
         backgroundColor: '#54b38a',
-        flexDirection:'row'
-
+        borderBottomLeftRadius:40,
+        borderBottomRightRadius:40,
     },
     title: {
         marginLeft: 18,
@@ -216,13 +216,11 @@ const styles = StyleSheet.create({
         // flexDirection:'column',
         // marginTop : Dimensions.get('window').height * 0.2,
         
-        width : Dimensions.get('window').width ,
-        height : Dimensions.get('window').height * 0.8,
+        width : Dimensions.get('window').width - 30,
+        height : Dimensions.get('window').height * 0.85,
         borderRadius:20,
         marginTop: 20,
-        // alignItems: 'center',
-        // justifyContent: 'center',
-        // alignItems:'center'
+        alignSelf: 'center'
     },
 
 })

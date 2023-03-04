@@ -435,8 +435,8 @@ const Home = ({ navigation }) => {
               name={getItem(item.Icon, ListIcon)[1]}
               color={item.Color}
             />
-                <Text  style={{fontSize: 18, flex:1}}>  {item.TenDanhMuc}</Text>
-                <Text  style={{fontSize: 18, textAlign:'right', flex:1}} >{new Intl.NumberFormat().format(item['SUM(Tien)'])}₫ </Text>
+                <Text  style={{fontSize: 16, flex:1}}>  {item.TenDanhMuc}</Text>
+                <Text  style={{fontSize: 16, textAlign:'right', flex:1, marginRight: 10, color:'black'}} >{new Intl.NumberFormat().format(item['SUM(Tien)'])}₫ </Text>
             </Pressable>
         );
       };
@@ -482,11 +482,13 @@ const Home = ({ navigation }) => {
                                 {acctionTrigger === 'wallet' ?
                                 <View style = {styles.showContainer}>
                                 <View style ={styles.showContainerCenter}>
-                                    <Text style = {{marginLeft : 15, marginTop :10, fontSize:20}}>Chon tai khoan</Text>
+                                    <Text style = {{marginLeft : 20, marginTop :15, fontSize:20}}>Chọn tài khoản</Text>
                                     <ScrollView>
                                         <View>
                                             <RadioButtonRN 
+                                                style = {{marginLeft:20, marginTop:5}}
                                                 data = {ListVi}
+                                                box = {false}
                                                 selectedBtn = {(e) => {console.log(e.MaVi)
                                                 setWalletChoose(e.MaVi)}}
                                                     />
@@ -494,8 +496,8 @@ const Home = ({ navigation }) => {
                                     </ScrollView>
                                    
                                 <Pressable onPress = {() => setModalVisible(!modalVisible)}>
-                                        <Text style = {{fontSize:15, color:'green', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:10}}> Chon </Text>
-                                    </Pressable>
+                                    <Text style = {{fontSize:17, color:'green', textAlign:'right', marginTop:30, marginRight : 18, marginBottom:18}}> Chọn </Text>
+                                </Pressable>
                                 </View>
                                 
                             </View>
@@ -539,33 +541,33 @@ const Home = ({ navigation }) => {
                                 onPress={() => {setModalVisible(true)
                                 setAcctionTrigger('wallet')}}
                             >
-                                <Ionicons name = 'caret-down-outline' color = 'white' fontSize='20'/>
+                                <Ionicons name = 'caret-down-outline' color = 'white' size={25}/>
 
                             </Pressable>
                            
                         </View>
                     </View>
-                   <Text style = {{fontSize:20, fontWeight:'bold', color:'white'}}>
+                   <Text style = {{fontSize:25, fontWeight:'bold', color:'white'}}>
                         {GetSoDuByMaVi(WalletChoose)}
                    </Text>
                   
                 </View>
-                <View style = {{justifyContent:'space-between', flexDirection:'row', textAlignVertical:'center', paddingTop:40, marginBottom: 10}}>
+                <View style = {{justifyContent:'space-between', flexDirection:'row', textAlignVertical:'center', paddingTop:20, marginBottom: 10}}>
                     <TouchableOpacity
-                        style = {{marginLeft:100}}
+                        style = {{marginLeft:80}}
                         onPress = {() => setIsIncome(false)}
                     >
                         {/* { isIncome === true ? <Text> </Text>} */}
-                        { isIncome === false ? <Text style = {{fontSize:20, color: '#d15830', textDecorationLine : 'underline',
-                    textDecorationStyle : 'solid', fontWeight : 'bold'}}> Chi Phi</Text> : <Text style = {styles.Income_s}> Chi Phi</Text>}
+                        { isIncome === false ? <Text style = {{fontSize:18, color: '#F6D242', textDecorationLine : 'underline',
+                    textDecorationStyle : 'solid', fontWeight : 'bold'}}>CHI PHÍ</Text> : <Text style = {styles.Income_s}>CHI PHÍ</Text>}
                          
                     </TouchableOpacity>       
                     <TouchableOpacity
-                        style ={{marginRight:100}}   
+                        style ={{marginRight:80}}   
                         onPress = {() => setIsIncome(true)} 
                     >
-                         { isIncome === true ? <Text style = {{fontSize:20, color: '#d15830', textDecorationLine : 'underline',
-                    textDecorationStyle : 'solid', fontWeight : 'bold'}}> Thu Nhap</Text> : <Text style = {styles.Income_s}> Thu Nhap</Text>}
+                         { isIncome === true ? <Text style = {{fontSize:18, color: '#F6D242', textDecorationLine : 'underline',
+                    textDecorationStyle : 'solid', fontWeight : 'bold'}}>THU NHẬP</Text> : <Text style = {styles.Income_s}>THU NHẬP</Text>}
                     </TouchableOpacity> 
                 </View>
             </View>
@@ -576,13 +578,13 @@ const Home = ({ navigation }) => {
                             setAcctionTrigger('ngay')
                             setModalVisible(true)
                         }}>
-                            <Text style = {styles.text_date}> Ngay</Text>
+                            <Text style = {styles.text_date}> Ngày</Text>
                         </TouchableOpacity>
                         <TouchableOpacity>
-                            <Text style = {styles.text_date}> Thang</Text>
+                            <Text style = {styles.text_date}> Tháng</Text>
                         </TouchableOpacity>
                         <TouchableOpacity>
-                            <Text style = {styles.text_date}> Nam</Text>
+                            <Text style = {styles.text_date}> Năm</Text>
                         </TouchableOpacity>
                     </View>
                 
@@ -594,7 +596,7 @@ const Home = ({ navigation }) => {
                                 navigation.navigate("Thêm giao dịch", {DataListVi: ListVi.slice(1), MaVi: WalletChoose} );
                             }}
                         >
-                            <Ionicons name = 'md-add-circle-sharp' color = 'yellow' size = {40}/>
+                            <Ionicons name = 'md-add-circle-sharp' color = '#F6D242' size = {55}/>
                         </TouchableOpacity>
                     </View>                
                 </View>
@@ -617,11 +619,11 @@ const Home = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     header:{
-        height : Dimensions.get('window').height * 0.2,
+        height : Dimensions.get('window').height * 0.19,
         width: Dimensions.get('window').width,
         backgroundColor: '#54b38a',
-        borderBottomLeftRadius:30,
-        borderBottomRightRadius:30,
+        borderBottomLeftRadius:40,
+        borderBottomRightRadius:40,
         // flexDirection:'',
     },
     
@@ -629,7 +631,7 @@ const styles = StyleSheet.create({
         backgroundColor : 'white',
         flexDirection:'column',
         width : Dimensions.get('window').width * 0.9,
-        height : Dimensions.get('window').height * 0.4,
+        height : Dimensions.get('window').height * 0.38,
         borderRadius:10,
         marginLeft:20,
         marginTop:10,
@@ -653,15 +655,16 @@ const styles = StyleSheet.create({
     },
     Income_s: {
         color :'white',
-        fontSize:20,
+        fontSize:18,
     },
     Row_view : {
         backgroundColor:'white',
         width : Dimensions.get('window').width * 0.9,
-        height : 50,
+        height : 55,
         borderRadius : 10,
         marginLeft : 20,
         marginTop: 5,
+        marginBottom: 2,
         flexDirection:'row',
         alignItems:'center'
 

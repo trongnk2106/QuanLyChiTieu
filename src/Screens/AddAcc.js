@@ -137,11 +137,11 @@ const AddAcc = ({navigation}) => {
         <View style = {{backgroundColor: '#ffffff', flex:1}}>
         <ScrollView>
             <View style = {styles.header}>
-                <View style = {{flexDirection:'row', marginTop:30, marginLeft:10}}>
+              <View style = {{flexDirection:'row', marginTop:25, margin:20}}>
                     <Pressable style = {{paddingRight: 30, size: 30}} onPress={() => {navigation.goBack()}}>
                         <Ionicons name = 'arrow-back' color = 'white' size={25}/>
                     </Pressable>
-                    <Text style = {{color:'white', fontSize:20}}> Them tai khoan</Text>
+                    <Text style = {{fontSize:18, fontWeight:'bold', color:'white', marginRight:5}}>Thêm tài khoản</Text>
                 </View>
             </View>
             <View style = {{ 
@@ -156,17 +156,17 @@ const AddAcc = ({navigation}) => {
                     onChangeText={(newmoney) => setMoney(newmoney)}
                 />
 
-                    <Text style={{fontSize: 15, color:'#4CA07C', marginTop:20}}>VNĐ </Text>
+                <Text style={{fontSize: 18, color:'#4CA07C', marginTop:20}}>VNĐ </Text>
             </View>
             
-            <Text style={styles.title}>Ten tai khoan</Text>
+            <Text style={styles.title}>Tên tài khoản</Text>
             <View style = {{ 
                 flexDirection: 'row', 
                 marginLeft: 18,
                 }}>
                 <TextInput
                     style={styles.inputText}
-                    placeholder='Nhap ten tai khoan'
+                    placeholder='Nhập tên tài khoản'
                     onChangeText={(newacc) => setAccount(newacc)}
 
                 />
@@ -193,10 +193,12 @@ const AddAcc = ({navigation}) => {
 
 const styles = StyleSheet.create({
     header:{
-        height : Dimensions.get('window').height * 0.15,
-        width: Dimensions.get('window').width,
-        backgroundColor: '#54b38a',
-    },
+      height : Dimensions.get('window').height * 0.1,
+      width: Dimensions.get('window').width,
+      backgroundColor: '#54b38a',
+      borderBottomLeftRadius:40,
+      borderBottomRightRadius:40,
+  },
     inputText2: {
         fontSize: 18, 
         borderBottomWidth: 2,
