@@ -9,6 +9,8 @@ import AddAcc from './AddAcc';
 import EditAcc from '../Small_Components/EditAcc';
 import Transfer_History from '../Small_Components/Transfer_History';
 import Transfer from '../Small_Components/Transfer';
+import ViewTranfer from '../Small_Components/ViewTranfer';
+import EditHistory from '../Small_Components/Edit_History';
 const Stack = createNativeStackNavigator();
 
 function CreateAcc_Stack() {
@@ -19,6 +21,8 @@ function CreateAcc_Stack() {
         <Stack.Screen name = 'EditAcc' component={EditAcc}/>
         <Stack.Screen name = 'Transfer_History' component={Transfer_History}/>
         <Stack.Screen name = 'Transfer' component={Transfer}/>
+        <Stack.Screen name = 'ViewTranfer' component={ViewTranfer} />
+        <Stack.Screen name = 'EditHistory' component={EditHistory} />
         
     </Stack.Navigator>
   );

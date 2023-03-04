@@ -12,11 +12,14 @@ import { NavigationContainer, useIsFocused } from '@react-navigation/native';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {ListIcon, getIcon, getItem} from '../Small_Components/Icon';
 import { Button, Icon } from 'react-native-elements';
+import { Agenda, Calendar } from 'react-native-calendars';
 
 import moment from 'moment';
 // import ViewDetail from '../Small_Components/ViewDetail';
 import ViewDetail_Type from './ViewDetail_Type';
 import ViewDetail from '../Small_Components/ViewDetail';
+import { VictoryBar, VictoryChart, VictoryTheme, VictoryPie } from "victory-native";
+
 
 
 
@@ -33,6 +36,18 @@ const Home = ({ navigation }) => {
     const [SelectedList, setSelectedList] = useState([])
     const [SelectedGD, setSelectedGD] = useState('')
     const [Key, SetKey] = useState([])
+    
+    const [Thang, setThang] = useState('')
+    const [graphicData, setGraphicData] = useState([])
+    const [graphicColor, setGraphicColor] = useState([])
+    const [acctionTrigger, setAcctionTrigger] = useState('')
+
+    // const th = 
+    const timercurrent = new Date().getFullYear() + '-' +'0'+ (new Date().getMonth()+ 1) + '-' + '0' + new Date().getDate()
+    console.log(timercurrent)
+
+    const [ngay, setNgay] = useState(`${timercurrent}`)
+   
     // const [style_choose, setStyle_choose] = useState('bold')
     // load vao day ten cac vi, cac vi chon duoc se nam trong bien WalletChoose
     const listWallet = [
@@ -66,43 +81,7 @@ const Home = ({ navigation }) => {
     useShadowColorFromDataset: false // optional
     };
     
-    const LoadingMapType = (choosemap) => {
-        if (choosemap === true) {
-            return (
-                <View style = {{alignItems : 'center', margin:5}}>
-                    <Text> Thu Nhap Map</Text>
-                     <ProgressChart
-                        data={data_plot}
-                        width={Dimensions.get('window').width * 0.8}
-                        height={200}
-                        strokeWidth={16}
-                        radius={20}
-                        chartConfig={chartConfig}
-                        hideLegend={false}
-                    />
-                </View>
-               
-            )
-        }   
-        else{
-            return (
-                <View style = {{alignItems : 'center', margin:5}}>
-                    <Text> Thu Nhap Map</Text>
-                    <ProgressChart
-                        data={data_plot}
-                        width={Dimensions.get('window').width * 0.8}
-                        height={200}
-                        strokeWidth={16}
-                        radius={20}
-                        chartConfig={chartConfig}
-                        hideLegend={false}
-                    />
-                </View>
-                
-            )
-        }
-    }
-
+    
     const DeletaDanhMuc = () => {
 
         // goi ham xoa giao dich
@@ -215,28 +194,39 @@ const Home = ({ navigation }) => {
         }
 
     }
-    const GetGDByMaViGrByMaDanhMuc = async(ID, IsThu)=>{
+    const GetGDByMaViGrByMaDanhMuc = async(ID, IsThu, ngay)=>{
         console.log(ID, IsThu)
         if (IsThu == true)
             IsThu = 1
         else
             IsThu = 0
+        if (ngay !== null)
         if (ID == 'Vi00'){
             await db.transaction(async (tx) =>{
                 var List = []
                 await tx.executeSql(
-                  `SELECT GIAODICH.MaDanhMuc, DANHMUC.TenDanhMuc,DANHMUC.Icon,DANHMUC.Color , SUM(Tien) FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND DANHMUC.ThuChi == ${isIncome} GROUP BY GIAODICH.MaDanhMuc`,
+                  `SELECT GIAODICH.MaDanhMuc, DANHMUC.TenDanhMuc,DANHMUC.Icon,DANHMUC.Color , SUM(Tien), GIAODICH.Date FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND DANHMUC.ThuChi == ${isIncome} AND GIAODICH.Date == "${ngay}" GROUP BY GIAODICH.MaDanhMuc`,
                   [],
                   async (tx, results) =>{
                     var sum = 0
+                    var chart = []
+                    var charcolor = []
                     console.log(results.rows.length)
                     for (let i = 0; i < results.rows.length; i++){
                         var a = results.rows.item(i)
                         List.push(a)
                         console.log(a)
+                        const ite = {
+                            y : Math.abs(a[`SUM(Tien)`]),
+                            x : a.TenDanhMuc
+                        }
+                        charcolor.push(a.Color)
+                        chart.push(ite)
                         // List[i].MaVi = 'Vi00'
                         
                     }
+                    setGraphicData(chart)
+                    setGraphicColor(charcolor)
                     setSelectedList(List)
                     return List
                   }
@@ -252,14 +242,25 @@ const Home = ({ navigation }) => {
                 [],
                 async (tx, results) =>{
                     var sum = 0
+                    var chart = []
+                    var charcolor = []
                     for (let i = 0; i < results.rows.length; i++){
                         console.log(results.rows.length)
                         var a = results.rows.item(i)
                         console.log(a)
                         List.push(a)
+                        const itedate= {
+                            y : Math.abs(a[`SUM(Tien)`]),
+                            x : a.TenDanhMuc
+                        }
+                        charcolor.push(a.Color)
+                        // console.log(ite)
+                        chart.push(itedate)
 
                     }
                     setSelectedList(List)
+                    setGraphicData(chart)
+                    setGraphicColor(charcolor)
                     return List
                 }
                 )
@@ -347,10 +348,54 @@ const Home = ({ navigation }) => {
             })
          
     }
+
+
+    const LoadingMapType = (choosemap) => {
+        if (choosemap === true) {
+            return (
+                <View style = {{alignItems : 'center'}}>
+                    <VictoryPie
+                        data={graphicData}
+                        colorScale = {graphicColor}
+                        width={250}
+                        height={250}
+                        innerRadius={40}
+                        style={{
+                        labels: {
+                        fill: 'green', fontSize: 15, padding: 10,
+                        }, }}
+                        /> 
+                </View>
+               
+               
+            )
+        }   
+        else{
+            return (
+                <View style = {{alignItems : 'center'}}>
+                    <VictoryPie
+                        data={graphicData}
+                        colorScale = {graphicColor}
+                        width={400}
+                        height={250}
+                        innerRadius={40}
+                        style={{
+                        labels: {
+                        fill: 'red', fontSize: 15, padding: 10,
+                        }, }}
+                        /> 
+                </View>
+                
+                
+            )
+        }
+    }
+
+
     
     useEffect(() => {
         // AddVi()
-        Get()
+        // Get()
         // AddDM()
         // getSoduVi()
         // AddGD()
@@ -358,15 +403,15 @@ const Home = ({ navigation }) => {
         // GetGDByMaViGrByMaDanhMuc('Vi01', 1)
       }, [])
     useEffect(() => {
-        GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome)
-    }, [WalletChoose, isIncome])
+        GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome, ngay)
+    }, [WalletChoose, isIncome, ngay])
 
     const isFocused = useIsFocused()
 
     useEffect(() => {
         if(isFocused){
             GetListWallet()
-            GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome)
+            GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome, ngay)
         }
     }, [isFocused])
 
@@ -433,34 +478,66 @@ const Home = ({ navigation }) => {
                                 transparent={true}
                                 visible = {modalVisible}
                                 onRequestClose={() => setModalVisible(!modalVisible)}    
-                            >
+                            > 
+                                {acctionTrigger === 'wallet' ?
                                 <View style = {styles.showContainer}>
-                                    <View style ={styles.showContainerCenter}>
-                                        <Text style = {{marginLeft : 15, marginTop :10, fontSize:20}}>Chon tai khoan</Text>
-                                        <ScrollView>
-                                            <View>
-                                                <RadioButtonRN 
-                                                    data = {ListVi}
-                                                    selectedBtn = {(e) => {console.log(e.MaVi)
-                                                    setWalletChoose(e.MaVi)}}
-                                                        />
-                                            </View>
-                                        </ScrollView>
-                                       
-                                    <Pressable onPress = {() => setModalVisible(!modalVisible)}>
-                                            <Text style = {{fontSize:15, color:'green', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:10}}> Chon </Text>
-                                        </Pressable>
-                                    </View>
-                                    
+                                <View style ={styles.showContainerCenter}>
+                                    <Text style = {{marginLeft : 15, marginTop :10, fontSize:20}}>Chon tai khoan</Text>
+                                    <ScrollView>
+                                        <View>
+                                            <RadioButtonRN 
+                                                data = {ListVi}
+                                                selectedBtn = {(e) => {console.log(e.MaVi)
+                                                setWalletChoose(e.MaVi)}}
+                                                    />
+                                        </View>
+                                    </ScrollView>
+                                   
+                                <Pressable onPress = {() => setModalVisible(!modalVisible)}>
+                                        <Text style = {{fontSize:15, color:'green', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:10}}> Chon </Text>
+                                    </Pressable>
                                 </View>
+                                
+                            </View>
+                            : acctionTrigger === 'ngay' ?
+                            <View style={styles.centeredView}>
+                                <View style={styles.modalView}>
+                                    <Calendar style={{borderRadius: 15}}
+                                        onDayPress={(day) => {
+                                            setNgay(day.dateString)
+                                            console.log('ngay chon tu calender', day.dateString === timercurrent)
+                                        }}
+                                        onDayLongPress={(day) => console.log('onDayLongPress', day) }
+                                        onMonthChange={(date) => console.log('onMonthChange', date) }
+                                        onPressArrowLeft={(goToPreviousMonth) => {
+                                        console.log('onPressArrowLeft'); goToPreviousMonth();
+                                        }}
+                                        onPressArrowRight={(goToNextMonth) => {
+                                        console.log('onPressArrowRight'); goToNextMonth();
+                                        }}
+                                        markedDates={{
+                                            [ngay] : {selected: true, marked: true, selectedColor: '#466A8F'}
+                                        }}
+                                    />
 
-                               
+                                    <TouchableOpacity 
+                                        style={styles.doneButton2} 
+                                        onPress = {() => setModalVisible(!modalVisible)}>
+                                        <Text style={{color:'#FFFFFF'}}>Done</Text>
+                                    </TouchableOpacity>
+                                                    
 
+                                    </View>
+                            </View>       
+                            : null
+                            }
+                                
 
                             </Modal>
 
                             <Pressable
-                                onPress={() => setModalVisible(true)}
+                                onPress={() => {setModalVisible(true)
+                                setAcctionTrigger('wallet')}}
                             >
                                 <Ionicons name = 'caret-down-outline' color = 'white' fontSize='20'/>
 
@@ -495,20 +572,23 @@ const Home = ({ navigation }) => {
             <ScrollView>
                 <View style = {styles.body}>
                     <View style = {{flexDirection:'row', justifyContent:'space-between', paddingLeft:50, paddingRight:50, paddingTop:10}}>
-                        <TouchableOpacity>
-                            <Text style = {styles.Date_s}> Ngay</Text>
+                        <TouchableOpacity onPress = {() => {
+                            setAcctionTrigger('ngay')
+                            setModalVisible(true)
+                        }}>
+                            <Text style = {styles.text_date}> Ngay</Text>
                         </TouchableOpacity>
                         <TouchableOpacity>
-                            <Text style = {styles.Date_s}> Thang</Text>
+                            <Text style = {styles.text_date}> Thang</Text>
                         </TouchableOpacity>
                         <TouchableOpacity>
-                            <Text style = {styles.Date_s}> Nam</Text>
+                            <Text style = {styles.text_date}> Nam</Text>
                         </TouchableOpacity>
                     </View>
                 
                     {isIncome === true ? LoadingMapType(true) : LoadingMapType(false)}
 
-                    <View style={{alignItems:'flex-end', marginBottom: 10, marginRight:10}}>
+                    <View style={{alignItems:'flex-end', marginBottom: 10, marginRight:10,  position: 'absolute',alignSelf: 'flex-end', marginTop: 250}}>
                         <TouchableOpacity
                             onPress = {() => {
                                 navigation.navigate("Thêm giao dịch", {DataListVi: ListVi.slice(1), MaVi: WalletChoose} );
@@ -518,35 +598,12 @@ const Home = ({ navigation }) => {
                         </TouchableOpacity>
                     </View>                
                 </View>
-                <View>
+                {/* <View>
           
 
-                        {/* <Modal 
-                            animationType='slide'
-                            transparent={false}
-                            visible = {modalView}
-                            onRequestClose={() => SetModalViewVisible(!modalView)}    
-                        >
-                            <View style = {styles.showContainer}>
-                              
-                                
-
-                                <ViewDetail_Type data = {SelectedGD} />
-                                 
-                                <Pressable onPress = {() => {
-                                    
-                                    AlerBottom()
-                                
-                                }}>
-                                    <Text style = {{fontSize:15, color:'red', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:10, backgroundColor :'white'}}> XOA </Text>
-                                </Pressable>
-                                
-                            </View>
-                        </Modal> */}
                         
-                  
 
-                </View>
+                </View> */}
                 {show()}
                 {/* <View>
             
@@ -609,9 +666,33 @@ const styles = StyleSheet.create({
         alignItems:'center'
 
     },
-    Date_s: {
+    text_date: {
         fontSize : 15
-    }
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+        backgroundColor: "rgba(0,0,0, 0.4)",
+      },
+      modalView: {
+        backgroundColor: "#fff",
+        width: Dimensions.get("screen").width - 40,
+        height: Dimensions.get("screen").height - 500,
+        borderRadius: 15
+      },
+      doneButton2: {
+        backgroundColor: "#466A8F",
+        padding: 10,
+        width: 100,
+        flexDirection: "row",
+        justifyContent: 'center',
+        borderRadius: 6,
+        alignSelf: 'flex-end',
+        marginTop: 20,
+        marginRight: 16
+      },
 
 })
 
