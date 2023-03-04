@@ -15,26 +15,26 @@ const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation :
 
 
 
-const Transfer = ({navigation}) => {
+const EditHistory = ({route,navigation}) => {
 
 
-    // const {data} = route.params
-    // console.log(data)
-
+    const {MaGD, FrAcc, ToAcc, Money, date, GhiChu} = route.params
+    console.log(MaGD)
+   
     const [modalVisible, setModalVisible] = useState(false)
     const [acctionTrigger, setAcctionTrigger] = useState('')
-    const [ghichu, setghichu] = useState('')
-    const [Tien, setTien] = useState(0)
+    const [ghichu, setghichu] = useState(GhiChu)
+    const [Tien, setTien] = useState(Money)
     const [listWallet, setListWallet] = useState([])
     const homnay = new Date().getDate()
     const thangnay = new Date().getMonth() + 1
     const namnay = new Date().getFullYear()
-    // const fulltime = `Hom nay ${homnay} thang ${thangnay}, ${namnay}`
-    const fulltime = `${namnay}-0${thangnay}-0${homnay}`
-    const [Date_s, setdate] = useState(`${fulltime}`)
+   
+    const fulltime = `${namnay}-${thangnay}-${homnay}`
+    const [Date_s, setdate] = useState(`${date}`)
     const [ListVi, setListVi] = useState([])
-    const [WalletChoose_CH, setWalletChoose_CH] = useState('chua chon')
-    const [WalletChoose_NH, setWalletChoose_NH] = useState('chua chon')
+    const [WalletChoose_CH, setWalletChoose_CH] = useState(FrAcc)
+    const [WalletChoose_NH, setWalletChoose_NH] = useState(ToAcc)
 
     const GetListWallet = async()=>{
         var List = []
@@ -81,48 +81,35 @@ const Transfer = ({navigation}) => {
         })
     }
     // console.log(ListVi)
-
     const checkViTien = (ID, money_ch) => {
 
-      if (ListVi.length > 0){
-        for( let i = 0; i < ListVi.length; i++){
-            if (ListVi[i].MaVi == ID)
-                {
-                  ListVi[i].SoDu < money_ch
-                  return false
-                }
-        }
+        if (ListVi.length > 0){
+          for( let i = 0; i < ListVi.length; i++){
+              if (ListVi[i].MaVi == ID)
+                  {
+                    ListVi[i].SoDu < money_ch
+                    return false
+                  }
+          }
+      }
+  
     }
 
-  }
-
-    const setData = async () =>{
-        if (WalletChoose_CH === 'chua chon' || WalletChoose_NH === 'chua chon' || Tien === 0){
+    const UpdateData = async () =>{
+      
+      
+        if (WalletChoose_CH === null || WalletChoose_NH === null){
             Alert.alert('Vui lòng điền đầy đủ thông tin trước khi thêm giao dịch!!!')
         }
         else if (checkViTien(WalletChoose_CH,  Tien) === false) {Alert.alert("Khong du so du, Vui long chon vi khac")}
         else {
-            // getID()
-            var MAGDTK = new Date().toString()
-         
-            MAGDTK =MAGDTK.replaceAll(' ','')
-            MAGDTK ='GDTK' + MAGDTK.replaceAll(':','').slice(6,17)
-            // var Name_Vi = account
-            // var newMoney = Tien
-            // if (isIncome == false){
-            //   var newMoney = -Tien
-            // }
-            // console.log(1)
-            // console.log(MaVi,Name_Vi,money)
             try{
               await db.transaction(async (tx)=> {
                 await tx.executeSql(
-                "INSERT INTO GD_TK (MaGDTK,FromAcc,ToAcc,Money, Date, GhiChu) VALUES(?,?,?,?,?,?)",
-                [MAGDTK,WalletChoose_CH,WalletChoose_NH, Tien, Date_s, ghichu],
-  
-                
+                "UPDATE GD_TK set FromAcc = ? ,ToAcc= ?, Money = ?, Date = ?, GhiChu = ? WHERE MaGDTK = ?",
+                [WalletChoose_CH,WalletChoose_NH, Tien,Date_s, ghichu, MaGD],
                 (tx, results) => {
-                  // console.log('Results', results.rowsAffected);
+                  console.log('Results', results.rowsAffected);
                   if (results.rowsAffected > 0) {
                     Alert.alert(
                       'Success',
@@ -135,19 +122,23 @@ const Transfer = ({navigation}) => {
                       ],
                       {cancelable: false},
                     );
-                  } else alert('Registration Failed');
+                  } else { 
+                    alert('Registration Failed')};
                 },
                 )
-                
               })
             }
             catch (error){
               console.log('error')
             }
-            
-            // setModifine(!modifine)
         }
-      }
+            // setModifine(!modifine)
+        
+    }
+
+
+
+    
     const GetTenViByMaVi= (ID) =>{
         if (ID === 'chua chon') {
             return 'chua chon'
@@ -162,36 +153,10 @@ const Transfer = ({navigation}) => {
     }
 
 
-       const Get = async()=>{
-            await db.transaction(async (tx) =>{
-  
-                await tx.executeSql(
-                  `SELECT * FROM GD_TK`,
-                  [],
-                  async (tx, results) =>{
-                    var sum = 0
-                    console.log(results.rows.length)
-                    for (let i = 0; i < results.rows.length; i++){
-                        var a = results.rows.item(i)
-                        console.log(a)
-           
-                        // List[i].MaVi = 'Vi00'
-                        
-                    }
-              
-                  }
-                )
-                
-            })
-         
-    }
-
-
 
     useEffect(() => {
-        // GetTenVi()
         GetListWallet()
-        Get()
+  
     }, [])
 
     
@@ -201,7 +166,7 @@ const Transfer = ({navigation}) => {
                 <Pressable style = {{paddingRight: 30, size: 30, marginTop:20}} onPress={() => {navigation.goBack(null)}}>
                                 <Ionicons name = 'arrow-back' color = 'white' size={25}/>
                     </Pressable>
-                    <Text style = {{color:'white', fontSize: 20, marginTop:20}}> Tao chuyen khoan</Text>
+                    <Text style = {{color:'white', fontSize: 20, marginTop:20}}> Chinh sua chuyen khoan</Text>
             </View>
             <View>
                 <Modal
@@ -217,6 +182,7 @@ const Transfer = ({navigation}) => {
                                 <View>
                                     <RadioButtonRN 
                                         data = {ListVi}
+                                        initial = {FrAcc}
                                         selectedBtn = {(e) => {console.log(e.MaVi)
                                             setWalletChoose_CH(e.MaVi)}}
                                             />
@@ -238,6 +204,7 @@ const Transfer = ({navigation}) => {
                             <View>
                                 <RadioButtonRN 
                                     data = {ListVi}
+                                    initial = {ToAcc}
                                     selectedBtn = {(e) => {console.log(e.MaVi)
                                         setWalletChoose_NH(e.MaVi)}}
                                         />
@@ -324,8 +291,10 @@ const Transfer = ({navigation}) => {
                     style={styles.inputText}
                     placeholder='0'
                     keyboardType="numeric"
-                    onChangeText={(newMoney) => setTien(newMoney)}/>
-
+                    onChangeText={(newMoney) => setTien(newMoney)}
+                    defaultValue = {Money.toString()}
+                    />
+                    
                     <Text style={{fontSize: 25, color:'#4CA07C', marginTop:10}}>VNĐ</Text>
                     </View>
                    
@@ -351,14 +320,14 @@ const Transfer = ({navigation}) => {
                 <TextInput
                     style = {styles.noteText}
                     placeholder='Add Note (Optional)'
-        
+                    defaultValue={GhiChu}
                     onChangeText={newghichu => setghichu(newghichu)}
                     />
                 </View>
                 <View style = {{marginTop:150}}>
                     <TouchableOpacity style={[styles.floatingButton]}
-                    onPress = {() => setData()}>
-                        <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Thêm</Text>
+                    onPress = {() => UpdateData()}>
+                        <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Luu</Text>
                     </TouchableOpacity>
                     
                 </View>
@@ -471,4 +440,4 @@ const styles = StyleSheet.create({
         borderRadius:10,
     },
 })
-export default Transfer;
+export default EditHistory;

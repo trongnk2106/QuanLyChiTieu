@@ -12,38 +12,14 @@ import { openDatabase } from 'react-native-sqlite-storage';
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
 
-const Transfer_History = ({route, navigation}) => {
+const ViewTranfer = ({route, navigation}) => {
 
     const [hist, setHist] = useState([])
     const [listvi, setListvi] = useState([])
 
-    // const {TenTk, money} = route.params
-    // // console.log(TenTk, money)
-    // const [changeMoney, setChangeMoney] = useState(money)
-    // const [nameAcc, setNameAcc] = useState(TenTk)
-
+    const {MaGD, FrAcc, ToAcc, Money, date, ghichu} = route.params
+    console.log(MaGD, FrAcc, ToAcc, Money, date, ghichu)
     const GetHistory = async()=>{
-       
-        await db.transaction(async (tx) =>{
-            await tx.executeSql(
-              "SELECT * FROM GD_TK",
-              [],
-              (tx, results) =>{
-                var sum = 0
-               
-                var temp_list= []
-                for (let i = 0; i < results.rows.length; i++){
-                    var a = results.rows.item(i)
-                    console.log(a)
-                    temp_list.push(a)
-             
-                }
-                setHist(temp_list)
-                
-              }
-            )
-        })
-
         await db.transaction(async (tx) =>{
             await tx.executeSql(
               "SELECT * FROM DS_VI",
@@ -68,87 +44,75 @@ const Transfer_History = ({route, navigation}) => {
         }
     }
     
+    
+    
+
+    const Delete = async () =>{
+        // console.log(data1.MaGD)    
+        await db.transaction(async (tx) =>{
+          await tx.executeSql(
+            `DELETE FROM GD_TK WHERE MaGDTK = ?`,
+            [MaGD],
+            (tx, results) => {
+                console.log('Results', results.rowsAffected);
+                if (results.rowsAffected > 0) {
+                  Alert.alert(
+                    'Success',
+                    'Giao dịch đã được xóa',
+                    [
+                      {
+                        text: 'Ok',
+                        onPress: () => navigation.navigate('Acc'),
+                      },
+                    ],
+                    {cancelable: false},
+                  );
+                } else {
+                  Alert.alert('Hệ thống đang xử lý');
+                }
+            }
+            )
+        })
+    }
+
+    
+
     useEffect(() => {
         GetHistory()
     },[])
-    // const {TKChuyen, TKNhan, TGian,sotien} = route.params
-    // console.log(TKChuyen, TKNhan, TGian, sotien)
+  
 
 
-    const Display_View = () => {
-
-
-        var output=[]
-
-        for(let i of hist){
-            const itemview= (
-                <View>
-                    <Pressable onPress = {() => navigation.navigate('ViewTranfer', {MaGD:i.MaGDTK, 
-                    FrAcc : i.FromAcc, ToAcc : i.ToAcc, Money : i.Money, date : i.Date, ghichu : i.GhiChu
-                    })}>
-                        <View style = {{flexDirection:'row', justifyContent:'space-between'}}>
-
-                            <View style = {{marginTop:20}}>
-                                {console.log(i.MaGDTK)}
-                            
-                                    <Text style = {{color:'black'}}> {i.Date}</Text>
-                                    <Text style = {{color:'red'}}> {GetTenVibyMavi(i.FromAcc)}</Text>
-                                    <Ionicons name = 'arrow-down-outline' size = {20} style = {{marginLeft: 40}}></Ionicons>
-                                    <Text style = {{color:'green'}}> {GetTenVibyMavi(i.ToAcc)}</Text>
-                                
-                                
-                            </View>
-                            <View style={{flexDirection:'row'}}>
-                                <View >
-                                    <Text style = {{marginTop:50}}> {new Intl.NumberFormat().format(i.Money)} </Text>
-                                </View>
-                                <View>
-                                    <Text style = {{marginTop:50}}> VND</Text>
-                                </View>
-                            </View>
-                            
-                        </View>
-                    </Pressable>    
-                </View>
-              
-            )
-            output.push(itemview)
-        }
-
-
-        return output
-    }
-
-    //     return(
-    //         <View style = {{flexDirection:'row', justifyContent:'space-between'}}>
-    //                 <View style = {{marginTop:10}}>
-    //                     <Text> {TGian}</Text>
-    //                     <Text> {TKChuyen}</Text>
-    //                     <Ionicons name = 'arrow-down-outline' size = {20} style = {{marginLeft: 40}}></Ionicons>
-    //                     <Text> {TKNhan}</Text>
-    //                 </View>
-    //                 <View >
-    //                     <Text style = {{marginTop:50}}> {sotien}</Text>
-    //                 </View>
-    //             </View>
-    //     )
-    // }
-
+  
     return (
-       <View style= {{backgroundColor:'#edece8'}}>
+       <View style= {{backgroundColor:'#edece8',flex:1}}>
             <View style = {styles.header}>
                 <Pressable style = {{paddingRight: 30, size: 30, marginTop:20}} onPress={() => {navigation.goBack(null)}}>
                                 <Ionicons name = 'arrow-back' color = 'white' size={25}/>
                     </Pressable>
                 <Text style = {{color:'white', fontSize: 20, marginTop:20}}> Chuyen khoan</Text>
+                <Pressable style = {{marginTop : 20, size: 30}} onPress={() => navigation.navigate('EditHistory', {MaGD:MaGD, FrAcc:FrAcc, ToAcc:ToAcc, Money:Money, date:date, GhiChu:ghichu})}>
+                        <Ionicons name ='md-pencil' color='white' size={30} style={{marginRight:10}}/>
+                </Pressable>
             </View>
-            <View style = {styles.showContainerCenter}>
 
-                <ScrollView>
-                    <Display_View/>    
-                </ScrollView>
-
+            <View>
+                <Text style = {styles.title}>Chuyen tu tai khoan</Text>
+                <Text style = {styles.text_}>{GetTenVibyMavi(FrAcc)}</Text>
+                <Text style = {styles.title}> Chuyen vao tai khoan</Text>
+                <Text style = {styles.text_}> {GetTenVibyMavi(ToAcc)}</Text>
+                <Text style = {styles.title}> So tien chuyen</Text>
+                <Text style = {styles.text_}> {new Intl.NumberFormat().format(Money)} VND</Text>
+                <Text style = {styles.title}> Ngay </Text>
+                <Text style = {styles.text_}> {date}</Text>
             </View>
+
+            <View style = {{marginTop: 40, marginLeft:18}}>
+                <Pressable onPress = {() => Delete()}>
+                    <Text style ={{fontSize:18, color: 'red'}}> XOA </Text>
+                </Pressable>
+            </View>
+
        
        </View>
     )
@@ -161,14 +125,22 @@ const styles = StyleSheet.create({
         height : Dimensions.get('window').height * 0.1,
         width: Dimensions.get('window').width,
         backgroundColor: '#54b38a',
-        flexDirection:'row'
+        flexDirection:'row',
+        justifyContent:'space-between'
 
     },
     title: {
+        color : '#737875',
         marginLeft: 18,
         fontSize: 15,
         marginTop: 40
       },
+      text_ :{
+        color:'black',
+        fontSize:16,
+        marginLeft:18
+      },
+
       inputText2: {
         fontSize: 18, 
         borderBottomWidth: 2,
@@ -226,4 +198,4 @@ const styles = StyleSheet.create({
     },
 
 })
-export default Transfer_History;
+export default ViewTranfer;

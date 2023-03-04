@@ -36,7 +36,8 @@
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-time-date-picker": "^1.2.0",
     "react-native-vector-icons": "^9.2.0",
-    "react-native-wheel-color-picker": "^1.2.0"
+    "react-native-wheel-color-picker": "^1.2.0",
+    "victory-native": "^36.6.8"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
