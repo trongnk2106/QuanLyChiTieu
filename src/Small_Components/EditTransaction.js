@@ -18,7 +18,6 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { openDatabase } from 'react-native-sqlite-storage';
 import { onChange } from 'react-native-reanimated';
 import { Icon, Button } from 'react-native-elements'
-import SwitchButton from "@freakycoder/react-native-switch-button";
 import { Agenda, Calendar } from 'react-native-calendars';
 import RadioButtonRN from 'radio-buttons-react-native';
 import { NavigationContainer, useIsFocused } from '@react-navigation/native';

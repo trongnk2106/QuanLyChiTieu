@@ -98,7 +98,7 @@ const Transfer = ({navigation}) => {
 
     const setData = async () =>{
         if (WalletChoose_CH === 'Chưa chọn' || WalletChoose_NH === 'Chưa chọn' || Tien === 0){
-            Alert.alert('Vui lòng điền đầy đủ thông tin trước khi thêm giao dịch!')
+            Alert.alert('Vui lòng điền đầy đủ thông tin trước khi thêm giao dịch')
         }
         else if (checkViTien(WalletChoose_CH,  Tien) === false) {Alert.alert("Không đủ số dư, vui lòng chọn ví khác")}
         else {

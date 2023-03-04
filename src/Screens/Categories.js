@@ -16,7 +16,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import { ScrollView } from 'react-native-gesture-handler';
 import { openDatabase } from 'react-native-sqlite-storage';
 import { onChange } from 'react-native-reanimated';
-import SwitchButton from "@freakycoder/react-native-switch-button";
 import { Button, Icon } from 'react-native-elements';
 import { NavigationContainer, useIsFocused } from '@react-navigation/native';
 import {ListIncomeCategory, ListExpenseCategory, ListIcon, getItem} from '../Small_Components/Icon';

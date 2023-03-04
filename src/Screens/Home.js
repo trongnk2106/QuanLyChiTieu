@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 import {Text, View, StyleSheet, Dimensions, TouchableOpacity, Alert, Modal, Pressable, SafeAreaView, FlatList, Image} from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import RadioButtonRN from 'radio-buttons-react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { ProgressChart } from 'react-native-chart-kit';
 import { SwipeListView } from 'react-native-swipe-list-view'
 // import Icon from 'react-native-vector-icons'
@@ -22,7 +22,6 @@ import { VictoryBar, VictoryChart, VictoryTheme, VictoryPie } from "victory-nati
 
 
 
-
 const db =  openDatabase({ name: 'data.db', readOnly: false,createFromLocation : 1})
 
 const Home = ({ navigation }) => {
@@ -37,7 +36,7 @@ const Home = ({ navigation }) => {
     const [SelectedGD, setSelectedGD] = useState('')
     const [Key, SetKey] = useState([])
     
-    const [Thang, setThang] = useState('')
+    // const [Thang, setThang] = useState('')
     const [graphicData, setGraphicData] = useState([])
     const [graphicColor, setGraphicColor] = useState([])
     const [acctionTrigger, setAcctionTrigger] = useState('')
@@ -47,6 +46,10 @@ const Home = ({ navigation }) => {
     console.log(timercurrent)
 
     const [ngay, setNgay] = useState(`${timercurrent}`)
+    const [thang, setThang] = useState(new Date().getMonth())
+    const [nam, setNam] = useState(new Date().getFullYear())
+    const [displayText, setDisplayText] = useState(`${timercurrent}`)
+    const [pressedText, setPressedText] = useState('Ngày')
    
     // const [style_choose, setStyle_choose] = useState('bold')
     // load vao day ten cac vi, cac vi chon duoc se nam trong bien WalletChoose
@@ -465,7 +468,7 @@ const Home = ({ navigation }) => {
     }
   
     return(
-        <View style = {{backgroundColor: '#d4d9d7', flex:1}}>
+        <View style = {{backgroundColor: '#edece8', flex:1}}>
             <View style = {styles.header}>
                 <View style = {{flexDirection:'column', marginTop:25, alignItems:'center'}}>
                     <View style = {{flexDirection: 'row'}}>
@@ -524,13 +527,106 @@ const Home = ({ navigation }) => {
 
                                     <TouchableOpacity 
                                         style={styles.doneButton2} 
-                                        onPress = {() => setModalVisible(!modalVisible)}>
+                                        onPress = {() => {
+                                            setModalVisible(!modalVisible)
+                                            setDisplayText(ngay)
+                                        }}>
                                         <Text style={{color:'#FFFFFF'}}>Done</Text>
                                     </TouchableOpacity>
                                                     
 
                                     </View>
-                            </View>       
+                                </View>    
+
+                            : acctionTrigger === 'thang' ?
+                            
+                            <View style = {styles.showContainer}>
+                                <View style ={styles.showContainerCenter}>
+                                    <Text style = {{marginLeft:20, marginTop:15, fontSize:20}}>Chọn tháng</Text>
+                                    <Text style = {{marginLeft:20, fontSize:16, marginVertical:5}}>Tháng {thang} năm {nam}</Text>
+                                    <View style={{flexDirection:'row', marginHorizontal:15, marginVertical:10, justifyContent:'space-between'}}>
+                                        <Icon name='chevron-left' type='evil-icons' size={30} color='#74B498'
+                                            onPress={() => setNam(nam-1)}/>
+                                        <Text style = {{fontSize:18, color:'#74B498',alignContent:'center'}}>{nam}</Text>
+                                        <Icon name='chevron-right' type='evil-icons' size={30} color='#74B498'
+                                            onPress={() => setNam(nam+1)}/>
+                                        
+                                    </View>
+                                    
+                                    <SafeAreaView style={styles.container}>
+                                        <FlatList
+                                            contentContainerStyle={{justifyContent:'center', alignItems:'flex-start', alignSelf:'center'}}
+                                            horizontal={false}
+                                            numColumns = {4}
+                                            scrollEnabled= {false}
+                                            data={[        
+                                                {num: '1', label:'Tháng 1'},
+                                                {num: '2', label:'Tháng 2'},
+                                                {num: '3', label:'Tháng 3'},
+                                                {num: '4', label:'Tháng 4'},
+                                                {num: '5', label:'Tháng 5'},
+                                                {num: '6', label:'Tháng 6'},
+                                                {num: '7', label:'Tháng 7'},
+                                                {num: '8', label:'Tháng 8'},
+                                                {num: '9', label:'Tháng 9'},
+                                                {num: '10', label:'Tháng 10'},
+                                                {num: '11', label:'Tháng 11'},
+                                                {num: '12', label:'Tháng 12'}]}
+                                            renderItem={({item}) => <Button 
+                                                                        title={item.label} titleStyle={{fontSize:14,color:thang == item.num ? 'white':'#999999'}}
+                                                                        buttonStyle={{width:85,height:40,borderRadius:10,margin:2,
+                                                                            backgroundColor: thang == item.num ? '#74B498':'transparent'}}
+                                                                        onPress={() => {
+                                                                            setThang(item.num)
+                                                                        }}
+                                                                    />}
+                                            keyExtractor={item => item.num}
+                                        />
+                                    </SafeAreaView>
+
+                                    
+                                <Pressable onPress = {() => {
+                                    setModalVisible(!modalVisible)
+                                    setDisplayText('Tháng ' + thang + ' năm '+ nam)
+                                }}>
+                                    <Text style = {{fontSize:17, color:'green', textAlign:'right', marginTop:22, marginRight : 18, marginBottom:18}}> Chọn </Text>
+                                </Pressable>
+                                </View>
+                            </View>
+
+                            : acctionTrigger === 'nam' ?
+
+                            <View style = {styles.showContainer}>
+                                <View style ={styles.showContainerCenter}>
+                                    <Text style = {{marginLeft:20, marginTop:15, fontSize:20}}>Chọn năm</Text>
+                                    <Text style = {{marginLeft:20, fontSize:16, marginVertical:5}}>Năm {nam}</Text>
+                                    <View style={{flexDirection:'row', marginHorizontal:45, marginVertical:10, justifyContent:'space-between'}}>
+                                        <Icon name='chevron-left' type='evil-icons' size={30} color='#74B498'
+                                            onPress={() => setNam(nam-1)}/>
+                                        <Text style = {{fontSize:18, color:'#74B498',alignContent:'center'}}>{nam}</Text>
+                                        <Icon name='chevron-right' type='evil-icons' size={30} color='#74B498'
+                                            onPress={() => setNam(nam+1)}/>
+                                    </View>
+
+                                    <TextInput
+                                        style={styles.inputText}
+                                        placeholder='Nhập năm'
+                                        keyboardType="numeric"
+                                        onChangeText={(newYear) => setNam(newYear)}/>
+                                    
+                                    
+
+                                    
+                                <Pressable onPress = {() => {
+                                    setModalVisible(!modalVisible)
+                                    setDisplayText('Năm '+ nam)
+                                }}>
+                                    <Text style = {{fontSize:17, color:'green', textAlign:'right', marginTop:22, marginRight : 18, marginBottom:18}}> Chọn </Text>
+                                </Pressable>
+                                </View>
+                            </View>
+
+
                             : null
                             }
                                 
@@ -574,19 +670,41 @@ const Home = ({ navigation }) => {
             <ScrollView>
                 <View style = {styles.body}>
                     <View style = {{flexDirection:'row', justifyContent:'space-between', paddingLeft:50, paddingRight:50, paddingTop:10}}>
+                        
                         <TouchableOpacity onPress = {() => {
                             setAcctionTrigger('ngay')
                             setModalVisible(true)
+                            setPressedText('Ngày')
                         }}>
-                            <Text style = {styles.text_date}> Ngày</Text>
+                            { pressedText === 'Ngày' ? <Text style = {{fontSize:16, color: '#54b38a', textDecorationLine : 'underline',
+                            textDecorationStyle : 'solid', fontWeight : 'bold'}}>Ngày</Text> : <Text style = {styles.text_date}>Ngày</Text>}
                         </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Text style = {styles.text_date}> Tháng</Text>
+
+                        <TouchableOpacity onPress = {() => {
+                            setPressedText('Tháng')
+                            setAcctionTrigger('thang')
+                            setModalVisible(true)
+                        }}>
+                            { pressedText === 'Tháng' ? <Text style = {{fontSize:16, color: '#54b38a', textDecorationLine : 'underline',
+                            textDecorationStyle : 'solid', fontWeight : 'bold'}}>Tháng</Text> : <Text style = {styles.text_date}>Tháng</Text>}
                         </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Text style = {styles.text_date}> Năm</Text>
+
+
+
+                        <TouchableOpacity onPress = {() => {
+                            // setAcctionTrigger('ngay')
+                            // setModalVisible(true)
+                            setPressedText('Năm')
+                            setAcctionTrigger('nam')
+                            setModalVisible(true)
+                        }}>
+                            { pressedText === 'Năm' ? <Text style = {{fontSize:16, color: '#54b38a', textDecorationLine : 'underline',
+                            textDecorationStyle : 'solid', fontWeight : 'bold'}}>Năm</Text> : <Text style = {styles.text_date}>Năm</Text>}
                         </TouchableOpacity>
+                        
                     </View>
+
+                    <Text style={{textAlign:'center', marginVertical:5,textDecorationLine:'underline'}}>{displayText}</Text>
                 
                     {isIncome === true ? LoadingMapType(true) : LoadingMapType(false)}
 
@@ -626,7 +744,17 @@ const styles = StyleSheet.create({
         borderBottomRightRadius:40,
         // flexDirection:'',
     },
-    
+    inputText: {
+        fontSize: 20, 
+        borderBottomWidth: 2,
+        borderBottomColor:'#4CA07C',
+        width: 130,
+        marginLeft: 30,
+        marginTop: 20,
+        marginBottom: 55,
+        textAlign:'left',
+        alignItems:'center'
+      },
     body: {
         backgroundColor : 'white',
         flexDirection:'column',
@@ -670,7 +798,7 @@ const styles = StyleSheet.create({
 
     },
     text_date: {
-        fontSize : 15
+        fontSize : 16
     },
     centeredView: {
         flex: 1,
