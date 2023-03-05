@@ -6,7 +6,9 @@
 
 ## Tên App
  * Quản Lý Chi Tiêu
-
+ * 
+## Link Video Demo
+ * [link]
 	
 ## Setup
 To run this project, install it locally using npm:
