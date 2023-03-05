@@ -8,7 +8,7 @@
  * Quản Lý Chi Tiêu
  
 ## Link Video Demo
- * [Demo](#Demo)
+ * [Demo](https://youtu.be/KrlFCc_uP8M)
 	
 ## Setup
 To run this project, install it locally using npm:
@@ -19,3 +19,5 @@ $ cd QuanLyChiTieu
 $ npm install
 $ npm start
 ```
+
+Bỏ chức năng thông báo so với báo cáo
