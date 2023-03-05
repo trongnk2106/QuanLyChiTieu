@@ -15,9 +15,9 @@ import ViewDetail_Type from './src/Screens/ViewDetail_Type';
 import ViewDetail from './src/Small_Components/ViewDetail';
 import EditTransaction from './src/Small_Components/EditTransaction';
 import CategoriesStack from './src/Screens/CategoriesStack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import PlotMap from './src/Screens/PlotMap';
-import Icon from 'react-native-vector-icons/Ionicons';
-// import StackedBarChartScreen from './src/test';
 
 // function HomeScreen({ navigation }) {
 //   return (
@@ -30,50 +30,45 @@ import Icon from 'react-native-vector-icons/Ionicons';
 //   );
 // }
 
-function NotificationsScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button onPress={() => navigation.goBack()} title="Go back home" />
-    </View>
-  );
-}
 
-const MyTheme = {
-  colors: {
-    card: 'rgb(55, 115, 89)',
-    text: 'rgb(255, 255, 255)',
-  },
-};
-
-const Drawer = createDrawerNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function App() {
-  return (
-    <NavigationContainer theme={MyTheme}>
-      <Drawer.Navigator screenOptions={{
-        headerShown : false, 
-        drawerActiveTintColor:'#C4DDCA',
-        drawerInactiveTintColor:'#C4DDCA',
-      }}>
-        <Drawer.Screen name="Trang chính" component={HomeStack} 
-          options={{ drawerIcon: config => <Icon size={25} name={'home'} color={'#C4DDCA'}></Icon> }}/> 
-        <Drawer.Screen name="Tài khoản" component={CreateAcc_Stack}
-          options={{ drawerIcon: config => <Icon size={25} name={'card'} color={'#C4DDCA'}></Icon> }}/>
-        <Drawer.Screen name="Bieu do" component={PlotMap}
-          options={{ drawerIcon: config => <Icon size={25} name={'bar-chart'} color={'#C4DDCA'}></Icon> }}/>  
+  return(
 
-        <Drawer.Screen name="Nhắc nhở" component={NotificationsScreen}
-          options={{ drawerIcon: config => <Icon size={25} name={'notifications'} color={'#C4DDCA'}></Icon> }}/> 
-        {/* <Drawer.Screen name="Thêm giao dịch" component={Add} /> */}
-        {/* <Drawer.Screen name = 'ViewDetail_Type' component={ViewDetail_Type} />
-        <Drawer.Screen name = "ViewDetail" component={ViewDetail} />
-        <Drawer.Screen name = "EditTransaction" component={EditTransaction} /> */}
-        <Drawer.Screen name="Danh mục" component={CategoriesStack}
-          options={{ drawerIcon: config => <Icon size={25} name={'list'} color={'#C4DDCA'}></Icon> }}/> 
-        <Drawer.Screen name="Calculator" component={Cal} options={{drawerItemStyle:{height:0}}} />
-        <Drawer.Screen name="CreateCategory" component={CreateCategory} options={{drawerItemStyle:{height:0}}} />
-        <Drawer.Screen name="EditCategory" component={EditCategory} options={{drawerItemStyle:{height:0}}} />
-      </Drawer.Navigator>
+    <NavigationContainer>
+        <Tab.Navigator screenOptions={({ route }) => ({
+              headerShown : false,
+              tabBarIcon: ({ focused, color, size }) => {
+                let iconName;
+    
+                if (route.name === 'Trang chính') {
+                  iconName = focused
+                    ? 'home'
+                    : 'home-outline';
+                } else if (route.name === 'Danh mục') {
+                  iconName = focused ? 'list' : 'list-outline';
+                } else if (route.name === 'Tài khoản') {
+                  iconName = focused ? 'card' : 'card-outline'
+                } else if (route.name === 'Notifications') {
+                    iconName = focused ? 'alarm' : 'alarm-outline'
+                  }
+                  else if (route.name === 'Bieu do'){
+                    iconName = focused ? 'bar-chart' : 'bar-chart-outline'
+                  }
+               
+                return <Ionicons name={iconName} size={size} color={color} />;
+              },
+              tabBarActiveTintColor: 'tomato',
+              tabBarInactiveTintColor: 'gray',
+            })} >
+          <Tab.Screen name="Trang chính" component={HomeStack} /> 
+          <Tab.Screen name="Danh mục" component={CategoriesStack}  />
+          <Tab.Screen name="Bieu do" component={PlotMap}  />
+          <Tab.Screen name="Tài khoản" component={CreateAcc_Stack} />
+         
+
+        </Tab.Navigator>
     </NavigationContainer>
-  );
+  )
 }
