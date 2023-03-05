@@ -28,7 +28,7 @@ function NotificationsScreen() {
 
   const hideDatePicker = () => {
     //setElementVisible(true);
-    setDatePickerVisibility(false);
+    setIsDatePickerVisible(false);
   };
 
   const handleConfirm = (item) => {
@@ -71,9 +71,6 @@ function NotificationsScreen() {
          )}
 
       </SafeAreaView>
-
-
-
 
       <View style={styles.timePicker}>
         <Button style={styles.button} title="Show Date Picker" onPress={showDatePicker} />
