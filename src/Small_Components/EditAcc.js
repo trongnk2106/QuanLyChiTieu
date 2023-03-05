@@ -140,34 +140,36 @@ const EditAcc = ({route, navigation}) => {
                 />
 
             </View>
-            <View style = {{backgroundColor:'white', height: Dimensions.get('window').height * 0.5 }}></View>
-            <View>
+           
+            {/* <View style = {{backgroundColor:'white', height: Dimensions.get('window').height * 0.5 }}></View> */}
+            <View style = {{marginTop:250, flexDirection: 'row', justifyContent:'space-between', marginRight: 20, marginLeft:20}}>
+               
+                <View>
+                  <TouchableOpacity style={styles.floatingButton_2}
+                      onPress = {() =>{Alert.alert(
+                        'Warning',
+                        'Xóa tài khoản sẽ xóa tất cả giao dịch bao gồm các giao dịch chuyển khoản. Vẫn tiếp tục xóa?',
+                        [
+                          {
+                            text: 'Ok',
+                            onPress: () => Delete(),
+                          },
+                          {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel',
+                          },
+                        ],
+                        {cancelable: true},
+                      )}}>
+                      <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Xóa</Text>
+                  </TouchableOpacity>
+                </View>  
                 <View>
                     <TouchableOpacity style={styles.floatingButton}
                         onPress = {() => UpdateData()}>
-                        <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Luu</Text>
+                        <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Lưu</Text>
                     </TouchableOpacity>
-                </View>  
-                <View>
-                <TouchableOpacity style={styles.floatingButton_2}
-                    onPress = {() =>{Alert.alert(
-                      'Warning',
-                      'Xóa tài khoản sẽ xóa tất cả giao dịch bao gồm các giao dịch chuyển khoản. Vẫn tiếp tục xóa?',
-                      [
-                        {
-                          text: 'Ok',
-                          onPress: () => Delete(),
-                        },
-                        {
-                          text: 'Cancel',
-                          onPress: () => console.log('Cancel Pressed'),
-                          style: 'cancel',
-                        },
-                      ],
-                      {cancelable: true},
-                    )}}>
-                    <Text style={{fontSize:15, fontWeight:'bold', color:'white'}}>Xóa</Text>
-                </TouchableOpacity>
                 </View>  
             </View>
            
@@ -209,11 +211,11 @@ const styles = StyleSheet.create({
       },
 
       floatingButton: {
-        width: 160,  
+        width: 120,  
         height: 40,   
         borderRadius: 30,            
         backgroundColor: '#54b38a',                                    
-        position: 'absolute',        
+        // position: 'absolute',        
         flexDirection: "row",                                  
         bottom: 15,               
         alignItems: 'center',
@@ -221,11 +223,11 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end',
       },
       floatingButton_2: {
-        width: 160,  
+        width: 120,  
         height: 40,   
         borderRadius: 30,            
         backgroundColor: 'red',                                    
-        position: 'absolute',        
+        // position: 'absolute',        
         flexDirection: "row",                                  
         bottom: 15,               
         alignItems: 'center',

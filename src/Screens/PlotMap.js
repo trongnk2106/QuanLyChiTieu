@@ -1225,7 +1225,7 @@ const styles = StyleSheet.create({
         backgroundColor : 'white',
         flexDirection:'column',
         width : Dimensions.get('window').width * 0.9,
-        height : Dimensions.get('window').height * 0.8,
+        height : Dimensions.get('window').height * 0.7,
         borderRadius:10,
         marginLeft:20,
         marginTop:10,

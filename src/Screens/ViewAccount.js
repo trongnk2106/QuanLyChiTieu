@@ -209,7 +209,10 @@ const Acc = ({ route, navigation }) => {
                
                 
             </View>
-                <Pressable style= {{marginTop : 10, alignItems : 'center', flexDirection:'column-reverse'}}
+                <Pressable style= {{marginTop : Dimensions.get('window').height - 150, 
+                alignItems : 'center', flexDirection:'column-reverse',
+                marginLeft: Dimensions.get('window').width / 2.5,
+                position: 'absolute'}}
                 onPress = {() => navigation.navigate('AddAcc')}
                 >
       
