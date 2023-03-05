@@ -102,7 +102,7 @@ const Add = ({route, navigation }) => {
               />
             }
             onPress={() => {
-              item.Icon == 'Tao' ? navigation.navigate('CreateCategory') : setMadanhMuc(item.MaDanhMuc)
+              item.Icon == 'Tao' ? navigation.navigate('CreateCategory', {Thu: isIncome}) : setMadanhMuc(item.MaDanhMuc)
             }}
           />
           <Text style={{

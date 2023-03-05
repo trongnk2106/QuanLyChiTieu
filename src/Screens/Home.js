@@ -272,9 +272,9 @@ const Home = ({ navigation }) => {
                             chart.push(itedate)
     
                         }
-                        setSelectedList(List)
                         setGraphicData(chart)
                         setGraphicColor(charcolor)
+                        setSelectedList(List)
                         return List
                     }
                     )
@@ -284,7 +284,7 @@ const Home = ({ navigation }) => {
         }
         else if (acctionTr === 'thang'){
             console.log('thuc thi trong thang', thang)
-            
+            // console.log(isIncome)
             if (ID == 'Vi00'){
                 await db.transaction(async (tx) =>{
                     var List = []
@@ -296,13 +296,23 @@ const Home = ({ navigation }) => {
                         var chart = []
                         var charcolor = []
                         console.log(results.rows.length)
+                        
+                      
                         for (let i = 0; i < results.rows.length; i++){
                             var a = results.rows.item(i)
                             // console.log(a)
                             // console.log('thang home', a.Date.slice(6,9))
+                            var moth = a.Date.slice(5, 7)
+                            moth = Number(moth)
+                            console.log('month', moth)
+                            thang = Number(thang)
+                            console.log('tien querry tu thang',a)
+                            // if (thang < 10) {
+
+                            // }
                             if (thang < 10) {
                                
-                                if (a.Date.slice(6,7) === thang)
+                                if (a.Date.slice(6,7) === `${thang}`)
                                 {
                                     List.push(a)
                                     console.log(a)
@@ -316,12 +326,13 @@ const Home = ({ navigation }) => {
                                 }
                             }
                             else {
-                                // console.log('thang lon hon 10')
-                                console.log(a.Date.slice(5,7))
-                                if (a.Date.slice(5,7) === thang)
+                                console.log('thang lon hon 10')
+                                // console.log()
+                                console.log('thang in home',a.Date.slice(5,7))
+                                if (a.Date.slice(5,7) === `${thang}`)
                                 {
                                 List.push(a)
-                                // console.log(a)
+                                console.log(a)
                                 const ite = {
                                     y : Math.abs(a[`SUM(Tien)`]),
                                     x : a.TenDanhMuc
@@ -354,16 +365,19 @@ const Home = ({ navigation }) => {
                         var sum = 0
                         var chart = []
                         var charcolor = []
+                        
                         for (let i = 0; i < results.rows.length; i++){
                             console.log(results.rows.length)
                             var a = results.rows.item(i)
+                            var moth = a.Date.slice(5, 7)
+                            console.log('month', moth)
                             // console.log(a)
                             if (thang < 10) {
                                
                                 if (a.Date.slice(6,7) === thang)
                                 {
                                     List.push(a)
-                                    console.log(a)
+                                    // console.log(a)
                                     const ite = {
                                         y : Math.abs(a[`SUM(Tien)`]),
                                         x : a.TenDanhMuc
@@ -391,9 +405,9 @@ const Home = ({ navigation }) => {
                             }
     
                         }
-                        setSelectedList(List)
                         setGraphicData(chart)
                         setGraphicColor(charcolor)
+                        setSelectedList(List)
                         return List
                     }
                     )
@@ -473,9 +487,9 @@ const Home = ({ navigation }) => {
                             
     
                         }
-                        setSelectedList(List)
                         setGraphicData(chart)
                         setGraphicColor(charcolor)
+                        setSelectedList(List)
                         return List
                     }
                     )
