@@ -43,13 +43,17 @@ const Home = ({ navigation }) => {
 
     // const th = 
     const timercurrent = new Date().getFullYear() + '-' +'0'+ (new Date().getMonth()+ 1) + '-' + '0' + new Date().getDate()
-    console.log(timercurrent)
+    // console.log('ngay mac dinh ',timercurrent)
 
     const [ngay, setNgay] = useState(`${timercurrent}`)
-    const [thang, setThang] = useState(new Date().getMonth())
+    const [thang, setThang] = useState(new Date().getMonth() + 1)
     const [nam, setNam] = useState(new Date().getFullYear())
     const [displayText, setDisplayText] = useState(`${timercurrent}`)
     const [pressedText, setPressedText] = useState('Ngày')
+
+    // console.log(nam)
+    // console.log("thang ",thang)
+    // console.log("nam", nam)
    
     // const [style_choose, setStyle_choose] = useState('bold')
     // load vao day ten cac vi, cac vi chon duoc se nam trong bien WalletChoose
@@ -68,21 +72,21 @@ const Home = ({ navigation }) => {
     // console.log(SelectedGD)
 
 
-    const data_plot = {
-        labels: ["Swim", "Bike", "Run", "thu"], // optional
-        data: [0.4, 0.6, 0.5, 1]
-      };
+    // const data_plot = {
+    //     labels: ["Swim", "Bike", "Run", "thu"], // optional
+    //     data: [0.4, 0.6, 0.5, 1]
+    //   };
 
-    const chartConfig = {
-    backgroundGradientFrom: "#1E2923",
-    backgroundGradientFromOpacity: 0,
-    backgroundGradientTo: "#08130D",
-    backgroundGradientToOpacity: 0,
-    color: (opacity = 0) => `rgba(26, 255, 146, ${opacity})`,
-    strokeWidth: 2, // optional, default 3
-    barPercentage: 0.5,
-    useShadowColorFromDataset: false // optional
-    };
+    // const chartConfig = {
+    // backgroundGradientFrom: "#1E2923",
+    // backgroundGradientFromOpacity: 0,
+    // backgroundGradientTo: "#08130D",
+    // backgroundGradientToOpacity: 0,
+    // color: (opacity = 0) => `rgba(26, 255, 146, ${opacity})`,
+    // strokeWidth: 2, // optional, default 3
+    // barPercentage: 0.5,
+    // useShadowColorFromDataset: false // optional
+    // };
     
     
     const DeletaDanhMuc = () => {
@@ -197,79 +201,241 @@ const Home = ({ navigation }) => {
         }
 
     }
-    const GetGDByMaViGrByMaDanhMuc = async(ID, IsThu, ngay)=>{
-        console.log(ID, IsThu)
+    const GetGDByMaViGrByMaDanhMuc = async(ID, IsThu, ngay, thang, nam, acctionTr)=>{
+        // console.log(ID, IsThu)
         if (IsThu == true)
             IsThu = 1
         else
             IsThu = 0
         if (ngay !== null)
-        if (ID == 'Vi00'){
-            await db.transaction(async (tx) =>{
-                var List = []
-                await tx.executeSql(
-                  `SELECT GIAODICH.MaDanhMuc, DANHMUC.TenDanhMuc,DANHMUC.Icon,DANHMUC.Color , SUM(Tien), GIAODICH.Date FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND DANHMUC.ThuChi == ${isIncome} AND GIAODICH.Date == "${ngay}" GROUP BY GIAODICH.MaDanhMuc`,
-                  [],
-                  async (tx, results) =>{
-                    var sum = 0
-                    var chart = []
-                    var charcolor = []
-                    console.log(results.rows.length)
-                    for (let i = 0; i < results.rows.length; i++){
-                        var a = results.rows.item(i)
-                        List.push(a)
-                        console.log(a)
-                        const ite = {
-                            y : Math.abs(a[`SUM(Tien)`]),
-                            x : a.TenDanhMuc
-                        }
-                        charcolor.push(a.Color)
-                        chart.push(ite)
-                        // List[i].MaVi = 'Vi00'
-                        
-                    }
-                    setGraphicData(chart)
-                    setGraphicColor(charcolor)
-                    setSelectedList(List)
-                    return List
-                  }
-                )
-                
-            })
-        }
-        else
-            await db.transaction(async (tx) =>{
-                var List = []
-                await tx.executeSql(
-                `SELECT GIAODICH.MaDanhMuc,GIAODICH.MaVi ,DANHMUC.TenDanhMuc,DANHMUC.Icon,DANHMUC.Color, SUM(Tien) FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND GIAODICH.MaVi == '${ID}' AND DANHMUC.ThuChi == ${IsThu} GROUP BY GIAODICH.MaDanhMuc`,
-                [],
-                async (tx, results) =>{
-                    var sum = 0
-                    var chart = []
-                    var charcolor = []
-                    for (let i = 0; i < results.rows.length; i++){
+        if (acctionTr === 'ngay') {
+            if (ID == 'Vi00'){
+                await db.transaction(async (tx) =>{
+                    var List = []
+                    await tx.executeSql(
+                      `SELECT GIAODICH.MaDanhMuc, DANHMUC.TenDanhMuc,DANHMUC.Icon,DANHMUC.Color , SUM(Tien), GIAODICH.Date FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND DANHMUC.ThuChi == ${isIncome} AND GIAODICH.Date == "${ngay}" GROUP BY GIAODICH.MaDanhMuc`,
+                      [],
+                      async (tx, results) =>{
+                        var sum = 0
+                        var chart = []
+                        var charcolor = []
                         console.log(results.rows.length)
-                        var a = results.rows.item(i)
-                        console.log(a)
-                        List.push(a)
-                        const itedate= {
-                            y : Math.abs(a[`SUM(Tien)`]),
-                            x : a.TenDanhMuc
+                        for (let i = 0; i < results.rows.length; i++){
+                            var a = results.rows.item(i)
+                            List.push(a)
+                            // console.log(a)
+                            const ite = {
+                                y : Math.abs(a[`SUM(Tien)`]),
+                                x : a.TenDanhMuc
+                            }
+                            charcolor.push(a.Color)
+                            chart.push(ite)
+                            // List[i].MaVi = 'Vi00'
+                            
                         }
-                        charcolor.push(a.Color)
-                        // console.log(ite)
-                        chart.push(itedate)
-
+                        setGraphicData(chart)
+                        setGraphicColor(charcolor)
+                        setSelectedList(List)
+                        return List
+                      }
+                    )
+                    
+                })
+            }
+            else
+                await db.transaction(async (tx) =>{
+                    var List = []
+                    await tx.executeSql(
+                    `SELECT GIAODICH.MaDanhMuc,GIAODICH.MaVi ,DANHMUC.TenDanhMuc,DANHMUC.Icon,DANHMUC.Color, SUM(Tien) FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND GIAODICH.MaVi == '${ID}' AND DANHMUC.ThuChi == ${IsThu} AND GIAODICH.Date == "${ngay}" GROUP BY GIAODICH.MaDanhMuc`,
+                    [],
+                    async (tx, results) =>{
+                        var sum = 0
+                        var chart = []
+                        var charcolor = []
+                        for (let i = 0; i < results.rows.length; i++){
+                            console.log(results.rows.length)
+                            var a = results.rows.item(i)
+                            // console.log(a)
+                            List.push(a)
+                            const itedate= {
+                                y : Math.abs(a[`SUM(Tien)`]),
+                                x : a.TenDanhMuc
+                            }
+                            charcolor.push(a.Color)
+                            // console.log(ite)
+                            chart.push(itedate)
+    
+                        }
+                        setSelectedList(List)
+                        setGraphicData(chart)
+                        setGraphicColor(charcolor)
+                        return List
                     }
-                    setSelectedList(List)
-                    setGraphicData(chart)
-                    setGraphicColor(charcolor)
-                    return List
-                }
-                )
-                
-            })
-         
+                    )
+                    
+                })
+             
+        }
+        else if (acctionTr === 'thang'){
+            if (ID == 'Vi00'){
+                await db.transaction(async (tx) =>{
+                    var List = []
+                    await tx.executeSql(
+                      `SELECT GIAODICH.MaDanhMuc, DANHMUC.TenDanhMuc,DANHMUC.Icon,DANHMUC.Color , SUM(Tien), GIAODICH.Date FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND DANHMUC.ThuChi == ${isIncome} GROUP BY GIAODICH.MaDanhMuc`,
+                      [],
+                      async (tx, results) =>{
+                        var sum = 0
+                        var chart = []
+                        var charcolor = []
+                        console.log(results.rows.length)
+                        for (let i = 0; i < results.rows.length; i++){
+                            var a = results.rows.item(i)
+                            // console.log('ngay thang in thang',a.Date)
+                            // console.log(a.Date.slice(6,7))
+                            // console.log('thang get tu triger', thang)
+                            if (a.Date.slice(6,7) === thang)
+                            {
+                                List.push(a)
+                                // console.log(a)
+                                const ite = {
+                                    y : Math.abs(a[`SUM(Tien)`]),
+                                    x : a.TenDanhMuc
+                                }
+                                charcolor.push(a.Color)
+                                chart.push(ite)
+                                // List[i].MaVi = 'Vi00'
+                            }
+                           
+                            
+                        }
+                        setGraphicData(chart)
+                        setGraphicColor(charcolor)
+                        setSelectedList(List)
+                        return List
+                      }
+                    )
+                    
+                })
+            }
+            else
+                await db.transaction(async (tx) =>{
+                    var List = []
+                    await tx.executeSql(
+                    `SELECT GIAODICH.MaDanhMuc,GIAODICH.MaVi ,DANHMUC.TenDanhMuc,DANHMUC.Icon,DANHMUC.Color, SUM(Tien), GIAODICH.Date FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND GIAODICH.MaVi == '${ID}' AND DANHMUC.ThuChi == ${IsThu} GROUP BY GIAODICH.MaDanhMuc`,
+                    [],
+                    async (tx, results) =>{
+                        var sum = 0
+                        var chart = []
+                        var charcolor = []
+                        for (let i = 0; i < results.rows.length; i++){
+                            console.log(results.rows.length)
+                            var a = results.rows.item(i)
+                            // console.log(a)
+                            if (a.Date.slice(6,7) === thang) {
+                                List.push(a)
+                                const itedate= {
+                                y : Math.abs(a[`SUM(Tien)`]),
+                                x : a.TenDanhMuc
+                                 }
+                                charcolor.push(a.Color)
+                            // console.log(ite)
+                                chart.push(itedate)
+                            }
+                            
+    
+                        }
+                        setSelectedList(List)
+                        setGraphicData(chart)
+                        setGraphicColor(charcolor)
+                        return List
+                    }
+                    )
+                    
+                })
+        }
+        else if (acctionTr === 'nam'){
+            console.log('in nam')
+            // console.log(nam)
+            if (ID == 'Vi00'){
+                await db.transaction(async (tx) =>{
+                    var List = []
+                    await tx.executeSql(
+                      `SELECT GIAODICH.MaDanhMuc, DANHMUC.TenDanhMuc,DANHMUC.Icon,DANHMUC.Color , SUM(Tien), GIAODICH.Date FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND DANHMUC.ThuChi == ${isIncome} GROUP BY GIAODICH.MaDanhMuc`,
+                      [],
+                      async (tx, results) =>{
+                        var sum = 0
+                        var chart = []
+                        var charcolor = []
+                        console.log(results.rows.length)
+                        for (let i = 0; i < results.rows.length; i++){
+                            var a = results.rows.item(i)
+                            // console.log('ngay thang in thang',a.Date)
+                            // console.log(a.Date.slice(0,4))
+                            // console.log('thang get tu triger', nam)
+                            // console.log()
+                            if (a.Date.slice(0,4) === `${nam}`)
+                            {
+                                // console.log('here')
+                                // console.log(nam)
+                                List.push(a)
+                                // console.log(a)
+                                const ite = {
+                                    y : Math.abs(a[`SUM(Tien)`]),
+                                    x : a.TenDanhMuc
+                                }
+                                charcolor.push(a.Color)
+                                chart.push(ite)
+                                // List[i].MaVi = 'Vi00'
+                            }
+                           
+                            
+                        }
+                        setGraphicData(chart)
+                        setGraphicColor(charcolor)
+                        setSelectedList(List)
+                        return List
+                      }
+                    )
+                    
+                })
+            }
+            else
+                await db.transaction(async (tx) =>{
+                    var List = []
+                    await tx.executeSql(
+                    `SELECT GIAODICH.MaDanhMuc,GIAODICH.MaVi ,DANHMUC.TenDanhMuc,DANHMUC.Icon,DANHMUC.Color, SUM(Tien), GIAODICH.Date FROM GIAODICH, DANHMUC WHERE GIAODICH.MaDanhMuc == DANHMUC.MaDanhMuc AND GIAODICH.MaVi == '${ID}' AND DANHMUC.ThuChi == ${IsThu} GROUP BY GIAODICH.MaDanhMuc`,
+                    [],
+                    async (tx, results) =>{
+                        var sum = 0
+                        var chart = []
+                        var charcolor = []
+                        for (let i = 0; i < results.rows.length; i++){
+                            console.log(results.rows.length)
+                            var a = results.rows.item(i)
+                            // console.log(a)
+                            if (a.Date.slice(0,4) === `${nam}`) {
+                                List.push(a)
+                                const itedate= {
+                                y : Math.abs(a[`SUM(Tien)`]),
+                                x : a.TenDanhMuc
+                                 }
+                                charcolor.push(a.Color)
+                            // console.log(ite)
+                                chart.push(itedate)
+                            }
+                            
+    
+                        }
+                        setSelectedList(List)
+                        setGraphicData(chart)
+                        setGraphicColor(charcolor)
+                        return List
+                    }
+                    )
+                    
+                })
+        }
+       
     }
 
     // const AddVi = async()=>{
@@ -329,28 +495,28 @@ const Home = ({ navigation }) => {
             // )
     //     })
     // }
-    const Get = async()=>{
-            await db.transaction(async (tx) =>{
-                var List = []
-                await tx.executeSql(
-                  `SELECT * FROM GIAODICH`,
-                  [],
-                  async (tx, results) =>{
-                    var sum = 0
-                    console.log(results.rows.length)
-                    for (let i = 0; i < results.rows.length; i++){
-                        var a = results.rows.item(i)
-                        console.log(a)
-                        List.push(a)
-                        // List[i].MaVi = 'Vi00'
+    // const Get = async()=>{
+    //         await db.transaction(async (tx) =>{
+    //             var List = []
+    //             await tx.executeSql(
+    //               `SELECT * FROM GIAODICH`,
+    //               [],
+    //               async (tx, results) =>{
+    //                 var sum = 0
+    //                 console.log(results.rows.length)
+    //                 for (let i = 0; i < results.rows.length; i++){
+    //                     var a = results.rows.item(i)
+    //                     console.log(a)
+    //                     List.push(a)
+    //                     // List[i].MaVi = 'Vi00'
                         
-                    }
-                  }
-                )
+    //                 }
+    //               }
+    //             )
                 
-            })
+    //         })
          
-    }
+    // }
 
 
     const LoadingMapType = (choosemap) => {
@@ -365,7 +531,7 @@ const Home = ({ navigation }) => {
                         innerRadius={40}
                         style={{
                         labels: {
-                        fill: 'green', fontSize: 15, padding: 10,
+                        fill: 'white', fontSize: 15, paddingTop: 0,
                         }, }}
                         /> 
                 </View>
@@ -384,7 +550,7 @@ const Home = ({ navigation }) => {
                         innerRadius={40}
                         style={{
                         labels: {
-                        fill: 'red', fontSize: 15, padding: 10,
+                        fill: 'white', fontSize: 15, paddingTop: 0,
                         }, }}
                         /> 
                 </View>
@@ -406,15 +572,15 @@ const Home = ({ navigation }) => {
         // GetGDByMaViGrByMaDanhMuc('Vi01', 1)
       }, [])
     useEffect(() => {
-        GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome, ngay)
-    }, [WalletChoose, isIncome, ngay])
+        GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome, ngay, thang, nam, acctionTrigger)
+    }, [WalletChoose, isIncome, ngay, thang, nam, acctionTrigger])
 
     const isFocused = useIsFocused()
 
     useEffect(() => {
         if(isFocused){
             GetListWallet()
-            GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome, ngay)
+            GetGDByMaViGrByMaDanhMuc(WalletChoose, isIncome, ngay, thang, nam, acctionTrigger)
         }
     }, [isFocused])
 
@@ -607,12 +773,14 @@ const Home = ({ navigation }) => {
                                         <Icon name='chevron-right' type='evil-icons' size={30} color='#74B498'
                                             onPress={() => setNam(nam+1)}/>
                                     </View>
-
+                                    {/* {console.log(nam)} */}
                                     <TextInput
                                         style={styles.inputText}
                                         placeholder='Nhập năm'
                                         keyboardType="numeric"
-                                        onChangeText={(newYear) => setNam(newYear)}/>
+                                        onChangeText={(newYear) => setNam(newYear)}
+                                        value={nam.toString()}
+                                        />
                                     
                                     
 
@@ -759,7 +927,7 @@ const styles = StyleSheet.create({
         backgroundColor : 'white',
         flexDirection:'column',
         width : Dimensions.get('window').width * 0.9,
-        height : Dimensions.get('window').height * 0.38,
+        height : Dimensions.get('window').height * 0.45,
         borderRadius:10,
         marginLeft:20,
         marginTop:10,

@@ -83,13 +83,14 @@ const Transfer = ({navigation}) => {
     // console.log(ListVi)
 
     const checkViTien = (ID, money_ch) => {
-
       if (ListVi.length > 0){
         for( let i = 0; i < ListVi.length; i++){
             if (ListVi[i].MaVi == ID)
                 {
-                  ListVi[i].SoDu < money_ch
-                  return false
+                  // console.log('check vi',ListVi[i].TenVi, ListVi[i].SoDu, money_ch)
+                  if (ListVi[i].SoDu < money_ch)
+                  {return false}
+                  else {return true}
                 }
         }
     }
@@ -100,6 +101,7 @@ const Transfer = ({navigation}) => {
         if (WalletChoose_CH === 'Chưa chọn' || WalletChoose_NH === 'Chưa chọn' || Tien === 0){
             Alert.alert('Vui lòng điền đầy đủ thông tin trước khi thêm giao dịch')
         }
+        
         else if (checkViTien(WalletChoose_CH,  Tien) === false) {Alert.alert("Không đủ số dư, vui lòng chọn ví khác")}
         else {
             // getID()

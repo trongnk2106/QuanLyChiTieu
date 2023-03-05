@@ -87,8 +87,8 @@ const EditHistory = ({route,navigation}) => {
           for( let i = 0; i < ListVi.length; i++){
               if (ListVi[i].MaVi == ID)
                   {
-                    ListVi[i].SoDu < money_ch
-                    return false
+                    if (ListVi[i].SoDu < money_ch){ return false}
+                    else {return true}
                   }
           }
       }
