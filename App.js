@@ -16,7 +16,7 @@ import ViewDetail from './src/Small_Components/ViewDetail';
 import EditTransaction from './src/Small_Components/EditTransaction';
 import CategoriesStack from './src/Screens/CategoriesStack';
 import Icon from 'react-native-vector-icons/Ionicons';
-
+import NotificationsScreen from './src/Screens/NotificationsScreen'
 // function HomeScreen({ navigation }) {
 //   return (
 //     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -28,13 +28,13 @@ import Icon from 'react-native-vector-icons/Ionicons';
 //   );
 // }
 
-function NotificationsScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button onPress={() => navigation.goBack()} title="Go back home" />
-    </View>
-  );
-}
+//function NotificationsScreen({ navigation }) {
+ // return (
+   // <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    //  <Button onPress={() => navigation.goBack()} title="Go back home" />
+    //</View>
+  //);
+//}
 
 const MyTheme = {
   colors: {
