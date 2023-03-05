@@ -28,7 +28,7 @@ const Home = ({ navigation }) => {
 
 
     const [modalVisible, setModalVisible] = useState(false);
-    const [modalView, SetModalViewVisible] = useState(false)
+    const [modalViewWallet, SetModalViewVisibleWallet] = useState(false)
     const [WalletChoose, setWalletChoose] = useState('Vi00');
     const [isIncome, setIsIncome] = useState(false)
     const [ListVi, setListVi] = useState([])
@@ -36,13 +36,19 @@ const Home = ({ navigation }) => {
     const [SelectedGD, setSelectedGD] = useState('')
     const [Key, SetKey] = useState([])
     
-    // const [Thang, setThang] = useState('')
     const [graphicData, setGraphicData] = useState([])
     const [graphicColor, setGraphicColor] = useState([])
-    const [acctionTrigger, setAcctionTrigger] = useState('')
 
-    // const th = 
-    const timercurrent = new Date().getFullYear() + '-' +'0'+ (new Date().getMonth()+ 1) + '-' + '0' + new Date().getDate()
+    const [acctionTrigger, setAcctionTrigger] = useState('ngay')
+
+
+
+    const dd = new Date().getDate() < 10 ? '0' + new Date().getDate() : new Date().getDate()
+    const mm = new Date().getMonth() + 1 < 10 ? '0' + (new Date().getMonth()+1) : (new Date().getMonth() + 1)
+  
+    const timercurrent = new Date().getFullYear() + '-' + mm + '-' + dd
+
+   
     // console.log('ngay mac dinh ',timercurrent)
 
     const [ngay, setNgay] = useState(`${timercurrent}`)
@@ -97,25 +103,25 @@ const Home = ({ navigation }) => {
     }
 
 
-    const AlerBottom = () => {
-        Alert.alert('Canh bao','Ban co chac chan muon xoa giao dich khong', [
-            {
-                text: 'Roll Back',
-                onPress : () => {
-                    SetModalViewVisible(!modalView)
-                }
-            },
-            {
-              text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
-              style: 'cancel',
-            },
-            {text: 'OK', onPress: () => {
-                DeletaDanhMuc()
-                SetModalViewVisible(!modalView)}},
+    // const AlerBottom = () => {
+    //     Alert.alert('Canh bao','Ban co chac chan muon xoa giao dich khong', [
+    //         {
+    //             text: 'Roll Back',
+    //             onPress : () => {
+    //                 SetModalViewVisible(!modalView)
+    //             }
+    //         },
+    //         {
+    //           text: 'Cancel',
+    //           onPress: () => console.log('Cancel Pressed'),
+    //           style: 'cancel',
+    //         },
+    //         {text: 'OK', onPress: () => {
+    //             DeletaDanhMuc()
+    //             SetModalViewVisible(!modalView)}},
            
-          ]);
-    }
+    //       ]);
+    // }
     const GetListWallet = async()=>{
         var List = [{"MaVi" : 'Vi00','TenVi': 'Ví Tổng' ,label :'Ví tổng', "Tien": 0, "SoDu": 0 }]
         //Get Danh sách Ví: ID ví, Tên Ví, Tiền ban đầu lúc tạo ví
@@ -277,6 +283,8 @@ const Home = ({ navigation }) => {
              
         }
         else if (acctionTr === 'thang'){
+            console.log('thuc thi trong thang', thang)
+            
             if (ID == 'Vi00'){
                 await db.transaction(async (tx) =>{
                     var List = []
@@ -290,11 +298,28 @@ const Home = ({ navigation }) => {
                         console.log(results.rows.length)
                         for (let i = 0; i < results.rows.length; i++){
                             var a = results.rows.item(i)
-                            // console.log('ngay thang in thang',a.Date)
-                            // console.log(a.Date.slice(6,7))
-                            // console.log('thang get tu triger', thang)
-                            if (a.Date.slice(6,7) === thang)
-                            {
+                            // console.log(a)
+                            // console.log('thang home', a.Date.slice(6,9))
+                            if (thang < 10) {
+                               
+                                if (a.Date.slice(6,7) === thang)
+                                {
+                                    List.push(a)
+                                    console.log(a)
+                                    const ite = {
+                                        y : Math.abs(a[`SUM(Tien)`]),
+                                        x : a.TenDanhMuc
+                                    }
+                                    charcolor.push(a.Color)
+                                    chart.push(ite)
+                                    // List[i].MaVi = 'Vi00'
+                                }
+                            }
+                            else {
+                                // console.log('thang lon hon 10')
+                                console.log(a.Date.slice(5,7))
+                                if (a.Date.slice(5,7) === thang)
+                                {
                                 List.push(a)
                                 // console.log(a)
                                 const ite = {
@@ -305,6 +330,8 @@ const Home = ({ navigation }) => {
                                 chart.push(ite)
                                 // List[i].MaVi = 'Vi00'
                             }
+                            }
+                            
                            
                             
                         }
@@ -331,17 +358,37 @@ const Home = ({ navigation }) => {
                             console.log(results.rows.length)
                             var a = results.rows.item(i)
                             // console.log(a)
-                            if (a.Date.slice(6,7) === thang) {
-                                List.push(a)
-                                const itedate= {
-                                y : Math.abs(a[`SUM(Tien)`]),
-                                x : a.TenDanhMuc
-                                 }
-                                charcolor.push(a.Color)
-                            // console.log(ite)
-                                chart.push(itedate)
+                            if (thang < 10) {
+                               
+                                if (a.Date.slice(6,7) === thang)
+                                {
+                                    List.push(a)
+                                    console.log(a)
+                                    const ite = {
+                                        y : Math.abs(a[`SUM(Tien)`]),
+                                        x : a.TenDanhMuc
+                                    }
+                                    charcolor.push(a.Color)
+                                    chart.push(ite)
+                                    // List[i].MaVi = 'Vi00'
+                                }
                             }
-                            
+                            else {
+                                // console.log('thang lon hon 10')
+                                console.log(a.Date.slice(5,7))
+                                if (a.Date.slice(5,7) === thang)
+                                {
+                                List.push(a)
+                                // console.log(a)
+                                const ite = {
+                                    y : Math.abs(a[`SUM(Tien)`]),
+                                    x : a.TenDanhMuc
+                                }
+                                charcolor.push(a.Color)
+                                chart.push(ite)
+                                // List[i].MaVi = 'Vi00'
+                            }
+                            }
     
                         }
                         setSelectedList(List)
@@ -437,6 +484,9 @@ const Home = ({ navigation }) => {
         }
        
     }
+
+
+    // console.log('gra', graphicData)
 
     // const AddVi = async()=>{
     //     await db.transaction(async (tx)=> {
@@ -642,36 +692,48 @@ const Home = ({ navigation }) => {
                             {GetTenViByMaVi(WalletChoose)}
                         </Text>
                         <View style={{marginTop:10}}>
-                            <Modal 
+                            {/* modal show select wallet */}
+                            <Modal
                                 animationType='slide'
-                                transparent={true}
-                                visible = {modalVisible}
-                                onRequestClose={() => setModalVisible(!modalVisible)}    
-                            > 
-                                {acctionTrigger === 'wallet' ?
-                                <View style = {styles.showContainer}>
+                                transparent = {true}
+                                visible= {modalViewWallet}
+                                onRequestClose = {() => SetModalViewVisibleWallet(!modalViewWallet)}
+                            >
+                                 <View style = {styles.showContainer}>
                                 <View style ={styles.showContainerCenter}>
-                                    <Text style = {{marginLeft : 20, marginTop :15, fontSize:20}}>Chọn tài khoản</Text>
+                                    <Text style = {{marginLeft : 15, marginTop :10, fontSize:20}}>Chon tai khoan</Text>
                                     <ScrollView>
                                         <View>
                                             <RadioButtonRN 
-                                                style = {{marginLeft:20, marginTop:5}}
                                                 data = {ListVi}
-                                                box = {false}
                                                 selectedBtn = {(e) => {console.log(e.MaVi)
                                                 setWalletChoose(e.MaVi)}}
                                                     />
                                         </View>
                                     </ScrollView>
                                    
-                                <Pressable onPress = {() => setModalVisible(!modalVisible)}>
-                                    <Text style = {{fontSize:17, color:'green', textAlign:'right', marginTop:30, marginRight : 18, marginBottom:18}}> Chọn </Text>
-                                </Pressable>
+                                <Pressable onPress = {() => SetModalViewVisibleWallet(!modalViewWallet)}>
+                                        <Text style = {{fontSize:15, color:'green', textAlign:'right', marginTop:30, marginRight : 20, marginBottom:10}}> Chon </Text>
+                                    </Pressable>
                                 </View>
                                 
-                            </View>
-                            : acctionTrigger === 'ngay' ?
-                            <View style={styles.centeredView}>
+                                </View>
+                            </Modal>
+                            <Pressable
+                                onPress={() => {
+                                    SetModalViewVisibleWallet(true)}}
+                            >
+                                <Ionicons name = 'caret-down-outline' color = 'white' size={25}/>
+
+                            </Pressable>
+                            <Modal 
+                                animationType='slide'
+                                transparent={true}
+                                visible = {modalVisible}
+                                onRequestClose={() => setModalVisible(!modalVisible)}    
+                            > 
+                                {acctionTrigger === 'ngay' ?
+                                <View style={styles.centeredView}>
                                 <View style={styles.modalView}>
                                     <Calendar style={{borderRadius: 15}}
                                         onDayPress={(day) => {
@@ -801,13 +863,7 @@ const Home = ({ navigation }) => {
 
                             </Modal>
 
-                            <Pressable
-                                onPress={() => {setModalVisible(true)
-                                setAcctionTrigger('wallet')}}
-                            >
-                                <Ionicons name = 'caret-down-outline' color = 'white' size={25}/>
-
-                            </Pressable>
+                           
                            
                         </View>
                     </View>

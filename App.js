@@ -15,7 +15,9 @@ import ViewDetail_Type from './src/Screens/ViewDetail_Type';
 import ViewDetail from './src/Small_Components/ViewDetail';
 import EditTransaction from './src/Small_Components/EditTransaction';
 import CategoriesStack from './src/Screens/CategoriesStack';
+import PlotMap from './src/Screens/PlotMap';
 import Icon from 'react-native-vector-icons/Ionicons';
+// import StackedBarChartScreen from './src/test';
 
 // function HomeScreen({ navigation }) {
 //   return (
@@ -56,7 +58,10 @@ export default function App() {
         <Drawer.Screen name="Trang chính" component={HomeStack} 
           options={{ drawerIcon: config => <Icon size={25} name={'home'} color={'#C4DDCA'}></Icon> }}/> 
         <Drawer.Screen name="Tài khoản" component={CreateAcc_Stack}
-          options={{ drawerIcon: config => <Icon size={25} name={'card'} color={'#C4DDCA'}></Icon> }}/> 
+          options={{ drawerIcon: config => <Icon size={25} name={'card'} color={'#C4DDCA'}></Icon> }}/>
+        <Drawer.Screen name="Bieu do" component={PlotMap}
+          options={{ drawerIcon: config => <Icon size={25} name={'bar-chart'} color={'#C4DDCA'}></Icon> }}/>  
+
         <Drawer.Screen name="Nhắc nhở" component={NotificationsScreen}
           options={{ drawerIcon: config => <Icon size={25} name={'notifications'} color={'#C4DDCA'}></Icon> }}/> 
         {/* <Drawer.Screen name="Thêm giao dịch" component={Add} /> */}
