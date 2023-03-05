@@ -1,10 +1,12 @@
-## Table of contents
-* [General info](#general-info)
-* [Technologies](#technologies)
-* [Setup](#setup)
+## Nhom 7
+* Nguyễn Thanh Trọng 20520330
+* Nguyễn Hồng Hậu 20521300
+* Lê Nguyễn Bảo Hân 20520174
+* Phạm Đức Anh 20521076
 
-## General info
-This project is simple Lorem ipsum dolor generator.
+## Tên App
+ Quản Lý Chi Tiêu
+
 	
 ## Technologies
 Project is created with:
