@@ -57,12 +57,6 @@ function NotificationsScreen() {
                     <ListItem.Subtitle>{item.date}</ListItem.Subtitle>
                 </ListItem.Content>
                 <Button
-                    title="Show"
-                    color='red'
-                    onPress={()=>{}}
-                />
-
-                <Button
                     title="Remove"
                     color='red'
                     onPress={()=>{
